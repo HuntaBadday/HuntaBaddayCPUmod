@@ -4,7 +4,7 @@ Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you ha
 
 ### ToDo:
 
-Nothing so far! (Except maybe test the interrupts, I forget if I tested those ;-;)
+Nothing so far!
 
 ## LWC 3.1
 
@@ -167,9 +167,10 @@ data:
 
 ###### Interrupts
 ```x86
-#include "lwc31.asm"
-
 #addr 0x0000
+
+#include "../lwc31.asm"
+
 init:
     ; Initialize interrupts and stack
     mov sp, 0xffff
@@ -193,6 +194,11 @@ irq:
     ; Shift the value in memory right
     mov r1, [0x8000]
     ror r1
+    cmp r1, 0   ; Because the carry flag isn't saved in the irq the shift won't loop around
+                ; This means that if it's 0 we set the MSB
+    bne .skip
+    mov r1, 0x8000  
+.skip:
     mov [0x8000], r1
         
     popall  ; Restore the registers
