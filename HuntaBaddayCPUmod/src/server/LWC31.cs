@@ -4,6 +4,7 @@ namespace HuntaBaddayCPUmod
 {
     public class LWC31 : LogicComponent
     {
+        // Define constants for each instruction and operation
         const int BRK = 0;
         const int JMP = 1;
         const int MOV = 2;
@@ -33,13 +34,17 @@ namespace HuntaBaddayCPUmod
         const int OR = 9;
         const int XOR = 10;
         
+        // List that coresponds to how many operands per instruction
         int[] opNums = {
             0, 1, 2, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 1, 0, 0
         };
+        
+        // All instructions that can have turbo
         int[] perfBypass = {
             0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0
         };
         
+        // All pin numbers
         static int addressPin = 0;
         static int WritePin = 16;
         static int ReadPin = 17;
@@ -52,27 +57,40 @@ namespace HuntaBaddayCPUmod
         static int interruptPin = 19;
         static int turboPin = 20;
         
+        // Program counter and instruction register
         ushort pc = 0;
         ushort ir = 0;
+        
+        // CPU state
         ushort CPUstate = 0;
         // 0 - Initialize (load start address from 0xffff)
         // 1 - Load next instruction
         // 2 - Execute
         
+        // Execution phase
         ushort execPhase = 1;
-            
+        
+        // Array of registers
         ushort[] registers = {0, 0, 0, 0, 0, 0, 0, 0};
+        
+        // Variables that the instruction get separated into
         int inst = 0;
         int op1 = 0;
         int op2 = 0;
         int op3 = 0;
         
+        // Interrupt address set by int instruction
         ushort interruptAddr = 0;
+        
+        // This gets set to true when the code is executing inside an interrupt
+        // so it doesn't keep triggering.
         bool insideInt = false;
         
+        // Last state of clock
         bool lastClkState = false;
         
         protected override void DoLogicUpdate(){
+            // Setup reset configuration
             if(readPin(rstPin)){
                 setAddress(0xffff);
                 setBus(0);
@@ -85,19 +103,24 @@ namespace HuntaBaddayCPUmod
                 insideInt = false;
                 return;
             }
+            // Check if the logic update was the clock
             if(readPin(clkPin) == lastClkState){
                 return;
             }
             lastClkState = readPin(clkPin);
             
+            // Reset phase
             if(CPUstate == 0 && readPin(clkPin)){
                 CPUstate = 1;
                 pc = readBus();
                 setAddress(pc);
                 return;
             }
+            
+            // Fetech phase
             if(CPUstate == 1 && readPin(clkPin)){
                 CPUstate = 2;
+                // If the interrupt pin is enabled inject a "brk" instruction to the instruction register
                 if(readPin(interruptPin) && !insideInt && (registers[7] & 0b1000) == 0){
                     ir = 0;
                 } else {
@@ -107,6 +130,7 @@ namespace HuntaBaddayCPUmod
                 setAddress(pc);
                 return;
             }
+            // Load the constant data for instructions and turn off all pins used
             if(CPUstate == 2 && !readPin(clkPin)){
                 CPUstate = 3;
                 registers[0] = readBus();
@@ -116,13 +140,16 @@ namespace HuntaBaddayCPUmod
                 execPhase = 1;
             }
             
+            // Execute first phase of instruction
             if(CPUstate == 3 && execPhase == 1){
                 // 0000 000 000 0000 00
                 inst = (ir >> 12) & 0b1111;
                 op1 = (ir >> 9) & 0b111;
                 op2 = (ir >> 6) & 0b111;
                 op3 = (ir >> 2) & 0b1111;
-                execPhase1();
+                execPhase1();   // Do the phase
+                
+                // If the instruction supports turbo then skip the second phase
                 if(readPin(turboPin) && perfBypass[inst] == 1){
                     setupLoad();
                 } else {
@@ -130,11 +157,13 @@ namespace HuntaBaddayCPUmod
                 }
                 return;
             }
+            // Execute phase 2
             if(CPUstate == 3 && execPhase == 2 && readPin(clkPin)){
                 execPhase2();
                 execPhase = 3;
                 return;
             }
+            // Phase 3 is just to check the falling-edge of the clock to initialize the next fetch.
             if(CPUstate == 3 && execPhase == 3 && !readPin(clkPin)){
                 setupLoad();
                 return;
@@ -142,6 +171,8 @@ namespace HuntaBaddayCPUmod
         }
         
         protected void execPhase1(){
+            // If constant data is used then incrment the pc
+            // so the constant data isn't executed.
             ushort inc = 0;
             if(opNums[inst] >= 1){
                 if(op1 == 0){
@@ -154,6 +185,8 @@ namespace HuntaBaddayCPUmod
                 }
             }
             pc += inc;
+            
+            // Instruction execution
             switch(inst){
                 case BRK:
                     registers[6]--;
@@ -191,6 +224,7 @@ namespace HuntaBaddayCPUmod
                 case ALU:
                     ushort preVal = registers[op1];
                     int tmp;
+                    // Subset instructions of ALU
                     switch(op3){
                         case ADD:
                             tmp = registers[op1] + registers[op2];
@@ -240,6 +274,8 @@ namespace HuntaBaddayCPUmod
                     }
                     genStatus(registers[op1]);
                     
+                    // If the shift instruction is used and the second operand is set to constant data
+                    // which isn't used, then decrement the pc so the next instruction isn't skipped.
                     inc = 0;
                     if(op3 >= 4 && op3 <= 7){
                         if(op2 == 0){
@@ -317,6 +353,8 @@ namespace HuntaBaddayCPUmod
             }
         }
         protected void execPhase2(){
+            // This is the second phase for instructions that need the data bus
+            // You can see there are only a few here, that's where turbo comes from.
             switch(inst){
                 case BRK:
                     setWrite(1);
@@ -354,6 +392,7 @@ namespace HuntaBaddayCPUmod
             }
         }
         
+        // Setup I/O port for fetch
         protected void setupLoad(){
             CPUstate = 1;
             setAddress(pc);
@@ -363,13 +402,16 @@ namespace HuntaBaddayCPUmod
             setUB(1);
         }
         
+        // Set the carry flag depending on the input
         protected void genCarry(int data){
             registers[7] &= 0b1111111111111110;
+            // Check if there was an overflow from an addition
             if(data >= 0x10000){
                 registers[7] |= 0b1;
             }
         }
         
+        // Generate zero and negative flags
         protected void genStatus(ushort data){
             registers[7] &= 0b1111111111111001;
             if(data == 0){
@@ -380,6 +422,7 @@ namespace HuntaBaddayCPUmod
             }
         }
         
+        // Output data to address port
         protected void setAddress(ushort address){
             for(int i = 0; i < 16; i++){
                 int state = (address>>i) & 1;
@@ -390,6 +433,8 @@ namespace HuntaBaddayCPUmod
                 }
             }
         }
+        
+        // Output data to data bus
         protected void setBus(ushort data){
             for(int i = 0; i < 16; i++){
                 int state = (data>>i) & 1;
@@ -400,6 +445,8 @@ namespace HuntaBaddayCPUmod
                 }
             }
         }
+        
+        // Read the data bus
         protected ushort readBus(){
             ushort data = 0;
             for(int i = 0; i < 16; i++){
@@ -410,15 +457,20 @@ namespace HuntaBaddayCPUmod
             }
             return data;
         }
+        
+        // Set write pin
         protected void setWrite(ushort state){
             base.Outputs[WritePin].On = state != 0;
         }
+        // Set readpin
         protected void setRead(ushort state){
             base.Outputs[ReadPin].On = state != 0;
         }
+        // Set pin for when CPU is using the bus
         protected void setUB(ushort state){
             base.Outputs[useBusPin].On = state != 0;
         }
+        // Read a pin's state
         protected bool readPin(int pin){
             return base.Inputs[pin].On;
         }

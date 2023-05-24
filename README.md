@@ -4,7 +4,7 @@ Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you ha
 
 ### ToDo:
 
-Code comments.
+Nothing so far! (Except maybe test the interrupts, I forget if I tested those ;-;)
 
 ## LWC 3.1
 
