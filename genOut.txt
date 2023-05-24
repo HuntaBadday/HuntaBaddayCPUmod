@@ -1,0 +1,9 @@
+            -
+                position:
+                    x: -22
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0

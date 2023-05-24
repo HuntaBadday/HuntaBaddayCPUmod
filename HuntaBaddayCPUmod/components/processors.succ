@@ -1,0 +1,526 @@
+LWC31:
+    column: "CPU"
+    category: null
+    prefab:
+        blocks:
+            -
+                color: a5a5a5
+                position: (0.5, 0, 0.5)
+                scale: (46, 2, 2)
+        inputs:
+            -
+                position:
+                    x: 2
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -4
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -5
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -6
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -7
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -8
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -9
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -10
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -11
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -12
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -13
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+            -
+                position:
+                    x: -16
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -17
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+            -
+                position:
+                    x: -20
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+            -
+                position:
+                    x: -22
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            -
+                position:
+                    x: -15
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+        outputs:
+            -
+                position:
+                    x: 23
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 22
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 21
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 20
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 19
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 18
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 17
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 16
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 15
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 14
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 13
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 12
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 11
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 10
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 9
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 8
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+            -
+                position:
+                    x: 6
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 5
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+            -
+                position:
+                    x: 2
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -4
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -5
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -6
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -7
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -8
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -9
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -10
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -11
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -12
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -13
+                    y: 1.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+            -
+                position:
+                    x: -19
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+
+    logicCode: HuntaBaddayCPUmod.LWC31
+    placingRules: Standard
