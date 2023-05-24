@@ -177,7 +177,7 @@ init:
     int irq ; Set interrupt location
     cli     ; Enable interupts
     
-    ; Some code that loops to show the interrupts working
+    ; Some code that loops to show the interrupts working.
     ; (Hook up a write-only register to 0x8000 to see the data)
     mov r1, 1
     mov [0x8000], r1
@@ -189,13 +189,13 @@ loop:
     
 irq:
     pushall ; Push all registers (including the status), except stack pointer.
-            ; So when the interrupt returns, the code that was running doesn't see any changes
+            ; So when the interrupt returns, the code that was running doesn't see any changes.
     
     ; Shift the value in memory right
     mov r1, [0x8000]
     ror r1
-    cmp r1, 0   ; Because the carry flag isn't saved in the irq the shift won't loop around
-                ; This means that if it's 0 we set the MSB
+    cmp r1, 0   ; Because the carry flag isn't saved in the irq the shift won't loop around.
+                ; This means that if it's 0 we set the MSB.
     bne .skip
     mov r1, 0x8000  
 .skip:
