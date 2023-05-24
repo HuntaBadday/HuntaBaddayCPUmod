@@ -134,3 +134,65 @@ Adds abbreviations:\
 CLI (Clear interrupt diable)\
 SEI (Set interrupt disable)
 
+#### Examples:
+###### Multiplication (Shift and add method)
+```x86
+#addr 0x0000
+init:
+    ; Load multiplier and multiplicant
+    mov r1, [data]
+    mov r2, [data+1]
+    mov r3, 0
+main:
+    mov r0, r1  ; Store r1 to r0 to do bit checking
+    and r0, 0x1
+    beq .skipAdd    ; If bit 0 is not set skip the add
+    add r3, r2
+.skipAdd:
+    shl r2  ; Shift the registers
+    shr r1
+    bne main    ; If r1 is 0 then we are done, otherwise keep looping
+    
+    mov [0x8000], r3    ; Store the result into 0x8000
+    jmp $
+    
+data:
+#d16 23, 8
+
+#addr 0xffff
+#d16 init   ; Start vector pointing to init
+```
+
+###### Interrupts
+```x86
+#addr 0x0000
+init:
+    ; Initialize interrupts and stack
+    mov sp, 0xffff
+    int irq ; Set interrupt location
+    cli     ; Enable interupts
+    
+    ; Some code that loops to show the interrupts working
+    ; (Hook up a write-only register to 0x8000 to see the data)
+    mov r1, 1
+    mov [0x8000], r1
+loop:
+    mov r1, [0x8000]
+    rol r1
+    mov [0x8000], r1
+    jmp loop
+    
+irq:
+    pushall ; Push all registers (including the status), except stack pointer.
+            ; So when the interrupt returns, the code that was running doesn't see any changes
+    
+    ; Shift the value in memory right
+    mov r1, [0x8000]
+    ror r1
+    mov [0x8000], r1
+        
+    popall  ; Restore the registers
+    rti
+
+#addr 0xffff
+#d16 init   ; Start vector pointing to init
