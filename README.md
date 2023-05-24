@@ -137,6 +137,8 @@ SEI (Set interrupt disable)
 ### Examples:
 ###### Multiplication (Shift and add method)
 ```x86
+#include "lwc31.asm"
+
 #addr 0x0000
 init:
     ; Load multiplier and multiplicant
@@ -165,6 +167,8 @@ data:
 
 ###### Interrupts
 ```x86
+#include "lwc31.asm"
+
 #addr 0x0000
 init:
     ; Initialize interrupts and stack
