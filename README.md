@@ -134,7 +134,7 @@ Adds abbreviations:\
 CLI (Clear interrupt diable)\
 SEI (Set interrupt disable)
 
-#### Examples:
+### Examples:
 ###### Multiplication (Shift and add method)
 ```x86
 #addr 0x0000
