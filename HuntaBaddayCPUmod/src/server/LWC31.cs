@@ -34,7 +34,7 @@ namespace HuntaBaddayCPUmod
         const int OR = 9;
         const int XOR = 10;
         
-        // List that coresponds to how many operands per instruction
+        // Array for how many operands each instruction uses
         int[] opNums = {
             0, 1, 2, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 1, 0, 0
         };
