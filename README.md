@@ -2,9 +2,9 @@
 
 Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you have.
 
-### In progress update stuff:
+### ToDo:
 
-I will be adding comments to the code in the future (I know, right now it's a terrible mess).
+Code comments.
 
 ## LWC 3.1
 
@@ -18,7 +18,9 @@ lwc31.asm also replaces instructions like "ALU" and "JIF" with thier expansions.
 ### Usage:
 
 #### CPU I/O:
-AAAAAAAAAAAAAAAA WR DDDDDDDDDDDDDDDD TSC BU I
+AAAAAAAAAAAAAAAA WR DDDDDDDDDDDDDDDD TSC BU I\
+^\
+LSB
 
 A: Address Bus\
 W: Write\
@@ -30,6 +32,8 @@ C: Clock In\
 B: High when CPU is using the BUS\
 U: Unused\
 I: Trigger interrupt
+
+Least significant bit of address and data is in the left when looking at it.
 
 ##### What is turbo??
 
