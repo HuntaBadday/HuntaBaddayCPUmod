@@ -4,7 +4,7 @@ Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you ha
 
 ### ToDo:
 
-Nothing so far!
+1. Make an 8 bit CPU
 
 ## LWC 3.1
 
