@@ -2,9 +2,9 @@
 
 Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you have.
 
-### ToDo:
+### Upcoming additions
 
-1. Make an 8 bit CPU
+1. 6502
 
 ## LWC 3.1
 
