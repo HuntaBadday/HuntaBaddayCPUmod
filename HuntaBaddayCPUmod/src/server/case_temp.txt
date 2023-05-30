@@ -1,0 +1,19 @@
+case 0x00:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                
+                            } else {
+                                
+                            }
+                            break;
+                    }
+                    break;
+
+case 1:
+                            if(phi1){
+                                
+                            } else {
+                                
+                            }
+                            break;

@@ -4,6 +4,7 @@ namespace HuntaBaddayCPUmod
 {
     public class MOS6502 : LogicComponent
     {
+        // Reference for me to know what input and output id each pin is
         // I 0      I 19
         // I 1      O 19
         // O 0      I 18
@@ -31,6 +32,8 @@ namespace HuntaBaddayCPUmod
         const int nmiPin = 4;
         const int RWPin = 18;
         const int syncPin = 1;
+        const int rdyPin = 1;
+        const int setOFpin = 18;
         
         const int dataPinW = 20;
         const int dataPinR = 7;
@@ -39,18 +42,25 @@ namespace HuntaBaddayCPUmod
         const int phi1Pin = 0;
         const int phi2Pin = 19;
         
-        const int fetchState= 0;
-        
         bool lastClkState = false;
+        bool lastClkStateU = false;
+        bool lastOFpinState = false;
         bool phi1 = false;
         bool phi2 = false;
         bool isPhi2 = false;
         bool resetTrigger = false;
         bool resetTriggerInt = false;
+        bool wasFetch = false;
+        int interruptType = 0;
+        // 0 = RST
+        // 1 = NMI
+        // 2 = BRK/IRQ
         
         byte ir = 0;
-        ushort pc = 0;
+        byte pcLo = 0;
+        byte pcHi = 0;
         byte sp = 0;
+        byte st = 0;
         
         byte acc = 0;
         byte indexX = 0;
@@ -60,8 +70,9 @@ namespace HuntaBaddayCPUmod
         // 0 - Fetch
         // 1+ - Execute
         
-        byte DBL = 0;
+        byte DBL1 = 0;
         byte DBL2 = 0;
+        byte ALUtmp = 0;
         
         protected override void DoLogicUpdate(){
             phi1 = false;
@@ -70,82 +81,267 @@ namespace HuntaBaddayCPUmod
             base.Outputs[phi1Pin].On = !base.Inputs[phi0Pin].On;
             base.Outputs[phi2Pin].On = base.Inputs[phi0Pin].On;
             
-            if(readPin(phi0Pin) != lastClkState){
-                phi1 = !readPin(phi0Pin);
-                phi2 = readPin(phi0Pin);
+            if(!readPin(setOFpin) && readPin(setOFpin) != lastOFpinState){
+                st |= 0b01000000;
+            }
+            lastOFpinState = readPin(setOFpin);
+            
+            if(readPin(phi0Pin) != lastClkStateU && readPin(phi0Pin) != lastClkState){
+                if(readPin(rdyPin) || !base.Outputs[RWPin].On){
+                    phi1 = !readPin(phi0Pin);
+                    phi2 = readPin(phi0Pin);
+                }
+                lastClkStateU = readPin(phi0Pin);
             } else {
+                lastClkStateU = readPin(phi0Pin);
                 return;
             }
             lastClkState = readPin(phi0Pin);
             
             if(!readPin(rstPin) || phi2 && resetTrigger){
                 resetTrigger = true;
-                state = 0;
-                flipState();
-                return;
-            } else {
-                resetTrigger = false;
                 resetTriggerInt = true;
+                state = 0;
+                return;
+            } else if(phi1 && resetTrigger){
+                resetTrigger = false;
             }
             
             if(state == 0 && phi1){
                 setRW(1);
                 setSync(1);
-                setAddress(pc);
+                setAddress16(pcLo, pcHi);
                 setBus(0);
                 return;
             }
+            
             if(state == 0 && phi2){
                 if(resetTriggerInt || !readPin(irqPin) || !readPin(nmiPin)){
+                    if(resetTriggerInt){
+                        interruptType = 0;
+                    } else if(!readPin(nmiPin)){
+                        interruptType = 1;
+                    } else if(!readPin(irqPin)){
+                        interruptType = 2;
+                    }
                     resetTriggerInt = false;
                     ir = 0;
                     state = 1;
+                    wasFetch = false;
                 } else {
+                    interruptType = 2;
                     ir = readBus();
-                    pc++;
+                    incrementPC();
                     state = 1;
-                    return;
+                    wasFetch = true;
                 }
                 setSync(0);
+                return;
             }
             
             // ================================================================
             
             switch(ir){
+                // BRK
                 case 0x00:
                     switch(state){
                         case 1:
-                            if(phi1){
-                                setAddress(pc);
-                            } else {
-                                getNextByte();
+                            if(wasFetch){
+                                if(phi1){
+                                    setAddress16(pcLo, pcHi);
+                                } else {
+                                    DBL1 = getNextByte();
+                                }
                             }
-                            
+                            break;
+                        case 2:
+                            if(phi1){
+                                setAddress((ushort)(0x100+sp));
+                                setBus(pcHi);
+                                setRW(0);
+                                if(interruptType == 0){
+                                    setRW(1);
+                                }
+                            } else {
+                                sp--;
+                            }
+                            break;
+                        case 3:
+                            if(phi1){
+                                setAddress((ushort)(0x100+sp));
+                                setBus(pcLo);
+                            } else {
+                                sp--;
+                            }
+                            break;
+                        case 4:
+                            if(phi1){
+                                setAddress((ushort)(0x100+sp));
+                                byte tmp = st;
+                                if(wasFetch){
+                                    tmp |= 0b00010000;
+                                }
+                                setBus(tmp);
+                            } else {
+                                sp--;
+                            }
+                            break;
+                        case 5:
+                            if(phi1){
+                                setRW(1);
+                                setBus(0);
+                                if(interruptType == 0){
+                                    setAddress(0xfffc);
+                                } else if(interruptType == 1){
+                                    setAddress(0xfffa);
+                                } else if(interruptType == 2){
+                                    setAddress(0xfffe);
+                                }
+                            } else {
+                                pcLo = readBus();
+                            }
+                            break;
+                        case 6:
+                            if(phi1){
+                                setRW(1);
+                                if(interruptType == 0){
+                                    setAddress(0xfffd);
+                                } else if(interruptType == 1){
+                                    setAddress(0xfffb);
+                                } else if(interruptType == 2){
+                                    setAddress(0xffff);
+                                }
+                            } else {
+                                pcHi = readBus();
+                                state = -1;
+                            }
+                            break;
                     }
-                    mcCounter++;
                     break;
+                // LDA #
+                case 0xa9:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                acc = getNextByte();
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                // LDA zp
+                case 0xa5:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                DBL1 = getNextByte();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                setAddress16(DBL1, 0);
+                            } else {
+                                acc = readBus();
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                // LDA zp,x
+                case 0xb5:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                DBL1 = getNextByte();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                ALUtmp = (byte)(DBL1+indexX);
+                            } else {
+                                
+                            }
+                            break;
+                        case 3:
+                            if(phi1){
+                                setAddress16(ALUtmp, 0);
+                            } else {
+                                acc = readBus();
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                // STA zp
+                case 0x85:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                DBL1 = getNextByte();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                setAddress16(DBL1, 0);
+                                setBus(acc);
+                                setRW(0);
+                            } else {
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                // NOP
+                case 0xea:
+                    if(phi2){
+                        state = -1;
+                    }
+                    break;
+            }
+            if(phi2){
+                state++;
             }
             
         }
         
         protected byte getNextByte(){
             byte data = readBus();
-            pc++;
+            incrementPC();
             return data;
         }
-        
+        // Toggle debug output pin
         protected void flipState(){
             base.Outputs[28].On = !base.Outputs[28].On;
         }
         protected bool readPin(int pin){
             return base.Inputs[pin].On;
         }
-        
         protected void setRW(int state){
             base.Outputs[RWPin].On = state != 0;
         }
         protected void setSync(int state){
             base.Outputs[syncPin].On = state != 0;
+        }
+        
+        // Increment the pc
+        protected void incrementPC(){
+            if(pcLo + 1 >= 0x100){
+                pcHi++;
+            }
+            pcLo++;
+            
+        }
+        // Set address from 2 bytes
+        protected void setAddress16(byte lo, byte hi){
+            setAddress((ushort)(lo | (hi<<8)));
         }
         
         // Output data to address port

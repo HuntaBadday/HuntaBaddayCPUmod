@@ -210,4 +210,5 @@ irq:
 
 ## 6502
 
-I will not add documention here. There is plenty on the internet.
+I will not add documention here. There is plenty on the internet.\
+Well, except for telling you to make sure the output pegs on the data bus are connected to the input pegs.
