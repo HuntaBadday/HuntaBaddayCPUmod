@@ -207,3 +207,7 @@ irq:
 #addr 0xffff
 #d16 init   ; Start vector pointing to init
 ```
+
+## 6502
+
+I will not add documention here. There is plenty on the internet.
