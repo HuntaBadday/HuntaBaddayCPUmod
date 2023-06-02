@@ -26,6 +26,7 @@ namespace HuntaBaddayCPUmod
         // O 12     O 14
         // O 13     I 6
         
+        // Pin name constants
         const int phi0Pin = 17;
         const int rstPin = 19;
         const int irqPin = 2;
@@ -42,6 +43,7 @@ namespace HuntaBaddayCPUmod
         const int phi1Pin = 0;
         const int phi2Pin = 19;
         
+        // Some state variables
         bool lastClkState = false;
         bool lastClkStateU = false;
         bool lastOFpinState = false;
@@ -54,8 +56,10 @@ namespace HuntaBaddayCPUmod
         int interruptType = 0;
         // 0 = RST
         // 1 = NMI
-        // 2 = BRK/IRQ
+        // 2 = IRQ
+        // 3 = BRK
         
+        // Registers
         byte ir = 0;
         byte pcLo = 0;
         byte pcHi = 0;
@@ -75,6 +79,7 @@ namespace HuntaBaddayCPUmod
         byte ALUtmp = 0;
         byte tmp = 0;
         
+        // Set one of these to load it on the next phi1
         bool loadIr = false;
         bool loadPCL = false;
         bool loadPCH = false;
@@ -88,14 +93,19 @@ namespace HuntaBaddayCPUmod
             phi1 = false;
             phi2 = false;
             
+            // Set the phi1 and phi2 pins
             base.Outputs[phi1Pin].On = !base.Inputs[phi0Pin].On;
             base.Outputs[phi2Pin].On = base.Inputs[phi0Pin].On;
             
+            // Set overflow flag if the pin is low
             if(!readPin(setOFpin) && readPin(setOFpin) != lastOFpinState){
                 st |= 0b01000000;
             }
             lastOFpinState = readPin(setOFpin);
             
+            // Set phi1 and phi2 depending on the clock
+            // lastClkState is to check if the instruction sould continue (filter so the instruction doesn't execute the wrong stage).
+            // lastClkStateU is the filter so the lastClkState isn't flipped on the wrong cycle.
             if(readPin(phi0Pin) != lastClkStateU && readPin(phi0Pin) != lastClkState){
                 if(readPin(rdyPin) || !base.Outputs[RWPin].On){
                     phi1 = !readPin(phi0Pin);
@@ -108,6 +118,7 @@ namespace HuntaBaddayCPUmod
             }
             lastClkState = readPin(phi0Pin);
             
+            // Some instructions need to load from the data bus on the falling edge in the second clock phase.
             if(phi1){
                 if(loadIr){
                     ir = readBus();
@@ -137,6 +148,7 @@ namespace HuntaBaddayCPUmod
                 setSync(0);
             }
             
+            // Setup cpu for rst
             if(!readPin(rstPin) || phi2 && resetTrigger){
                 resetTrigger = true;
                 resetTriggerInt = true;
@@ -146,6 +158,7 @@ namespace HuntaBaddayCPUmod
                 resetTrigger = false;
             }
             
+            // If in state 0, setup pins for fetch
             if(state == 0 && phi1){
                 setRW(1);
                 setSync(1);
@@ -154,7 +167,9 @@ namespace HuntaBaddayCPUmod
                 return;
             }
             
+            // Do fetch
             if(state == 0 && phi2){
+                // Force brk into ir if rst, irq or nmi was set
                 if(resetTriggerInt || !readPin(irqPin) || !readPin(nmiPin)){
                     if(resetTriggerInt){
                         interruptType = 0;
@@ -168,7 +183,7 @@ namespace HuntaBaddayCPUmod
                     state = 1;
                     wasFetch = false;
                 } else {
-                    interruptType = 2;
+                    interruptType = 3;
                     loadIr = true;
                     incrementPC();
                     state = 1;
@@ -189,7 +204,9 @@ namespace HuntaBaddayCPUmod
                                     setAddress16(pcLo, pcHi);
                                 } else {
                                     loadDBL1 = true;
-                                    incrementPC();
+                                    if(interruptType == 3){
+                                        incrementPC();
+                                    }
                                 }
                             }
                             break;
@@ -233,7 +250,7 @@ namespace HuntaBaddayCPUmod
                                     setAddress(0xfffc);
                                 } else if(interruptType == 1){
                                     setAddress(0xfffa);
-                                } else if(interruptType == 2){
+                                } else if(interruptType == 2 || interruptType == 3){
                                     setAddress(0xfffe);
                                 }
                             } else {
@@ -247,7 +264,7 @@ namespace HuntaBaddayCPUmod
                                     setAddress(0xfffd);
                                 } else if(interruptType == 1){
                                     setAddress(0xfffb);
-                                } else if(interruptType == 2){
+                                } else if(interruptType == 2 || interruptType == 3){
                                     setAddress(0xffff);
                                 }
                             } else {
@@ -393,7 +410,7 @@ namespace HuntaBaddayCPUmod
                             break;
                     }
                     break;
-                //LDA abs,x
+                //LDA abs,y
                 case 0xb9:
                     switch(state){
                         case 1:
@@ -475,12 +492,15 @@ namespace HuntaBaddayCPUmod
         protected void flipState(){
             base.Outputs[28].On = !base.Outputs[28].On;
         }
+        // Read a pin's state
         protected bool readPin(int pin){
             return base.Inputs[pin].On;
         }
+        // Set the R/W pin
         protected void setRW(int state){
             base.Outputs[RWPin].On = state != 0;
         }
+        // Set the sync pin
         protected void setSync(int state){
             base.Outputs[syncPin].On = state != 0;
         }
