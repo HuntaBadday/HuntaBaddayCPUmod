@@ -453,6 +453,48 @@ namespace HuntaBaddayCPUmod
                             break;
                     }
                     break;
+                // LDA (ind,x)
+                case 0xa1:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL1 = true;
+                                incrementPC();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                ALUtmp = (byte)(DBL1+indexX);
+                                setAddress16(ALUtmp, 0);
+                            } else {
+                                loadDBL1 = true;
+                            }
+                            break;
+                        case 3:
+                            if(phi1){
+                                ALUtmp++;
+                            } else {
+                                
+                            }
+                        case 4:
+                            if(phi1){
+                                setAddress16(ALUtmp, 0);
+                            } else {
+                                loadDBL2 = true;
+                            }
+                            break;
+                        case 5:
+                            if(phi1){
+                                setAddress16(DBL1, DBL2);
+                            } else {
+                                loadAcc = true;
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
                 // STA zp
                 case 0x85:
                     switch(state){
