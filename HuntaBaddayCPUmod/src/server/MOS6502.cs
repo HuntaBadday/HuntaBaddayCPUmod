@@ -66,13 +66,23 @@ namespace HuntaBaddayCPUmod
         byte indexX = 0;
         byte indexY = 0;
         
-        int state = 0;
+        float state = 0;
         // 0 - Fetch
         // 1+ - Execute
         
         byte DBL1 = 0;
         byte DBL2 = 0;
         byte ALUtmp = 0;
+        byte tmp = 0;
+        
+        bool loadIr = false;
+        bool loadPCL = false;
+        bool loadPCH = false;
+        bool loadAcc = false;
+        bool loadIndexX = false;
+        bool loadIndexY = false;
+        bool loadDBL1 = false;
+        bool loadDBL2 = false;
         
         protected override void DoLogicUpdate(){
             phi1 = false;
@@ -97,6 +107,35 @@ namespace HuntaBaddayCPUmod
                 return;
             }
             lastClkState = readPin(phi0Pin);
+            
+            if(phi1){
+                if(loadIr){
+                    ir = readBus();
+                } else if(loadPCL){
+                    pcLo = readBus();
+                } else if(loadPCH){
+                    pcHi = readBus();
+                } else if(loadAcc){
+                    acc = readBus();
+                } else if(loadIndexX){
+                    indexX = readBus();
+                } else if(loadIndexY){
+                    indexY = readBus();
+                } else if(loadDBL1){
+                    DBL1 = readBus();
+                } else if(loadDBL2){
+                    DBL2 = readBus();
+                }
+                loadIr = false;
+                loadPCL = false;
+                loadPCH = false;
+                loadAcc = false;
+                loadIndexX = false;
+                loadIndexY = false;
+                loadDBL1 = false;
+                loadDBL2 = false;
+                setSync(0);
+            }
             
             if(!readPin(rstPin) || phi2 && resetTrigger){
                 resetTrigger = true;
@@ -130,12 +169,11 @@ namespace HuntaBaddayCPUmod
                     wasFetch = false;
                 } else {
                     interruptType = 2;
-                    ir = readBus();
+                    loadIr = true;
                     incrementPC();
                     state = 1;
                     wasFetch = true;
                 }
-                setSync(0);
                 return;
             }
             
@@ -150,7 +188,8 @@ namespace HuntaBaddayCPUmod
                                 if(phi1){
                                     setAddress16(pcLo, pcHi);
                                 } else {
-                                    DBL1 = getNextByte();
+                                    loadDBL1 = true;
+                                    incrementPC();
                                 }
                             }
                             break;
@@ -198,7 +237,7 @@ namespace HuntaBaddayCPUmod
                                     setAddress(0xfffe);
                                 }
                             } else {
-                                pcLo = readBus();
+                                loadPCL = true;
                             }
                             break;
                         case 6:
@@ -212,7 +251,7 @@ namespace HuntaBaddayCPUmod
                                     setAddress(0xffff);
                                 }
                             } else {
-                                pcHi = readBus();
+                                loadPCH = true;
                                 state = -1;
                             }
                             break;
@@ -225,7 +264,8 @@ namespace HuntaBaddayCPUmod
                             if(phi1){
                                 setAddress16(pcLo, pcHi);
                             } else {
-                                acc = getNextByte();
+                                loadAcc = true;
+                                incrementPC();
                                 state = -1;
                             }
                             break;
@@ -238,14 +278,15 @@ namespace HuntaBaddayCPUmod
                             if(phi1){
                                 setAddress16(pcLo, pcHi);
                             } else {
-                                DBL1 = getNextByte();
+                                loadDBL1 = true;
+                                incrementPC();
                             }
                             break;
                         case 2:
                             if(phi1){
                                 setAddress16(DBL1, 0);
                             } else {
-                                acc = readBus();
+                                loadAcc = true;
                                 state = -1;
                             }
                             break;
@@ -258,7 +299,8 @@ namespace HuntaBaddayCPUmod
                             if(phi1){
                                 setAddress16(pcLo, pcHi);
                             } else {
-                                DBL1 = getNextByte();
+                                loadDBL1 = true;
+                                incrementPC();
                             }
                             break;
                         case 2:
@@ -272,7 +314,123 @@ namespace HuntaBaddayCPUmod
                             if(phi1){
                                 setAddress16(ALUtmp, 0);
                             } else {
-                                acc = readBus();
+                                loadAcc = true;
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                //LDA abs
+                case 0xad:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL1 = true;
+                                incrementPC();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL2 = true;
+                                incrementPC();
+                            }
+                            break;
+                        case 3:
+                            if(phi1){
+                                setAddress16(DBL1, DBL2);
+                            } else {
+                                loadAcc = true;
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                //LDA abs,x
+                case 0xbd:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL1 = true;
+                                incrementPC();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL2 = true;
+                                incrementPC();
+                            }
+                            break;
+                        case 3:
+                            if(phi1){
+                                if(DBL1+indexX >= 0x100){
+                                    DBL1 += indexX;
+                                    DBL2++;
+                                } else {
+                                    DBL1 += indexX;
+                                    setAddress16(DBL1, DBL2);
+                                    state = 2;
+                                }
+                            } else {
+                                loadAcc = true;
+                                state = -1;
+                            }
+                            break;
+                        case 4:
+                            if(phi1){
+                                setAddress16(DBL1, DBL2);
+                            } else {
+                                loadAcc = true;
+                                state = -1;
+                            }
+                            break;
+                    }
+                    break;
+                //LDA abs,x
+                case 0xb9:
+                    switch(state){
+                        case 1:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL1 = true;
+                                incrementPC();
+                            }
+                            break;
+                        case 2:
+                            if(phi1){
+                                setAddress16(pcLo, pcHi);
+                            } else {
+                                loadDBL2 = true;
+                            }
+                            break;
+                        case 3:
+                            if(phi1){
+                                if(DBL1+indexY >= 0x100){
+                                    DBL1 += indexY;
+                                    DBL2++;
+                                } else {
+                                    DBL1 += indexY;
+                                    setAddress16(DBL1, DBL2);
+                                    state = 2;
+                                }
+                            } else {
+                                loadAcc = true;
+                                state = -1;
+                            }
+                            break;
+                        case 4:
+                            if(phi1){
+                                setAddress16(DBL1, DBL2);
+                            } else {
+                                loadAcc = true;
                                 state = -1;
                             }
                             break;
@@ -285,7 +443,8 @@ namespace HuntaBaddayCPUmod
                             if(phi1){
                                 setAddress16(pcLo, pcHi);
                             } else {
-                                DBL1 = getNextByte();
+                                loadDBL1 = true;
+                                incrementPC();
                             }
                             break;
                         case 2:
@@ -312,11 +471,6 @@ namespace HuntaBaddayCPUmod
             
         }
         
-        protected byte getNextByte(){
-            byte data = readBus();
-            incrementPC();
-            return data;
-        }
         // Toggle debug output pin
         protected void flipState(){
             base.Outputs[28].On = !base.Outputs[28].On;
