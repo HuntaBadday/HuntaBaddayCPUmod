@@ -1,10 +1,10 @@
 LWC31:
-    column: "CPU"
-    category: null
+    column: "HBCM"
+    category: "Processors"
     prefab:
         blocks:
             -
-                color: a5a5a5
+                color: 2e2e2e
                 position: (0.5, 0, 0.5)
                 scale: (46, 2, 2)
         inputs:
