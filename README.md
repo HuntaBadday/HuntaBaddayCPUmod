@@ -2,8 +2,6 @@
 
 Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you have. (Related to this mod)
 
-Do not ask question such as "What cheese do I like"
-
 ### Upcoming additions
 
 1. 6502
