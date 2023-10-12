@@ -1,3 +1,5 @@
+logicCode: HuntaBaddayCPUmod.LWC31_Micro
+
 # HuntaBaddayCPUmod
 
 Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you have. (Related to this mod)
