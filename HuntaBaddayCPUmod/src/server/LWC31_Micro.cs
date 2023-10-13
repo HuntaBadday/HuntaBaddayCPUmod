@@ -5,7 +5,10 @@ namespace HuntaBaddayCPUmod
     public class LWC31_Micro : LogicComponent
     {   
         // Server Options
-        const int turboSpeed = 15; // How many instructions can run per tick. (Do not set this too high)
+        const int turboSpeed = 20; // How many instructions can run per tick. (Do not set this too high)
+        
+        // Component stuff
+        protected override bool HasPersistantValues = true;
         
         // ================================
         // I/O Port
@@ -181,6 +184,46 @@ namespace HuntaBaddayCPUmod
             op1 = (ir & 0b0000111000000000) >> 9;
             op2 = (ir & 0b0000000111000000) >> 6;
             op3 = (ir & 0b0000000000111100) >> 2;
+        }
+        
+        // Used to save / load cpu state
+        protected override byte[] SerializeCustomData(){
+            byte[] data = new byte[0x20000 + 4 + 16 + 1];
+            for(int i = 0; i <= 0xffff; i++){
+                data[i*2] = (byte)(memory[i] >> 8);
+                data[i*2 + 1] = (byte)(memory[i]&0xff);
+            }
+            
+            data[0x20000] = (byte)(pc>>8);
+            data[0x20001] = (byte)(pc&0xff);
+            
+            data[0x20002] = (byte)(interruptAddr>>8);
+            data[0x20003] = (byte)(interruptAddr&0xff);
+            
+            for(int i = 0; i <= 7; i++){
+                data[i*2 + 0x20004] = (byte)(registers[i] >> 8);
+                data[i*2 + 0x20005] = (byte)(registers[i]&0xff);
+            }
+            if(insideInterrupt){
+                byte[0x20013] = 1;
+            } else {
+                byte[0x20013] = 0;
+            }
+            return data;
+        }
+        protected override void DeserializeData(byte[] customdata){
+            for(int i = 0; i <= 0xffff; i++){
+                memory[i]  = (ushort)((customdata[i*2]<<8) | (customdata[i*2 + 1]));
+            }
+            
+            pc = (ushort)((customdata[0x20000]<<8) | (customdata[0x20001]));
+            interruptAddr = (ushort)((customdata[0x20002]<<8) | (customdata[0x20003]));
+            
+            for(int i = 0; i <= 7; i++){
+                registers[i] = (ushort)((customdata[i*2 + 0x20004]<<8) | (customdata[i*2 + 0x20005]));
+            }
+            insideInterrupt = byte[0x20013] != 0;
+            return;
         }
     }
 }
