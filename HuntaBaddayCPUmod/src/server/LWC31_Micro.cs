@@ -1,4 +1,10 @@
+// TO DO
+
+// Finish IRQ and add extra IRQs
+// Add file loading
+
 using LogicAPI.Server.Components;
+using System;
 
 namespace HuntaBaddayCPUmod
 {
@@ -8,7 +14,7 @@ namespace HuntaBaddayCPUmod
         const int turboSpeed = 20; // How many instructions can run per tick. (Do not set this too high)
         
         // Component stuff
-        protected override bool HasPersistantValues = true;
+        public override bool HasPersistentValues => true;
         
         // ================================
         // I/O Port
@@ -18,10 +24,10 @@ namespace HuntaBaddayCPUmod
         const int inputOut = 128; // - 135
         const int outputOut = 136; // -143
         
-        const int irqPin = 128;
+        const int rstPin = 128;
         const int runPin = 129;
-        const int rstPin = 130;
-        const int turboPin = 131;
+        const int turboPin = 130;
+        const int irqPin = 131;
         
         const int loadPin = 132;
         
@@ -85,13 +91,37 @@ namespace HuntaBaddayCPUmod
         const int IOAddress = 0xd000;
         bool IOAccess = false;
         
+        ushort[] tempProgram = {
+            0b0011001000000000,
+            0b1101000000000000,
+            
+            0b0100001000000000,
+            0b1101000000000001,
+            
+            0b0001000000000000,
+            0b0000000000000000
+        };
+        protected void loadTempProgram(){
+            writeMemory(0xffff, 0x0000);
+            for(int i = 0; i < tempProgram.Length; i++){
+                memory[i] = tempProgram[i];
+            }
+        }
+        
         protected override void DoLogicUpdate(){
             QueueLogicUpdate();
+            for(int i = 0; i <= 15; i++){
+                base.Outputs[inputOut+i].On = false;
+            }
             if(base.Inputs[rstPin].On){
                 pc = memory[0xffff];
                 insideInterrupt = false;
                 registers[7] |= 0b1000;
                 return;
+            }
+            if(base.Inputs[loadPin].On){
+                Logger.Info("Loaded!");
+                loadTempProgram();
             }
             if(!base.Inputs[runPin].On){
                 return;
@@ -127,6 +157,7 @@ namespace HuntaBaddayCPUmod
                     break;
                 case MOV:
                     registers[op1] = registers[op2];
+                    genStatus(registers[op1]);
                     break;
                 case LOD:
                     if(op3 >= 0x8){
@@ -134,6 +165,7 @@ namespace HuntaBaddayCPUmod
                     } else {
                         registers[op1] = readMemory(registers[op2]);
                     }
+                    genStatus(registers[op1]);
                     break;
                 case STO:
                     if(op3 >= 0x8){
@@ -142,6 +174,144 @@ namespace HuntaBaddayCPUmod
                         writeMemory(registers[op2], registers[op1]);
                     }
                     break;
+                case ALU:
+                    executeALU();
+                    break;
+                case CMP:
+                    int tmp = registers[op1] + (registers[op2]^0xffff)+1;
+                    ushort tmp2 = (ushort)tmp;
+                    genCarry(tmp);
+                    genStatus(tmp2);
+                    break;
+                case JIF:
+                    int condition = op3 & 0b111;
+                    int invert = 0;
+                    if((op3&0b1000) == 0b1000){
+                        invert = 0b111;
+                    }
+                    if(((registers[7]^invert) & condition) != 0){
+                        pc = registers[op1];
+                    }
+                    break;
+                case NOP:
+                    break;
+                case INT:
+                    if(op3 == 0x0){
+                        interruptAddr = registers[op1];
+                    } else if(op3 == 0x1){
+                        registers[7] |= 0b1000;
+                    } else if(op3 == 0x2){
+                        registers[7] &= 0b1111111111110111;
+                    }
+                    break;
+                case PLP:
+                    registers[7] = memory[registers[6]];
+                    registers[6]++;
+                    break;
+                case PUSH:
+                    registers[6]--;
+                    memory[registers[6]] = registers[op1];
+                    break;
+                case POP:
+                    registers[op1] = memory[registers[6]];
+                    registers[6]++;
+                    genStatus(registers[op1]);
+                    break;
+                case JSR:
+                    registers[6]--;
+                    memory[registers[6]] = pc;
+                    pc = registers[op1];
+                    break;
+                case RTS:
+                    pc = memory[registers[6]];
+                    registers[6]++;
+                    break;
+                case RTI:
+                    pc = memory[registers[6]];
+                    registers[6]++;
+                    insideInterrupt = false;
+                    break;
+            }
+        }
+        
+        protected void executeALU(){
+            ushort preVal = registers[op1];
+            int tmp;
+            // Subset instructions of ALU
+            switch(op3){
+                case ADD:
+                    tmp = registers[op1] + registers[op2];
+                    registers[op1] = (ushort)tmp;
+                    genCarry(tmp);
+                    break;
+                case ADC:
+                    tmp = registers[op1] + registers[op2] + (registers[7]&1);
+                    registers[op1] = (ushort)tmp;
+                    genCarry(tmp);
+                    break;
+                case SUB:
+                    tmp = registers[op1] + (registers[op2]^0xffff) + 1;
+                    registers[op1] = (ushort)tmp;
+                    genCarry(tmp);
+                    break;
+                case SBC:
+                    tmp = registers[op1] + (registers[op2]^0xffff) + (registers[7]&1);
+                    registers[op1] = (ushort)tmp;
+                    genCarry(tmp);
+                    break;
+                case SHL:
+                    registers[op1] = (ushort)(registers[op1] << 1);
+                    registers[7] = (ushort)((registers[7]&0xfffe) | (preVal >> 15));
+                    break;
+                case ROL:
+                    registers[op1] = (ushort)((registers[op1] << 1) | (registers[7] & 0x1));
+                    registers[7] = (ushort)((registers[7]&0xfffe) | (preVal >> 15));
+                    break;
+                case SHR:
+                    registers[op1] = (ushort)(registers[op1] >> 1);
+                    registers[7] = (ushort)((registers[7]&0xfffe) | (preVal & 0x1));
+                    break;
+                case ROR:
+                    registers[op1] = (ushort)((registers[op1] >> 1) | ((registers[7] & 0x1) << 15));
+                    registers[7] = (ushort)((registers[7]&0xfffe) | (preVal & 0x1));
+                    break;
+                case AND:
+                    registers[op1] = (ushort)(registers[op1] & registers[op2]);
+                    break;
+                case OR:
+                    registers[op1] = (ushort)(registers[op1] | registers[op2]);
+                    break;
+                case XOR:
+                    registers[op1] = (ushort)(registers[op1] ^ registers[op2]);
+                    break;
+            }
+            genStatus(registers[op1]);
+            // If the shift instruction is used and the second operand is set to constant data
+            // which isn't used, then decrement the pc so the next instruction isn't skipped.
+            if(op3 >= 4 && op3 <= 7){
+                if(op2 == 0){
+                    pc--;
+                }
+            }
+        }
+        
+        protected void genCarry(int data){
+            if(data >= 0x10000){
+                registers[7] |= 0b1;
+            } else {
+                registers[7] &= 0b1111111111111110;
+            }
+        }
+        protected void genStatus(ushort data){
+            if(data == 0){
+                registers[7] |= 0b010;
+            } else {
+                registers[7] &= 0b1111111111111101;
+            }
+            if((data & 0x8000) == 0x8000){
+                registers[7] |= 0b100;
+            } else {
+                registers[7] &= 0b1111111111111011;
             }
         }
         
@@ -172,7 +342,7 @@ namespace HuntaBaddayCPUmod
                     base.Outputs[IOOutput+i].On = (outputData&0x8000) != 0;
                     outputData <<= 1;
                 }
-                base.Outputs[inputOut+outPin].On = true;
+                base.Outputs[outputOut+outPin].On = true;
                 IOAccess = true;
             } else {
                 memory[address] = data;
@@ -180,19 +350,18 @@ namespace HuntaBaddayCPUmod
         }
         
         protected void divideInstruction(){
-            inst = (ir & 0b1111000000000000) >> 12;
-            op1 = (ir & 0b0000111000000000) >> 9;
-            op2 = (ir & 0b0000000111000000) >> 6;
-            op3 = (ir & 0b0000000000111100) >> 2;
+            inst = (ir >> 12) & 0b1111;
+            op1 = (ir >> 9) & 0b111;
+            op2 = (ir >> 6) & 0b111;
+            op3 = (ir >> 2) & 0b1111;
+            return;
         }
         
         // Used to save / load cpu state
         protected override byte[] SerializeCustomData(){
             byte[] data = new byte[0x20000 + 4 + 16 + 1];
-            for(int i = 0; i <= 0xffff; i++){
-                data[i*2] = (byte)(memory[i] >> 8);
-                data[i*2 + 1] = (byte)(memory[i]&0xff);
-            }
+            
+            Buffer.BlockCopy(memory, 0, data, 0, 0x20000);
             
             data[0x20000] = (byte)(pc>>8);
             data[0x20001] = (byte)(pc&0xff);
@@ -200,29 +369,30 @@ namespace HuntaBaddayCPUmod
             data[0x20002] = (byte)(interruptAddr>>8);
             data[0x20003] = (byte)(interruptAddr&0xff);
             
-            for(int i = 0; i <= 7; i++){
-                data[i*2 + 0x20004] = (byte)(registers[i] >> 8);
-                data[i*2 + 0x20005] = (byte)(registers[i]&0xff);
-            }
+            Buffer.BlockCopy(registers, 0, data, 0x20004, 16);
+            
             if(insideInterrupt){
-                byte[0x20013] = 1;
+                data[0x20014] = 1;
             } else {
-                byte[0x20013] = 0;
+                data[0x20014] = 0;
             }
             return data;
         }
         protected override void DeserializeData(byte[] customdata){
-            for(int i = 0; i <= 0xffff; i++){
-                memory[i]  = (ushort)((customdata[i*2]<<8) | (customdata[i*2 + 1]));
-            }
+            if(customdata == null){
+                // New object
+				return;
+			}
+            if(customdata.Length == (0x20000 + 4 + 16 + 1)){
+                Buffer.BlockCopy(customdata, 0, memory, 0, 0x20000);
             
-            pc = (ushort)((customdata[0x20000]<<8) | (customdata[0x20001]));
-            interruptAddr = (ushort)((customdata[0x20002]<<8) | (customdata[0x20003]));
-            
-            for(int i = 0; i <= 7; i++){
-                registers[i] = (ushort)((customdata[i*2 + 0x20004]<<8) | (customdata[i*2 + 0x20005]));
+                pc = (ushort)((customdata[0x20000]<<8) | (customdata[0x20001]));
+                interruptAddr = (ushort)((customdata[0x20002]<<8) | (customdata[0x20003]));
+                
+                Buffer.BlockCopy(customdata, 0x20004, registers, 0, 16);
+
+                insideInterrupt = customdata[0x20014] != 0;
             }
-            insideInterrupt = byte[0x20013] != 0;
             return;
         }
     }
