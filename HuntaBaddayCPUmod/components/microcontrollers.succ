@@ -2507,5 +2507,6 @@ LWC31_Micro:
                     y: 0
                     z: -90
     
-    logicCode: HuntaBaddayCPUmod.LWC31_Micro
+    logicCode: HuntaBaddayCPUmod.Component.LWC31_Micro
+    
     placingRules: Standard

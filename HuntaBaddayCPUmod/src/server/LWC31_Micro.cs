@@ -4,9 +4,11 @@
 // Add file loading
 
 using LogicAPI.Server.Components;
+using System.IO;
+using System.IO.Compression;
 using System;
 
-namespace HuntaBaddayCPUmod
+namespace HuntaBaddayCPUmod.Component
 {
     public class LWC31_Micro : LogicComponent
     {   
@@ -120,8 +122,8 @@ namespace HuntaBaddayCPUmod
                 return;
             }
             if(base.Inputs[loadPin].On){
-                Logger.Info("Loaded!");
-                loadTempProgram();
+                //Logger.Info("Loaded!");
+                //loadTempProgram();
             }
             if(!base.Inputs[runPin].On){
                 return;
@@ -376,14 +378,38 @@ namespace HuntaBaddayCPUmod
             } else {
                 data[0x20014] = 0;
             }
-            return data;
+            
+            MemoryStream memstream = new MemoryStream();
+            memstream.Position = 0;
+            DeflateStream compressor = new DeflateStream(memstream, CompressionLevel.Optimal, true);
+            compressor.Write(data, 0 ,data.Length);
+            compressor.Flush();
+            int length = (int)memstream.Position;
+            memstream.Position = 0;
+            byte[] output = new byte[length];
+            memstream.Read(bytes, 0, length);
+            
+            memstream.close();
+            compressor.close();
+            
+            return output;
         }
-        protected override void DeserializeData(byte[] customdata){
-            if(customdata == null){
+        protected override void DeserializeData(byte[] data){
+            if(data == null){
                 // New object
 				return;
 			}
-            if(customdata.Length == (0x20000 + 4 + 16 + 1)){
+            
+            MemoryStream memstream = new MemoryStream(customdata);
+            memstream.Position = 0;
+            DeflateStream decompressor = new DeflateStream(memstream, CompressionMode.Decompress);
+            byte[] customdata = new byte[0x20000 + 4 + 16 + 1]
+            int length = decompressor.Read(customdata, 0, customdata.Length);
+            
+            memstream.close();
+            decompressor.close();
+            
+            if(length == (0x20000 + 4 + 16 + 1)){
                 Buffer.BlockCopy(customdata, 0, memory, 0, 0x20000);
             
                 pc = (ushort)((customdata[0x20000]<<8) | (customdata[0x20001]));
@@ -394,6 +420,18 @@ namespace HuntaBaddayCPUmod
                 insideInterrupt = customdata[0x20014] != 0;
             }
             return;
+        }
+        protected override void OnCustomDataUpdated(){
+            MemoryStream memstream = new MemoryStream(ComponentData.CustomData);
+            memstream.Position = 0;
+            DeflateStream decompressor = new DeflateStream(memstream, CompressionMode.Decompress);
+            byte[] data = new byte[0x20000]
+            int length = decompressor.Read(data, 0, data.Length);
+            
+            memstream.close();
+            decompressor.close();
+            
+            Buffer.BlockCopy(data, 0, memory, 0, length);
         }
     }
 }

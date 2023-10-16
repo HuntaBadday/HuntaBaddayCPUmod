@@ -1,3 +1,5 @@
+clientCode: HuntaBaddayCPUmod.Client.LWC31_Micro_Client
+
 logicCode: HuntaBaddayCPUmod.LWC31_Micro
 
 # HuntaBaddayCPUmod

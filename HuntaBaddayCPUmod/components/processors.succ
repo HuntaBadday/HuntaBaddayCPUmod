@@ -522,5 +522,5 @@ LWC31:
                     y: 0
                     z: 0
 
-    logicCode: HuntaBaddayCPUmod.LWC31
+    logicCode: HuntaBaddayCPUmod.Component.LWC31
     placingRules: Standard

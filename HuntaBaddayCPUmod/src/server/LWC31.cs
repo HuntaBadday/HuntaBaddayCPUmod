@@ -1,6 +1,6 @@
 using LogicAPI.Server.Components;
 
-namespace HuntaBaddayCPUmod
+namespace HuntaBaddayCPUmod.Component
 {
     public class LWC31 : LogicComponent
     {
