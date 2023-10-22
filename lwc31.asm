@@ -154,4 +154,10 @@
 	}
 }
 
-#bits 16
+#bankdef lwc31bank {
+	#bits 16
+	#addr 0
+	#size 0x10000
+	#outp 0
+}
+#bank lwc31bank
