@@ -1,6 +1,6 @@
 # HuntaBaddayCPUmod
 
-Please ping or message me (HuntaBadday#7114 on discord) for ANY questions you have. (Related to this mod)
+Please ping or message me (HuntaBadday on discord) for ANY questions you have. (Related to this mod)
 
 ### Upcoming additions
 
@@ -207,3 +207,18 @@ irq:
 #addr 0xffff
 #d16 init   ; Start vector pointing to init
 ```
+
+## 8, 16 bit FIFO buffers
+### Usage
+#### Front
+- First 8/16 inputs is the data input.
+- Next output is a status for if the buffer is full.
+- Next input is the write pin.
+
+#### Back
+- First 8/16 output is the data output.
+- Next output is the status for if data is available.
+- Next input is a read pin.
+
+#### Read / Write
+To write, put the data on the inputs, the data will be written on the rising edge of the write pin. Data will be read to the outputs on the rising edge of the read pin.
