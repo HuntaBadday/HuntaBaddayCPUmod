@@ -9,6 +9,7 @@ namespace HuntaBaddayCPUmod {
         const int inputs = 0;
         const int writeBuffer = 16;
         const int readBuffer = 17;
+        const int resetPin = 18;
         const int outputs = 0;
         const int dataAvailable = 16;
         const int bufferFull = 17;
@@ -25,7 +26,11 @@ namespace HuntaBaddayCPUmod {
             lastRead = base.Inputs[readBuffer].On;
         }
         protected override void DoLogicUpdate(){
-            
+            if(base.Inputs[resetPin].On){
+                ptr1 = 0;
+                ptr2 = 0;
+                full = false;
+            }
             if(base.Inputs[writeBuffer].On && !lastWrite && !full){
                 memory[(int)ptr1] = readInput();
                 ptr1++;

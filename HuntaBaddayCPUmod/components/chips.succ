@@ -98,6 +98,16 @@ Buffer8:
                     x: -90
                     y: 0
                     z: 0
+            
+            -
+                position:
+                    x: -5.5
+                    y: 0.5
+                    z: 1
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
         outputs:
             -
                 position:
@@ -366,6 +376,16 @@ Buffer16:
                     x: -90
                     y: 0
                     z: 0
+                    
+            -
+                position:
+                    x: -9.5
+                    y: 0.5
+                    z: 1
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
         outputs:
             -
                 position:
