@@ -1,6 +1,7 @@
 HuntaBaddayCPUmod.LWC31: "LWC 3.1"
 HuntaBaddayCPUmod.Buffer8: "8 Bit FIFO"
 HuntaBaddayCPUmod.Buffer16: "16 Bit FIFO"
+HuntaBaddayCPUmod.TSC6530: "TSC6530"
 
 ComponentColumn.HBCM: "HBCM"
 ComponentCategory.Processors: "Processors"

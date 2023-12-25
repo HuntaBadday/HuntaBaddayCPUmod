@@ -1,10 +1,16 @@
 # HuntaBaddayCPUmod
 
+A mod for Logic World that adds processors and other useful microchips!\
 Please ping or message me (HuntaBadday on discord) for ANY questions you have. (Related to this mod)
 
-### Upcoming additions
+### To do
 
-1. 6502
+1. MOS6502
+
+### Included components
+1. LWC3.1 16 bit microprocessor
+2. 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
+3. TSC-6530 Dual timer chip
 
 ## LWC 3.1
 
@@ -222,3 +228,84 @@ irq:
 
 #### Read / Write
 To write, put the data on the inputs, the data will be written on the rising edge of the write pin. Data will be read to the outputs on the rising edge of the read pin.
+
+## TSC6530 interval timer chip (Basically the timer part of the MOS6526 Complex Interface Adapter)
+### Features
+- Two 16 bit internal timers
+- Multiple operation modes
+- Multiple interrupt options
+
+### Pinout (Starts from the left)
+#### Front
+0 - 7 = Data bus (MSB Right, pin 7) (Upper and Lower Pins)\
+8 = Chip select\
+9 = Read\
+10 = Write\
+11 - 13 = Address
+
+#### Back
+0 - Ext 1\
+1 - Ext 2\
+2 - Ext 3\
+4 - CNT\
+5 - TA (Timer A output)\
+6 - TB (Timer B output)\
+7 - IR (Interrupt)\
+8 - RES (Reset)\
+9 - Clk (System clock)
+
+
+### Internal register map
+```
+0 - Timer A: Low Byte
+1 - Timer A: High Byte
+2 - Timer B: Low Byte
+3 - Timer B: High Byte
+4 - Interrupt Control Register (Read IRs / Write mask)
+    7 - IR flag (1 = IR Occured / Set-_Clear flag)
+    4 - Ext 3
+    3 - Ext 2
+    2 - Ext 1
+    1 - Timer B Interrupt
+    0 - Timer A Interrupt
+5 - Control Register A
+    5 - Timer A Counts: 1 = CNT Signals, 0 = System Clock
+    4 - Force Load Timer A: 1 = Yes
+    3 - Timer A Run Mode: 1 = One-Shot, 0 = Continuous
+    2 - Timer A Output mode: 1 = Toggle, 0 = Pulse
+    1 - Timer A Output: 1 = Yes
+    0 - Start / Stop Timer A: 1 = Start, 0 = Stop
+6 - Control Register B:
+    6-5 - Timer B Mode Select
+        00 = Count System Clock Pulses
+        01 = Count Positive CNT Transitions
+        10 = Count Timer A Underflow Pulses
+        11 = Count Timer A Underflows While CNT Positive
+    4-0 - Same as Control Reg. A-for Timer B
+```
+
+### Interval Timers
+Each interval consists of a 16-bit read-only Timer Counter and a 16-bit write only Timer Latch. Data written to the timer are latched in the Timer Latch, while data read from the timer are the present contents of the Time Counter. The timers can be used independently or linked for extended operations. The various timer modes allow generation of time delays and variable frequency output. Utilizing the CNT input, the timers can count external pulses or measure frequency, pulse width and delay times of external signals. Each time has an associated control register, providing independant control of the following functions:
+
+#### Start/Stop
+A control bit allows the timer to be started and stopped.
+
+#### Output On/Off
+A control bit allows the timer output to appear on the output.
+
+#### Toggle/Pulse
+A control bit selects the type of output. On every timer underflow the output can either toggle or generate a single positive pulse of one cycle duration. The toggle output is set high whenever the timer is started and is set low by RES.
+
+#### One-Shot/Continous
+A control bit selects either timer mode. In one-shot mode, the timer will count down from the latched value to zero, generate an interrupt, reload the latched value, then stop. In continuous mode, the timer will count from the latched value to zero, generate the interrupt, reload the latched value and repeat the procedure continuously.
+
+#### Force Load
+A strobe bit allows the timer latch to be loaded into the timer counter at any time, whether the timer is running or not.
+
+#### Input Mode
+Control bits allow the selection of the clock used to decrement the timer. TIMER A can count system clock pulses or external pulses applied to the CNT pin. TIMER B can count system clock pulses, external CNT pulses, TIMER A underflow pulses or TIMER A underflow pulses while the CNT pin is held high. The timer latch is loaded into the timer on any timer underflow, on a force load or following a write to the latches while the timer is stopped. If the timer is running, a write to the timer byte will load the timer latch, but not reload the counter.
+
+### Interrupt Control Register
+There are five sources of an interrupt: underflow from TIMER A, underflow from TIMER B or any transition from low to high on the EXT pins. A single register provides masking and interrupt information. The Interrupt Control Register consists of a write-only MASK register and a read-only data register. Any interrupt will set the corresponding bit in the DATA register. Any interrupt which is enabled by the MASK register will set the IR bit (MSB) of the data register and set the IR pin high. The interrupt DATA register is cleared and the IR line returns low following a read of the DATA register.\
+\
+The MASK register provides convinient control of individual mask bits. When writing to the MASK register, if bit 7 (SET/_CLEAR) of the daata is a ZERO, any mask bit written with a one will be cleared, while those mask bits written with a zero will be unaffected. if bit 7 of the data written is a ONE, any mask bits written with a one will be set, while those mask bits written with a zero will be unaffected. In order for an interrupt flag to set IR and generate an interrupt, the corresponding  MASK bit must be set.
