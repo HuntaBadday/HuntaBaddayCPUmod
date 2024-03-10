@@ -1,0 +1,168 @@
+using LogicAPI.Server.Components;
+using System.Collections.Generic;
+using System;
+
+namespace HuntaBaddayCPUmod {
+    public class TNET_Trans : LogicComponent {
+        const int pin_bus = 0;
+        const int pin_enable = 8;
+        const int pin_read = 9;
+        const int pin_write = 10;
+        const int pin_rs = 11;
+        const int pin_output = 8;
+        const int pin_reset = 12;
+        
+        // Modes:
+        // idle
+        // packet_start
+        // byte_start
+        // byte_send
+        // ipg
+        string current_mode = "idle";
+        int serial_counter;
+        byte byteToSend; // Current byte to send
+        
+        byte[] send_buffer = new byte[1024]; // Current buffer to be sent out the port
+        int send_position; // Buffer index
+        int send_length; // Length of the packet
+        
+        List<byte[]> packet_stack = new List<byte[]>(); // All packets to be sent
+        List<int> stack_lengths = new List<int>(); // Legths of the packets
+        
+        byte[] input_buffer = new byte[1024]; // Data input buffer
+        int input_position = 0; // Position of the input buffer
+        uint input_checksum = 0; // Checksum
+        
+        bool lastWritePin = false;
+        protected override void Initialize(){
+            
+        }
+        protected override void DoLogicUpdate(){
+            if(getPin(pin_reset)){
+                current_mode = "idle";
+                packet_stack.Clear();
+                stack_lengths.Clear();
+                input_position = 0;
+                input_checksum = 0;
+                lastWritePin = getPin(pin_write);
+                writeBus(0);
+                return;
+            }
+            if(getPin(pin_read) && getPin(pin_rs) && getPin(pin_enable)){
+                byte output = 0;
+                if(current_mode == "idle"){
+                    output |= 0x1;
+                }
+                if(input_position == 0){
+                    output |= 0x2;
+                }
+                writeBus(output);
+            } else {
+                writeBus(0);
+            }
+            if(getPin(pin_write) && !lastWritePin && getPin(pin_rs) && getPin(pin_enable)){
+                byte value = readBus();
+                if((value&0x01) != 0){
+                    addPacket();
+                }
+                if((value&0x02) != 0){
+                    input_position = 0;
+                    input_checksum = 0;
+                }
+            } else if(getPin(pin_write) && !lastWritePin && !getPin(pin_rs) && getPin(pin_enable)){
+                byte value = readBus();
+                inputData(value);
+            }
+            doSerial();
+            lastWritePin = getPin(pin_write);
+        }
+        
+        protected void addPacket(){
+            if(input_position == 0){
+                return;
+            }
+            input_buffer[input_position++] = (byte)(input_checksum >> 0 & 0xff);
+            input_buffer[input_position++] = (byte)(input_checksum >> 8 & 0xff);
+            input_buffer[input_position++] = (byte)(input_checksum >> 16 & 0xff);
+            input_buffer[input_position++] = (byte)(input_checksum >> 24 & 0xff);
+            packet_stack.Add(new byte[1024]);
+            stack_lengths.Add(input_position);
+            Array.Copy(input_buffer, 0, packet_stack[packet_stack.Count-1], 0, 1024);
+            input_position = 0;
+            input_checksum = 0;
+        }
+        protected void inputData(byte value){
+            if(input_position == 1020){
+                return;
+            }
+            input_buffer[input_position++] = value;
+            input_checksum += value;
+        }
+        protected void doSerial(){
+            if(current_mode == "idle"){
+                setPin(pin_output, false);
+                if(packet_stack.Count > 0){
+                    current_mode = "packet_start";
+                }
+            }
+            if(current_mode == "packet_start"){
+                Array.Copy(packet_stack[0], 0, send_buffer, 0, 1024);
+                send_position = 0;
+                send_length = stack_lengths[0];
+                packet_stack.RemoveAt(0);
+                stack_lengths.RemoveAt(0);
+                current_mode = "byte_start";
+            }
+            if(current_mode == "byte_start"){
+                if(send_position == send_length){
+                    current_mode = "ipg";
+                } else {
+                    setPin(pin_output, true);
+                    current_mode = "byte_send";
+                    byteToSend = send_buffer[send_position++];
+                }
+                serial_counter = 0;
+                QueueLogicUpdate();
+            } else if(current_mode == "byte_send"){
+                setPin(pin_output, (byteToSend>>serial_counter & 0x1) == 1);
+                serial_counter++;
+                if(serial_counter == 8){
+                    current_mode = "byte_start";
+                }
+                QueueLogicUpdate();
+            }
+            if(current_mode == "ipg"){
+                setPin(pin_output, false);
+                serial_counter++;
+                if(serial_counter == 12){
+                    current_mode = "idle";
+                }
+                QueueLogicUpdate();
+            }
+        }
+        
+        protected void setPin(int pinnum, bool state){
+            base.Outputs[pinnum].On = state;
+        }
+        protected bool getPin(int pinnum){
+            return base.Inputs[pinnum].On;
+        }
+        protected byte readBus(){
+            byte output = 0;
+            for(int i = pin_bus; i < pin_bus+8; i++){
+                output <<= 1;
+                if(base.Inputs[i].On){
+                    output |= 0x1;
+                }
+            }
+            return output;
+        }
+        protected void writeBus(byte value){
+            byte output = value;
+            for(int i = pin_bus; i < pin_bus+8; i++){
+                base.Outputs[i].On = (output&0x1) == 1;
+                output >>= 1;
+            }
+        }
+    }
+}

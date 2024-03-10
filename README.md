@@ -3,10 +3,6 @@
 A mod for Logic World that adds processors and other useful microchips!\
 Please ping or message me (HuntaBadday on discord) for ANY questions you have. (Related to this mod)
 
-### To do
-
-1. MOS6502
-
 ### Included components
 1. LWC3.1 16 bit microprocessor
 2. 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
@@ -310,5 +306,72 @@ There are five sources of an interrupt: underflow from TIMER A, underflow from T
 \
 The MASK register provides convinient control of individual mask bits. When writing to the MASK register, if bit 7 (SET/_CLEAR) of the daata is a ZERO, any mask bit written with a one will be cleared, while those mask bits written with a zero will be unaffected. if bit 7 of the data written is a ONE, any mask bits written with a one will be set, while those mask bits written with a zero will be unaffected. In order for an interrupt flag to set IR and generate an interrupt, the corresponding  MASK bit must be set.
 
-### Other notes
+#### Other notes
 - Make sure to connect the data bus outputs to the data bus inputs! (If you need data from the thing)
+
+## TurnerNet
+### Overview
+TurnerNet is a L2 networking protocol for connecting devices and computers to eachother. The packets are variable length up to 1024 bytes total.
+
+### Serial protocol
+A tnet packet is started with a high signal for one tick, followed by the data, each octet of the packet is separated by a "1". Each packet must be separated by a gap of 10 ticks. Least significant bit is sent first.
+
+### Network protocol
+The tnet packet is composed of 5 sections, target address, source address, type, payload and checksum.\
+Packet form:
+```
++----------+----------+---------+---------------+----------+
+| Target   | Source   | Type    | Payload       | Checksum |
++----------+----------+---------+---------------+----------+
+| 6 octets | 6 octets | 2 octet | 1-1006 octets | 4 octets |
++----------+----------+---------+---------------+----------+
+```
+
+### TNET Transmitter
+The transmitter converts a packet of data into a serial data stream to be received by another device. It has an internal buffer of 1024 bytes. A checksum will be calculated automatically.
+
+#### I/O
+The left of the device is the serial data output.\
+On the front, in order from left to right is the data i/o (LSB Left), chip select / enable, read, write, RS.\
+On the right is a reset pin.
+
+### Data Input
+Writing to the chip while the RS pin is low will append data to the internal buffer.
+
+### Control Register
+The control register can be accessed while the RS pin is high.
+
+#### Control Register (Read / Write)
+- 0: Has finished sending / Send packet
+- 1: Is buffer empty / Clear buffer
+- 2: Not used
+- 3: Not used
+- 4: Not used
+- 5: Not used
+- 6: Not used
+- 7: Not used
+
+### TNET Receiver
+The receiver receives a serial stream and convert it into readable data. It has an internal buffer of 1024 bytes. A checksum is calculated automatically and will ignore the packet if the packet's checksum do not match.
+
+#### I/O
+The left of the device is the serial data input and a status output when reading the buffer\
+On the front, in order from left to right is the data i/o (LSB Left), chip select / enable, read, write, RS.\
+On the right is a reset pin.
+
+#### Data Output
+Reading from the chip while the RS pin is low will read an octet from the internal buffer.\
+The status pin will turn on when the buffer is empty while reading, this pin isn't strictly needed for operation since there is the "buffer empty" bit in the control register.
+
+### Control Register
+The control register can be accessed while the RS pin is high.
+
+#### Control Register (Read / Write)
+- 0: Packet available / Start reading next packet
+- 1: Is buffer empty / Clear packet stack & clear buffer
+- 2: Not used
+- 3: Not used
+- 4: Not used
+- 5: Not used
+- 6: Not used
+- 7: Not used
