@@ -243,6 +243,9 @@ namespace HuntaBaddayCPUmod {
                     
                     updateTable(source_mac, i);
                     int dest_port = getPort(dest_mac);
+                    if(dest_mac == 0xffffffffffff){
+                        dest_port = -1;
+                    }
                     if(dest_port == -1){
                         for(int j = 0; j < portCount; j++){
                             senders[j].addPacket(packet.buffer, packet.length);
