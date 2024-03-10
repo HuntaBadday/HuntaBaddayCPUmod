@@ -15,7 +15,7 @@ Please ping or message me (HuntaBadday on discord) for ANY questions you have. (
 ### Helpful Tools:
 Instruction Documentation: https://docs.google.com/spreadsheets/d/15QtVbXtz8gos2C4d7pLwn_2SpXMISwSytKTilIrm0DM/edit#gid=0
 
-CustomASM assembler: https://github.com/hlorenzi/customasm
+CustomASM assembler: https://github.com/hlorenzi/customasm \
 CustomASM instruction definitions: lwc31.asm\
 lwc31.asm also replaces instructions like "ALU" and "JIF" with thier expansions.
 
