@@ -248,7 +248,9 @@ namespace HuntaBaddayCPUmod {
                     }
                     if(dest_port == -1){
                         for(int j = 0; j < portCount; j++){
-                            senders[j].addPacket(packet.buffer, packet.length);
+                            if(j != i){
+                                senders[j].addPacket(packet.buffer, packet.length);
+                            }
                         }
                     } else {
                         senders[dest_port].addPacket(packet.buffer, packet.length);
