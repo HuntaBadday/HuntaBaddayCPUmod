@@ -4,11 +4,12 @@ A mod for Logic World that adds processors and other useful microchips!\
 Please ping or message me (HuntaBadday on discord) for ANY questions you have. (Related to this mod)
 
 ### Included components
-1. LWC3.1 16 bit microprocessor
-2. 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
-3. TSC-6530 Dual timer chip
-4. TurnerNet network transmitter/receiver
-5. TurnerNet network switch
+- LWC3.1 16 bit microprocessor
+- MOS 6502 microprocessor
+- 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
+- TSC-6530 Dual timer chip
+- TurnerNet network transmitter/receiver
+- TurnerNet network switch
 
 ## LWC 3.1
 

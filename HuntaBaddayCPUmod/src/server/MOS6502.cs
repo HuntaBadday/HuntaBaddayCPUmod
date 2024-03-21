@@ -466,9 +466,10 @@ namespace HuntaBaddayCPUmod
                 endInstruction = true;
                 break;
                 case "lda":
-                if(doAddressModeLoad("a")){
+                if(doAddressMode()){
                     break;
                 }
+                loadRegister = "a";
                 endInstruction = true;
                 break;
             }
@@ -482,7 +483,7 @@ namespace HuntaBaddayCPUmod
             }
         }
         
-        protected bool doAddressModeLoad(string reg){
+        protected bool doAddressMode(){
             if(addressModeDone){
                 return false;
             }
@@ -493,11 +494,157 @@ namespace HuntaBaddayCPUmod
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = reg;
                     addressModeDone = true;
                     return false;
-                }
-                break;
+                } break;
+                case "zp":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(DBL1, 0);
+                    addressModeDone = true;
+                    return false;
+                } break;
+                case "zpx":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(DBL1, 0)
+                    DBL1 += indexX
+                    break;
+                    case 3:
+                    setAddress16(DBL1, 0);
+                    addressModeDone = true;
+                    return false;
+                } break;
+                case "abs":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    loadRegister = "dbl2";
+                    break;
+                    case 3:
+                    setAddress16(DBL1, DBL2);
+                    addressModeDone = true;
+                    return false;
+                } break;
+                case "absx":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    loadRegister = "dbl2";
+                    break;
+                    case 3:
+                    DBL1 += indexX;
+                    setAddress16(DBL1, DBL2);
+                    if(DBL1+indexX > 0xff){
+                        DBL2++;
+                        break;
+                    }
+                    addressModeDone = true;
+                    return false;
+                    case 4:
+                    setAddress16(DBL1, DBL2);
+                    addressModeDone = true;
+                    return false;
+                } break;
+                case "absy":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    loadRegister = "dbl2";
+                    break;
+                    case 3:
+                    DBL1 += indexY;
+                    setAddress16(DBL1, DBL2);
+                    if(DBL1+indexY > 0xff){
+                        DBL2++;
+                        break;
+                    }
+                    addressModeDone = true;
+                    return false;
+                    case 4:
+                    setAddress16(DBL1, DBL2);
+                    addressModeDone = true;
+                    return false;
+                } break;
+                case "indx":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(DBL1, 0)
+                    DBL1 += indexX
+                    break;
+                    case 3:
+                    setAddress16(DBL1, 0);
+                    DBL1++;
+                    loadRegister = "dbl2";
+                    break;
+                    case 4:
+                    setAddress16(DBL1, 0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 5:
+                    setAddress16(DBL2, DBL1);
+                    addressModeDone = true;
+                    return false;
+                } break;
+                case "indy":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(DBL1, 0);
+                    DBL1++;
+                    loadRegister = "dbl2";
+                    break;
+                    case 3:
+                    setAddress16(DBL1, 0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 4:
+                    setAddress16(DBL2, DBL1);
+                } break;
             }
             addrState++;
             return true;
