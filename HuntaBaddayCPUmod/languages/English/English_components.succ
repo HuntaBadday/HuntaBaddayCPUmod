@@ -5,6 +5,7 @@ HuntaBaddayCPUmod.TSC6530: "TSC6530"
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
 HuntaBaddayCPUmod.TNET_Recv: "Receiver"
 HuntaBaddayCPUmod.TNET_Switch: "Switch"
+HuntaBaddayCPUmod.MOS6502: "MOS 6502"
 
 ComponentColumn.HBCM: "HBCM"
 ComponentCategory.Processors: "Processors"
