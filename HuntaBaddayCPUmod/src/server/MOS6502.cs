@@ -264,6 +264,7 @@ namespace HuntaBaddayCPUmod
         // 0 - Fetch
         // 1+ - Execute
         int addrState = 0;
+        int relState = 0;
         bool addressModeDone = false;
         
         byte DBL1 = 0;
@@ -472,6 +473,87 @@ namespace HuntaBaddayCPUmod
                 loadRegister = "a";
                 endInstruction = true;
                 break;
+                case "ldx":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "x";
+                endInstruction = true;
+                break;
+                case "ldy":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "y";
+                endInstruction = true;
+                break;
+                case "sta":
+                if(doAddressMode()){
+                    break;
+                }
+                setRW(false);
+                setBus(acc);
+                endInstruction = true;
+                break;
+                case "stx":
+                if(doAddressMode()){
+                    break;
+                }
+                setRW(false);
+                setBus(indexX);
+                endInstruction = true;
+                break;
+                case "sty":
+                if(doAddressMode()){
+                    break;
+                }
+                setRW(false);
+                setBus(indexY);
+                endInstruction = true;
+                break;
+                case "jmp":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    loadRegister = "pchi";
+                    pcLo = DBL1
+                    endInstruction = true;
+                    break;
+                } break;
+                case "jmpind":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    loadRegister = "dbl2";
+                    break;
+                    case 3:
+                    setAddress16(DBL1, DBL2);
+                    DBL1++;
+                    if(DBL1 == 0){
+                        DBL2++;
+                    }
+                    loadRegister = "pclo";
+                    break;
+                    case 4:
+                    setAddress16(DBL1, DBL2);
+                    loadRegister = "pchi";
+                    endInstruction = true;
+                    break;
+                } break;
             }
         }
         protected void phi2exec(){
@@ -480,13 +562,17 @@ namespace HuntaBaddayCPUmod
             }
             if(state != -1){
                 state++;
+                relState++;
             }
         }
         
+        // Set the address mode
         protected bool doAddressMode(){
             if(addressModeDone){
                 return false;
             }
+            addressModeDone = true;
+            relState = 0;
             switch(irMode){
                 case "imm":
                 switch(addrState){
@@ -494,7 +580,6 @@ namespace HuntaBaddayCPUmod
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "zp":
@@ -507,7 +592,6 @@ namespace HuntaBaddayCPUmod
                     break;
                     case 2:
                     setAddress16(DBL1, 0);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "zpx":
@@ -519,12 +603,11 @@ namespace HuntaBaddayCPUmod
                     loadRegister = "dbl1";
                     break;
                     case 2:
-                    setAddress16(DBL1, 0)
-                    DBL1 += indexX
+                    setAddress16(DBL1, 0);
+                    DBL1 += indexX;
                     break;
                     case 3:
                     setAddress16(DBL1, 0);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "abs":
@@ -542,7 +625,6 @@ namespace HuntaBaddayCPUmod
                     break;
                     case 3:
                     setAddress16(DBL1, DBL2);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "absx":
@@ -565,11 +647,9 @@ namespace HuntaBaddayCPUmod
                         DBL2++;
                         break;
                     }
-                    addressModeDone = true;
                     return false;
                     case 4:
                     setAddress16(DBL1, DBL2);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "absy":
@@ -592,11 +672,9 @@ namespace HuntaBaddayCPUmod
                         DBL2++;
                         break;
                     }
-                    addressModeDone = true;
                     return false;
                     case 4:
                     setAddress16(DBL1, DBL2);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "indx":
@@ -622,7 +700,6 @@ namespace HuntaBaddayCPUmod
                     break;
                     case 5:
                     setAddress16(DBL2, DBL1);
-                    addressModeDone = true;
                     return false;
                 } break;
                 case "indy":
@@ -643,9 +720,19 @@ namespace HuntaBaddayCPUmod
                     loadRegister = "dbl1";
                     break;
                     case 4:
+                    DBL2 += indexY;
                     setAddress16(DBL2, DBL1);
+                    if(DBL2+indexY > 0xff){
+                        DBL1++;
+                        break;
+                    }
+                    return false;
+                    case 5:
+                    setAddress16(DBL2, DBL1);
+                    return false;
                 } break;
             }
+            addressModeDone = false;
             addrState++;
             return true;
         }
