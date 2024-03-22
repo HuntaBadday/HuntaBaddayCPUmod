@@ -269,10 +269,6 @@ namespace HuntaBaddayCPUmod
         
         byte DBL1 = 0;
         byte DBL2 = 0;
-        byte ALUtmp = 0;
-        byte tmp = 0;
-        byte addrTmpLo = 0;
-        byte addrTmpHi = 0;
         
         // Set this to latch data to a register on phi1
         string loadRegister = "";
@@ -290,7 +286,7 @@ namespace HuntaBaddayCPUmod
             base.Outputs[phi2Pin].On = readPin(phi0Pin);
             
             // Set overflow flag if the pin is low
-            if(!readPin(setOFpin) && readPin(setOFpin) != lastOFpinState){
+            if(!readPin(setOFpin) && lastOFpinState){
                 st |= 0b01000000;
             }
             lastOFpinState = readPin(setOFpin);
@@ -313,10 +309,13 @@ namespace HuntaBaddayCPUmod
                     case "pchi": pcHi = readBus();
                         break;
                     case "a": acc = readBus();
+                        statusZN(acc);
                         break;
                     case "x": indexX = readBus();
+                        statusZN(indexX);
                         break;
                     case "y": indexY = readBus();
+                        statusZN(indexY);
                         break;
                     case "dbl1": DBL1 = readBus();
                         break;
@@ -325,8 +324,8 @@ namespace HuntaBaddayCPUmod
                 }
                 loadRegister = "";
                 setSync(false);
+                Logger.Info("A: "+acc.ToString("X2")+" X: "+indexX.ToString("X2")+" Y: "+indexY.ToString("X2")+" PC: "+pcHi.ToString("X2")+pcLo.ToString("X2")+" D1: "+DBL1.ToString("X2")+" D2: "+DBL2.ToString("X2"));
             }
-            Logger.Info(acc.ToString());
             
             // Setup cpu for a reset
             if(!readPin(rstPin) && phi2){
@@ -378,6 +377,7 @@ namespace HuntaBaddayCPUmod
                     irInst = opcodes[opcodeIndex].instruction;
                     irMode = opcodes[opcodeIndex].mode;
                     irAmt = opcodes[opcodeIndex].bytes;
+                    Logger.Info("Inst: "+irInst+" Mode: "+irMode);
                     state = 1;
                     addrState = 1;
                     addressModeDone = false;
@@ -391,6 +391,10 @@ namespace HuntaBaddayCPUmod
             
             // Dont do anything unless the clock clocked
             if(!phi1 && !phi2){
+                return;
+            }
+            // Don't execute if the state isn't in execute mode
+            if(state == 0){
                 return;
             }
             
@@ -512,7 +516,7 @@ namespace HuntaBaddayCPUmod
                 endInstruction = true;
                 break;
                 case "jmp":
-                switch(addrState){
+                switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
@@ -523,12 +527,12 @@ namespace HuntaBaddayCPUmod
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     loadRegister = "pchi";
-                    pcLo = DBL1
+                    pcLo = DBL1;
                     endInstruction = true;
                     break;
                 } break;
                 case "jmpind":
-                switch(addrState){
+                switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
@@ -554,12 +558,45 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
+                case "adc":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    acc = statusCO(acc, DBL1);
+                    statusZN(acc);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "sbc":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    acc = statusCO(acc, (byte)((DBL1^0xff)+1));
+                    statusZN(acc);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "sec":
+                st |= 0b00000001;
+                endInstruction = true;
+                break;
+                case "clc":
+                st &= 0b11111110;
+                endInstruction = true;
+                break;
             }
         }
         protected void phi2exec(){
-            switch(irInst){
-                
-            }
             if(state != -1){
                 state++;
                 relState++;
@@ -641,9 +678,10 @@ namespace HuntaBaddayCPUmod
                     loadRegister = "dbl2";
                     break;
                     case 3:
-                    DBL1 += indexX;
+                    int n = DBL1+indexX;
+                    DBL1 = (byte)n;
                     setAddress16(DBL1, DBL2);
-                    if(DBL1+indexX > 0xff){
+                    if(n > 0xff){
                         DBL2++;
                         break;
                     }
@@ -666,9 +704,10 @@ namespace HuntaBaddayCPUmod
                     loadRegister = "dbl2";
                     break;
                     case 3:
-                    DBL1 += indexY;
+                    int n = DBL1+indexY;
+                    DBL1 = (byte)n;
                     setAddress16(DBL1, DBL2);
-                    if(DBL1+indexY > 0xff){
+                    if(n > 0xff){
                         DBL2++;
                         break;
                     }
@@ -686,8 +725,8 @@ namespace HuntaBaddayCPUmod
                     loadRegister = "dbl1";
                     break;
                     case 2:
-                    setAddress16(DBL1, 0)
-                    DBL1 += indexX
+                    setAddress16(DBL1, 0);
+                    DBL1 += indexX;
                     break;
                     case 3:
                     setAddress16(DBL1, 0);
@@ -720,9 +759,10 @@ namespace HuntaBaddayCPUmod
                     loadRegister = "dbl1";
                     break;
                     case 4:
-                    DBL2 += indexY;
+                    int n = DBL2+indexY;
+                    DBL2 = (byte)n;
                     setAddress16(DBL2, DBL1);
-                    if(DBL2+indexY > 0xff){
+                    if(n > 0xff){
                         DBL1++;
                         break;
                     }
@@ -737,6 +777,31 @@ namespace HuntaBaddayCPUmod
             return true;
         }
         
+        protected void statusZN(byte value){
+            if(value == 0){
+                st |= 0b00000010;
+            } else {
+                st &= 0b11111101;
+            }
+            st &= 0b01111111;
+            st |= (byte)(value&0x80);
+        }
+        protected byte statusCO(byte v1, byte v2){
+            byte output = (byte)(v1+v2+(st&0x1));
+            if((v1&0x80) == 0 && (v1&0x80) == 0 && (v1+v2+(st&0x1) & 0x80) != 0){
+                st |= 0b01000000;
+            } else if((v1&0x80) != 0 && (v1&0x80) != 0 && (v1+v2+(st&0x1) & 0x80) == 0){
+                st |= 0b01000000;
+            } else {
+                st &= 0b10111111;
+            }
+            if((v1+v2+(st&0x1)) > 0xff){
+                st |= 0b00000001;
+            } else {
+                st &= 0b11111110;
+            }
+            return output;
+        }
         // Toggle debug output pin
         protected void flipState(){
             base.Outputs[28].On = !base.Outputs[28].On;
