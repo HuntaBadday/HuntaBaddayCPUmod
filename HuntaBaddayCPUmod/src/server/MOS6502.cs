@@ -71,14 +71,14 @@ namespace HuntaBaddayCPUmod
             (0x0e, "asl", "abs", 2),
             (0x1e, "asl", "absx", 2),
             
-            (0x90, "bcc", "rel", 1),
-            (0xb0, "bcs", "rel", 1),
-            (0xd0, "bne", "rel", 1),
-            (0xf0, "beq", "rel", 1),
-            (0x10, "bpl", "rel", 1),
-            (0x30, "bmi", "rel", 1),
-            (0x50, "bvc", "rel", 1),
-            (0x70, "bvs", "rel", 1),
+            (0x90, "bcc", "imm", 1),
+            (0xb0, "bcs", "imm", 1),
+            (0xd0, "bne", "imm", 1),
+            (0xf0, "beq", "imm", 1),
+            (0x10, "bpl", "imm", 1),
+            (0x30, "bmi", "imm", 1),
+            (0x50, "bvc", "imm", 1),
+            (0x70, "bvs", "imm", 1),
             
             (0x24, "bit", "zp", 1),
             (0x2c, "bit", "abs", 2),
@@ -232,7 +232,7 @@ namespace HuntaBaddayCPUmod
         
         // Some state variables
         bool lastClkState = false;
-        bool lastClkStateU = false;
+        bool pause = false;
         bool lastOFpinState = false;
         bool phi1 = false;
         bool phi2 = false;
@@ -240,6 +240,7 @@ namespace HuntaBaddayCPUmod
         bool resetTrigger = false;
         bool resetTriggerInt = false;
         bool wasFetch = false;
+        bool insideInterrupt = false;
         int interruptType = 0;
         // 0 = RST
         // 1 = NMI
@@ -266,6 +267,7 @@ namespace HuntaBaddayCPUmod
         int addrState = 0;
         int relState = 0;
         bool addressModeDone = false;
+        bool addressModeAcc = false;
         
         byte DBL1 = 0;
         byte DBL2 = 0;
@@ -299,6 +301,16 @@ namespace HuntaBaddayCPUmod
             }
             lastClkState = readPin(phi0Pin);
             
+            if(!readPin(rdyPin) && phi1){
+                pause = true;
+                return;
+            } else if(readPin(rdyPin) && phi2){
+                pause = false;
+                return;
+            }
+            if(pause){
+                return;
+            }
             // Some instructions need to latch data from the data bus on the falling edge in the second clock phase.
             if(phi1){
                 switch(loadRegister){
@@ -317,6 +329,8 @@ namespace HuntaBaddayCPUmod
                     case "y": indexY = readBus();
                         statusZN(indexY);
                         break;
+                    case "st": st = (byte)(readBus()&0xcf);
+                        break;
                     case "dbl1": DBL1 = readBus();
                         break;
                     case "dbl2": DBL2 = readBus();
@@ -331,6 +345,7 @@ namespace HuntaBaddayCPUmod
             if(!readPin(rstPin) && phi2){
                 resetTriggerInt = true;
                 resetTrigger = true;
+                insideInterrupt = false;
                 state = 0;
                 return;
             } else if(phi1 && resetTrigger){
@@ -345,6 +360,7 @@ namespace HuntaBaddayCPUmod
             
             // if state is 0, setup pins for a fetch
             if(state == 0 && phi1){
+                fetchExec();
                 setRW(true);
                 setSync(true);
                 setAddress16(pcLo, pcHi);
@@ -358,7 +374,7 @@ namespace HuntaBaddayCPUmod
                 return;
             } else if(state == 0 && phi1 && wasFetch){
                 // Force brk into ir if rst, irq or nmi was set
-                if(resetTriggerInt || !readPin(irqPin) || !readPin(nmiPin)){
+                if(resetTriggerInt || (!readPin(irqPin)&&(st&0x04)==0 || !readPin(nmiPin)&&!insideInterrupt)){
                     if(resetTriggerInt){
                         interruptType = 0;
                     } else if(!readPin(nmiPin)){
@@ -401,7 +417,10 @@ namespace HuntaBaddayCPUmod
             if(phi1){
                 phi1exec();
             } else {
-                phi2exec();
+                if(state != -1){
+                    state++;
+                    relState++;
+                }
             }
             if(phi2 && endInstruction){
                 state = 0;
@@ -409,6 +428,7 @@ namespace HuntaBaddayCPUmod
             }
         }
         
+        // Main instruction execution
         protected void phi1exec(){
             switch(irInst){
                 case "brk":
@@ -460,6 +480,7 @@ namespace HuntaBaddayCPUmod
                         setAddress(0xffff);
                     }
                     loadRegister = "pchi";
+                    insideInterrupt = true;
                     endInstruction = true;
                     break;
                 }
@@ -562,30 +583,16 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                switch(relState){
-                    case 0:
-                    loadRegister = "dbl1";
-                    break;
-                    case 1:
-                    acc = statusCO(acc, DBL1);
-                    statusZN(acc);
-                    endInstruction = true;
-                    break;
-                } break;
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
                 case "sbc":
                 if(doAddressMode()){
                     break;
                 }
-                switch(relState){
-                    case 0:
-                    loadRegister = "dbl1";
-                    break;
-                    case 1:
-                    acc = statusCO(acc, (byte)((DBL1^0xff)+1));
-                    statusZN(acc);
-                    endInstruction = true;
-                    break;
-                } break;
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
                 case "sec":
                 st |= 0b00000001;
                 endInstruction = true;
@@ -594,23 +601,748 @@ namespace HuntaBaddayCPUmod
                 st &= 0b11111110;
                 endInstruction = true;
                 break;
-            }
-        }
-        protected void phi2exec(){
-            if(state != -1){
-                state++;
-                relState++;
+                case "and":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "asl":
+                if(doAddressMode()){
+                    break;
+                }
+                if(addressModeAcc){
+                    clearCarry();
+                    if((acc&0x80) != 0){
+                        setCarry();
+                    }
+                    acc <<= 1;
+                    statusZN(acc);
+                    endInstruction = true;
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    clearCarry();
+                    if((DBL1&0x80) != 0){
+                        setCarry();
+                    }
+                    DBL1 <<= 1;
+                    statusZN(DBL1);
+                    setBus(DBL1);
+                    setRW(false);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bcc":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x01) != 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bcs":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x01) == 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bne":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x02) != 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "beq":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x02) == 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bpl":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x80) != 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bmi":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x80) == 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bvc":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x40) != 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bvs":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    if((st&0x40) == 0){
+                        endInstruction = true;
+                        break;
+                    }
+                    loadRegister = "dbl1";
+                    break;
+                    case 1:
+                    int tmp = pcLo;
+                    if((DBL1&0x80) != 0){
+                        DBL1 ^= 0xff;
+                        DBL1 += 1;
+                        tmp -= (int)DBL1;
+                    } else {
+                        tmp += (int)DBL1;
+                    }
+                    pcLo = (byte)tmp;
+                    if(tmp > 0xff){
+                        pcHi++;
+                    } else if(tmp < 0){
+                        pcHi--;
+                    } else {
+                        endInstruction = true;
+                    }
+                    break;
+                    case 2:
+                    endInstruction = true;
+                    break;
+                } break;
+                case "bit":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "cld":
+                st &= 0b11110111;
+                endInstruction = true;
+                break;
+                case "cli":
+                st &= 0b11111011;
+                endInstruction = true;
+                break;
+                case "clv":
+                st &= 0b10111111;
+                endInstruction = true;
+                break;
+                case "cmp":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "cpx":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "cpy":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "dec":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    DBL1--;
+                    statusZN(DBL1);
+                    setBus(DBL1);
+                    setRW(false);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "dex":
+                indexX--;
+                statusZN(indexX);
+                endInstruction = true;
+                break;
+                case "dey":
+                indexY--;
+                statusZN(indexY);
+                endInstruction = true;
+                break;
+                case "eor":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "inc":
+                if(doAddressMode()){
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    DBL1++;
+                    statusZN(DBL1);
+                    setBus(DBL1);
+                    setRW(false);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "inx":
+                indexX++;
+                statusZN(indexX);
+                endInstruction = true;
+                break;
+                case "iny":
+                indexY++;
+                statusZN(indexY);
+                endInstruction = true;
+                break;
+                case "jsr":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    sp--;
+                    break;
+                    case 3:
+                    setRW(false);
+                    setBus(pcHi);
+                    break;
+                    case 4:
+                    setAddress16(sp, 0x01);
+                    sp--;
+                    setBus(pcLo);
+                    break;
+                    case 5:
+                    setBus(0);
+                    setRW(true);
+                    setAddress16(pcLo, pcHi);
+                    pcLo = DBL1;
+                    loadRegister = "pchi";
+                    endInstruction = true;
+                    break;
+                } break;
+                case "lsr":
+                if(doAddressMode()){
+                    break;
+                }
+                if(addressModeAcc){
+                    clearCarry();
+                    if((acc&0x01) != 0){
+                        setCarry();
+                    }
+                    acc >>= 1;
+                    statusZN(acc);
+                    endInstruction = true;
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    clearCarry();
+                    if((DBL1&0x01) != 0){
+                        setCarry();
+                    }
+                    DBL1 >>= 1;
+                    statusZN(DBL1);
+                    setBus(DBL1);
+                    setRW(false);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "ora":
+                if(doAddressMode()){
+                    break;
+                }
+                loadRegister = "dbl1";
+                endInstruction = true;
+                break;
+                case "rol":
+                if(doAddressMode()){
+                    break;
+                }
+                if(addressModeAcc){
+                    byte carry = (byte)(st&0x1);
+                    clearCarry();
+                    if((acc&0x80) != 0){
+                        setCarry();
+                    }
+                    acc <<= 1;
+                    acc |= carry;
+                    statusZN(acc);
+                    endInstruction = true;
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    byte carry = (byte)(st&0x1);
+                    clearCarry();
+                    if((DBL1&0x80) != 0){
+                        setCarry();
+                    }
+                    DBL1 <<= 1;
+                    DBL1 |= carry;
+                    statusZN(DBL1);
+                    setBus(DBL1);
+                    setRW(false);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "ror":
+                if(doAddressMode()){
+                    break;
+                }
+                if(addressModeAcc){
+                    byte carry = (byte)(st<<7);
+                    clearCarry();
+                    if((acc&0x01) != 0){
+                        setCarry();
+                    }
+                    acc >>= 1;
+                    acc |= carry;
+                    statusZN(acc);
+                    endInstruction = true;
+                    break;
+                }
+                switch(relState){
+                    case 0:
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    byte carry = (byte)(st<<7);
+                    clearCarry();
+                    if((DBL1&0x01) != 0){
+                        setCarry();
+                    }
+                    DBL1 >>= 1;
+                    DBL1 |= carry;
+                    statusZN(DBL1);
+                    setBus(DBL1);
+                    setRW(false);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "rts":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    break;
+                    case 3:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "pclo";
+                    break;
+                    case 4:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "pchi";
+                    break;
+                    case 5:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    endInstruction = true;
+                    break;
+                } break;
+                case "rti":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    break;
+                    case 3:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "st";
+                    break;
+                    case 4:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "pclo";
+                    break;
+                    case 5:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "pchi";
+                    insideInterrupt = false;
+                    endInstruction = true;
+                    break;
+                } break;
+                case "pha":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    sp--;
+                    setRW(false);
+                    setBus(acc);
+                    endInstruction = true;
+                    break;
+                } break;
+                case "php":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    sp--;
+                    setRW(false);
+                    setBus((byte)(st |= 0x30));
+                    endInstruction = true;
+                    break;
+                } break;
+                case "pla":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    break;
+                    case 3:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "a";
+                    endInstruction = true;
+                    break;
+                } break;
+                case "plp":
+                switch(state){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    break;
+                    case 2:
+                    setAddress16(sp, 0x01);
+                    break;
+                    case 3:
+                    sp++;
+                    setAddress16(sp, 0x01);
+                    loadRegister = "st";
+                    endInstruction = true;
+                    break;
+                } break;
+                case "sed":
+                st |= 0x08;
+                endInstruction = true;
+                break;
+                case "sei":
+                st |= 0x04;
+                endInstruction = true;
+                break;
+                case "tax":
+                indexX = acc;
+                statusZN(indexX);
+                endInstruction = true;
+                break;
+                case "tay":
+                indexY = acc;
+                statusZN(indexY);
+                endInstruction = true;
+                break;
+                case "tsx":
+                indexX = sp;
+                statusZN(indexX);
+                endInstruction = true;
+                break;
+                case "txa":
+                acc = indexX;
+                statusZN(acc);
+                endInstruction = true;
+                break;
+                case "txs":
+                sp = indexX;
+                endInstruction = true;
+                break;
+                case "tya":
+                acc = indexY;
+                statusZN(acc);
+                endInstruction = true;
+                break;
             }
         }
         
-        // Set the address mode
+        // Some instructions overlap the final step with the fetch cycle
+        protected void fetchExec(){
+            switch(irInst){
+                case "adc":
+                acc = statusCO(acc, DBL1);
+                statusZN(acc);
+                break;
+                case "sbc":
+                acc = statusCO(acc, (byte)((DBL1^0xff)+1));
+                statusZN(acc);
+                break;
+                case "and":
+                acc &= DBL1;
+                statusZN(acc);
+                break;
+                case "bit":
+                byte tmp = (byte)(acc&DBL1);
+                statusZN(tmp);
+                st &= 0x3f;
+                st |= (byte)(DBL1&0xc0);
+                break;
+                case "cmp":
+                compare(acc, DBL1);
+                break;
+                case "cpx":
+                compare(indexX, DBL1);
+                break;
+                case "cpy":
+                compare(indexY, DBL1);
+                break;
+                case "eor":
+                acc ^= DBL1;
+                statusZN(acc);
+                break;
+                case "ora":
+                acc |= DBL1;
+                statusZN(acc);
+                break;
+            }
+        }
+        
+        // Do the addressing mode operations
         protected bool doAddressMode(){
             if(addressModeDone){
                 return false;
             }
             addressModeDone = true;
+            addressModeAcc = false;
             relState = 0;
             switch(irMode){
+                case "a":
+                addressModeAcc = true;
+                return false;
+                break;
                 case "imm":
                 switch(addrState){
                     case 1:
@@ -642,6 +1374,22 @@ namespace HuntaBaddayCPUmod
                     case 2:
                     setAddress16(DBL1, 0);
                     DBL1 += indexX;
+                    break;
+                    case 3:
+                    setAddress16(DBL1, 0);
+                    return false;
+                } break;
+                case "zpy":
+                switch(addrState){
+                    case 1:
+                    setAddress16(pcLo, pcHi);
+                    incrementPC();
+                    setBus(0);
+                    loadRegister = "dbl1";
+                    break;
+                    case 2:
+                    setAddress16(DBL1, 0);
+                    DBL1 += indexY;
                     break;
                     case 3:
                     setAddress16(DBL1, 0);
@@ -777,6 +1525,16 @@ namespace HuntaBaddayCPUmod
             return true;
         }
         
+        protected void compare(byte v1, byte v2){
+            byte tv2 = (byte)((v2^0xff) + 1);
+            int tmp = v1+tv2;
+            if(tmp > 0xff){
+                st |= 0b00000001;
+            } else {
+                st &= 0b11111110;
+            }
+            statusZN((byte)tmp);
+        }
         protected void statusZN(byte value){
             if(value == 0){
                 st |= 0b00000010;
@@ -801,6 +1559,12 @@ namespace HuntaBaddayCPUmod
                 st &= 0b11111110;
             }
             return output;
+        }
+        protected void setCarry(){
+            st |= 0x1;
+        }
+        protected void clearCarry(){
+            st &= 0xfe;
         }
         // Toggle debug output pin
         protected void flipState(){
