@@ -11,6 +11,10 @@ Please ping or message me (HuntaBadday on discord) for ANY questions you have. (
 - TurnerNet network transmitter/receiver
 - TurnerNet network switch
 
+### To do
+- Add decimal mode to ADC and SBC on the 6502
+- Optimise 6502
+
 ## LWC 3.1
 
 ### Helpful Tools:

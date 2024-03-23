@@ -233,6 +233,7 @@ namespace HuntaBaddayCPUmod
         // Some state variables
         bool lastClkState = false;
         bool pause = false;
+        bool lastRdy = false;
         bool lastOFpinState = false;
         bool phi1 = false;
         bool phi2 = false;
@@ -301,16 +302,6 @@ namespace HuntaBaddayCPUmod
             }
             lastClkState = readPin(phi0Pin);
             
-            if(!readPin(rdyPin) && phi1){
-                pause = true;
-                return;
-            } else if(readPin(rdyPin) && phi2){
-                pause = false;
-                return;
-            }
-            if(pause){
-                return;
-            }
             // Some instructions need to latch data from the data bus on the falling edge in the second clock phase.
             if(phi1){
                 switch(loadRegister){
@@ -358,8 +349,18 @@ namespace HuntaBaddayCPUmod
                 return;
             }
             
+            // Pause CPU when RDY pin is low
+            if(phi1 && !readPin(rdyPin)){
+                pause = true;
+            } else if(phi1 && readPin(rdyPin)){
+                pause = false;
+            }
+            if(pause){
+                return;
+            }
+            
             // if state is 0, setup pins for a fetch
-            if(state == 0 && phi1){
+            if(state == 0 && phi1 && !wasFetch){
                 fetchExec();
                 setRW(true);
                 setSync(true);
@@ -374,7 +375,7 @@ namespace HuntaBaddayCPUmod
                 return;
             } else if(state == 0 && phi1 && wasFetch){
                 // Force brk into ir if rst, irq or nmi was set
-                if(resetTriggerInt || (!readPin(irqPin)&&(st&0x04)==0 || !readPin(nmiPin)&&!insideInterrupt)){
+                if(resetTriggerInt || (!readPin(irqPin)&&(st&0x04)==0 || !readPin(nmiPin))&&!insideInterrupt){
                     if(resetTriggerInt){
                         interruptType = 0;
                     } else if(!readPin(nmiPin)){
@@ -480,7 +481,9 @@ namespace HuntaBaddayCPUmod
                         setAddress(0xffff);
                     }
                     loadRegister = "pchi";
-                    insideInterrupt = true;
+                    if(interruptType != 0){
+                        insideInterrupt = true;
+                    }
                     endInstruction = true;
                     break;
                 }
@@ -1297,7 +1300,8 @@ namespace HuntaBaddayCPUmod
                 statusZN(acc);
                 break;
                 case "sbc":
-                acc = statusCO(acc, (byte)((DBL1^0xff)+1));
+                DBL1 = (byte)(~DBL1);
+                acc = statusCO(acc, DBL1);
                 statusZN(acc);
                 break;
                 case "and":
@@ -1526,7 +1530,7 @@ namespace HuntaBaddayCPUmod
         }
         
         protected void compare(byte v1, byte v2){
-            byte tv2 = (byte)((v2^0xff) + 1);
+            byte tv2 = (byte)((~v2) + 1);
             int tmp = v1+tv2;
             if(tmp > 0xff){
                 st |= 0b00000001;
