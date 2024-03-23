@@ -43,191 +43,204 @@ namespace HuntaBaddayCPUmod
         const int phi1Pin = 0;
         const int phi2Pin = 19;
         
+        // Values for lookup
+        const int imm = 0;
+        const int zp = 1;
+        const int zpx = 2;
+        const int zpy = 3;
+        const int abs = 4;
+        const int absx = 5;
+        const int absy = 6;
+        const int indx = 7;
+        const int indy = 8;
+        const int impl = 9;
+        const int addrAcc = 10;
+        
         // List of instructions
-        (int opcode, string instruction, string mode, int bytes)[] opcodes = new[]{
-            (0x00, "brk", "impl", 0),
+        (int opcode, string instruction, int mode, int bytes)[] opcodes = new[]{
+            (0x00, "brk", impl, 0),
             
-            (0x69, "adc", "imm", 1),
-            (0x65, "adc", "zp", 1),
-            (0x75, "adc", "zpx", 1),
-            (0x6d, "adc", "abs", 2),
-            (0x7d, "adc", "absx", 2),
-            (0x79, "adc", "absy", 2),
-            (0x61, "adc", "indx", 1),
-            (0x71, "adc", "indy", 1),
+            (0x69, "adc", imm, 1),
+            (0x65, "adc", zp, 1),
+            (0x75, "adc", zpx, 1),
+            (0x6d, "adc", abs, 2),
+            (0x7d, "adc", absx, 2),
+            (0x79, "adc", absy, 2),
+            (0x61, "adc", indx, 1),
+            (0x71, "adc", indy, 1),
             
-            (0x29, "and", "imm", 1),
-            (0x25, "and", "zp", 1),
-            (0x35, "and", "zpx", 1),
-            (0x2d, "and", "abs", 2),
-            (0x3d, "and", "absx", 2),
-            (0x39, "and", "absy", 2),
-            (0x21, "and", "indx", 1),
-            (0x31, "and", "indy", 1),
+            (0x29, "and", imm, 1),
+            (0x25, "and", zp, 1),
+            (0x35, "and", zpx, 1),
+            (0x2d, "and", abs, 2),
+            (0x3d, "and", absx, 2),
+            (0x39, "and", absy, 2),
+            (0x21, "and", indx, 1),
+            (0x31, "and", indy, 1),
             
-            (0x0a, "asl", "a", 0),
-            (0x06, "asl", "zp", 1),
-            (0x16, "asl", "zpx", 1),
-            (0x0e, "asl", "abs", 2),
-            (0x1e, "asl", "absx", 2),
+            (0x0a, "asl", addrAcc, 0),
+            (0x06, "asl", zp, 1),
+            (0x16, "asl", zpx, 1),
+            (0x0e, "asl", abs, 2),
+            (0x1e, "asl", absx, 2),
             
-            (0x90, "bcc", "imm", 1),
-            (0xb0, "bcs", "imm", 1),
-            (0xd0, "bne", "imm", 1),
-            (0xf0, "beq", "imm", 1),
-            (0x10, "bpl", "imm", 1),
-            (0x30, "bmi", "imm", 1),
-            (0x50, "bvc", "imm", 1),
-            (0x70, "bvs", "imm", 1),
+            (0x90, "bcc", imm, 1),
+            (0xb0, "bcs", imm, 1),
+            (0xd0, "bne", imm, 1),
+            (0xf0, "beq", imm, 1),
+            (0x10, "bpl", imm, 1),
+            (0x30, "bmi", imm, 1),
+            (0x50, "bvc", imm, 1),
+            (0x70, "bvs", imm, 1),
             
-            (0x24, "bit", "zp", 1),
-            (0x2c, "bit", "abs", 2),
+            (0x24, "bit", zp, 1),
+            (0x2c, "bit", abs, 2),
             
-            (0x18, "clc", "impl", 0),
-            (0xd8, "cld", "impl", 0),
-            (0x58, "cli", "impl", 0),
-            (0xb8, "clv", "impl", 0),
+            (0x18, "clc", impl, 0),
+            (0xd8, "cld", impl, 0),
+            (0x58, "cli", impl, 0),
+            (0xb8, "clv", impl, 0),
             
-            (0xc9, "cmp", "imm", 1),
-            (0xc5, "cmp", "zp", 1),
-            (0xd5, "cmp", "zpx", 1),
-            (0xcd, "cmp", "abs", 2),
-            (0xdd, "cmp", "absx", 2),
-            (0xd9, "cmp", "absy", 2),
-            (0xc1, "cmp", "indx", 1),
-            (0xd1, "cmp", "indy", 1),
+            (0xc9, "cmp", imm, 1),
+            (0xc5, "cmp", zp, 1),
+            (0xd5, "cmp", zpx, 1),
+            (0xcd, "cmp", abs, 2),
+            (0xdd, "cmp", absx, 2),
+            (0xd9, "cmp", absy, 2),
+            (0xc1, "cmp", indx, 1),
+            (0xd1, "cmp", indy, 1),
             
-            (0xe0, "cpx", "imm", 1),
-            (0xe4, "cpx", "zp", 1),
-            (0xec, "cpx", "abs", 2),
+            (0xe0, "cpx", imm, 1),
+            (0xe4, "cpx", zp, 1),
+            (0xec, "cpx", abs, 2),
             
-            (0xc0, "cpy", "imm", 1),
-            (0xc4, "cpy", "zp", 1),
-            (0xcc, "cpy", "abs", 2),
+            (0xc0, "cpy", imm, 1),
+            (0xc4, "cpy", zp, 1),
+            (0xcc, "cpy", abs, 2),
             
-            (0xc6, "dec", "zp", 1),
-            (0xd6, "dec", "zpx", 1),
-            (0xce, "dec", "abs", 2),
-            (0xde, "dec", "absx", 2),
+            (0xc6, "dec", zp, 1),
+            (0xd6, "dec", zpx, 1),
+            (0xce, "dec", abs, 2),
+            (0xde, "dec", absx, 2),
             
-            (0xca, "dex", "impl", 0),
-            (0x88, "dey", "impl", 0),
+            (0xca, "dex", impl, 0),
+            (0x88, "dey", impl, 0),
             
-            (0x49, "eor", "imm", 1),
-            (0x45, "eor", "zp", 1),
-            (0x55, "eor", "zpx", 1),
-            (0x4d, "eor", "abs", 2),
-            (0x5d, "eor", "absx", 2),
-            (0x59, "eor", "absy", 2),
-            (0x41, "eor", "indx", 1),
-            (0x51, "eor", "indy", 1),
+            (0x49, "eor", imm, 1),
+            (0x45, "eor", zp, 1),
+            (0x55, "eor", zpx, 1),
+            (0x4d, "eor", abs, 2),
+            (0x5d, "eor", absx, 2),
+            (0x59, "eor", absy, 2),
+            (0x41, "eor", indx, 1),
+            (0x51, "eor", indy, 1),
             
-            (0xe6, "inc", "zp", 1),
-            (0xf6, "inc", "zpx", 1),
-            (0xee, "inc", "abs", 2),
-            (0xfe, "inc", "absx", 2),
+            (0xe6, "inc", zp, 1),
+            (0xf6, "inc", zpx, 1),
+            (0xee, "inc", abs, 2),
+            (0xfe, "inc", absx, 2),
             
-            (0xe8, "inx", "impl", 0),
-            (0xc8, "iny", "impl", 0),
+            (0xe8, "inx", impl, 0),
+            (0xc8, "iny", impl, 0),
             
-            (0x4c, "jmp", "abs", 2),
-            (0x6c, "jmpind", "ind", 2),
+            (0x4c, "jmp", abs, 2),
+            (0x6c, "jmpind", abs, 2),
             
-            (0x20, "jsr", "abs", 2),
+            (0x20, "jsr", abs, 2),
             
-            (0xa9, "lda", "imm", 1),
-            (0xa5, "lda", "zp", 1),
-            (0xb5, "lda", "zpx", 1),
-            (0xad, "lda", "abs", 2),
-            (0xbd, "lda", "absx", 2),
-            (0xb9, "lda", "absy", 2),
-            (0xa1, "lda", "indx", 1),
-            (0xb1, "lda", "indy", 1),
+            (0xa9, "lda", imm, 1),
+            (0xa5, "lda", zp, 1),
+            (0xb5, "lda", zpx, 1),
+            (0xad, "lda", abs, 2),
+            (0xbd, "lda", absx, 2),
+            (0xb9, "lda", absy, 2),
+            (0xa1, "lda", indx, 1),
+            (0xb1, "lda", indy, 1),
             
-            (0xa2, "ldx", "imm", 1),
-            (0xa6, "ldx", "zp", 1),
-            (0xb6, "ldx", "zpy", 1),
-            (0xae, "ldx", "abs", 2),
-            (0xbe, "ldx", "absy", 2),
+            (0xa2, "ldx", imm, 1),
+            (0xa6, "ldx", zp, 1),
+            (0xb6, "ldx", zpy, 1),
+            (0xae, "ldx", abs, 2),
+            (0xbe, "ldx", absy, 2),
             
-            (0xa0, "ldy", "imm", 1),
-            (0xa4, "ldy", "zp", 1),
-            (0xb4, "ldy", "zpx", 1),
-            (0xac, "ldy", "abs", 2),
-            (0xbc, "ldy", "absx", 2),
+            (0xa0, "ldy", imm, 1),
+            (0xa4, "ldy", zp, 1),
+            (0xb4, "ldy", zpx, 1),
+            (0xac, "ldy", abs, 2),
+            (0xbc, "ldy", absx, 2),
             
-            (0x4a, "lsr", "a", 0),
-            (0x46, "lsr", "zp", 1),
-            (0x56, "lsr", "zpx", 1),
-            (0x4e, "lsr", "abs", 2),
-            (0x5e, "lsr", "absx", 2),
+            (0x4a, "lsr", addrAcc, 0),
+            (0x46, "lsr", zp, 1),
+            (0x56, "lsr", zpx, 1),
+            (0x4e, "lsr", abs, 2),
+            (0x5e, "lsr", absx, 2),
             
-            (0xea, "nop", "impl", 0),
+            (0xea, "nop", impl, 0),
             
-            (0x09, "ora", "imm", 1),
-            (0x05, "ora", "zp", 1),
-            (0x15, "ora", "zpx", 1),
-            (0x0d, "ora", "abs", 2),
-            (0x1d, "ora", "absx", 2),
-            (0x19, "ora", "absy", 2),
-            (0x01, "ora", "indx", 1),
-            (0x11, "ora", "indy", 1),
+            (0x09, "ora", imm, 1),
+            (0x05, "ora", zp, 1),
+            (0x15, "ora", zpx, 1),
+            (0x0d, "ora", abs, 2),
+            (0x1d, "ora", absx, 2),
+            (0x19, "ora", absy, 2),
+            (0x01, "ora", indx, 1),
+            (0x11, "ora", indy, 1),
             
-            (0x48, "pha", "impl", 0),
-            (0x08, "php", "impl", 0),
-            (0x68, "pla", "impl", 0),
-            (0x28, "plp", "impl", 0),
+            (0x48, "pha", impl, 0),
+            (0x08, "php", impl, 0),
+            (0x68, "pla", impl, 0),
+            (0x28, "plp", impl, 0),
             
-            (0x2a, "rol", "a", 0),
-            (0x26, "rol", "zp", 1),
-            (0x36, "rol", "zpx", 1),
-            (0x2e, "rol", "abs", 2),
-            (0x3e, "rol", "absx", 2),
+            (0x2a, "rol", addrAcc, 0),
+            (0x26, "rol", zp, 1),
+            (0x36, "rol", zpx, 1),
+            (0x2e, "rol", abs, 2),
+            (0x3e, "rol", absx, 2),
             
-            (0x6a, "ror", "a", 0),
-            (0x66, "ror", "zp", 1),
-            (0x76, "ror", "zpx", 1),
-            (0x6e, "ror", "abs", 2),
-            (0x7e, "ror", "absx", 2),
+            (0x6a, "ror", addrAcc, 0),
+            (0x66, "ror", zp, 1),
+            (0x76, "ror", zpx, 1),
+            (0x6e, "ror", abs, 2),
+            (0x7e, "ror", absx, 2),
             
-            (0x40, "rti", "impl", 0),
-            (0x60, "rts", "impl", 0),
+            (0x40, "rti", impl, 0),
+            (0x60, "rts", impl, 0),
             
-            (0xe9, "sbc", "imm", 1),
-            (0xe5, "sbc", "zp", 1),
-            (0xf5, "sbc", "zpx", 1),
-            (0xed, "sbc", "abs", 2),
-            (0xfd, "sbc", "absx", 2),
-            (0xf9, "sbc", "absy", 2),
-            (0xe1, "sbc", "indx", 1),
-            (0xf1, "sbc", "indy", 1),
+            (0xe9, "sbc", imm, 1),
+            (0xe5, "sbc", zp, 1),
+            (0xf5, "sbc", zpx, 1),
+            (0xed, "sbc", abs, 2),
+            (0xfd, "sbc", absx, 2),
+            (0xf9, "sbc", absy, 2),
+            (0xe1, "sbc", indx, 1),
+            (0xf1, "sbc", indy, 1),
             
-            (0x38, "sec", "impl", 0),
-            (0xf8, "sed", "impl", 0),
-            (0x78, "sei", "impl", 0),
+            (0x38, "sec", impl, 0),
+            (0xf8, "sed", impl, 0),
+            (0x78, "sei", impl, 0),
             
-            (0x85, "sta", "zp", 1),
-            (0x95, "sta", "zpx", 1),
-            (0x8d, "sta", "abs", 2),
-            (0x9d, "sta", "absx", 2),
-            (0x99, "sta", "absy", 2),
-            (0x81, "sta", "indx", 1),
-            (0x81, "sta", "indy", 1),
+            (0x85, "sta", zp, 1),
+            (0x95, "sta", zpx, 1),
+            (0x8d, "sta", abs, 2),
+            (0x9d, "sta", absx, 2),
+            (0x99, "sta", absy, 2),
+            (0x81, "sta", indx, 1),
+            (0x81, "sta", indy, 1),
             
-            (0x86, "stx", "zp", 1),
-            (0x96, "stx", "zpy", 1),
-            (0x8e, "stx", "abs", 2),
+            (0x86, "stx", zp, 1),
+            (0x96, "stx", zpy, 1),
+            (0x8e, "stx", abs, 2),
             
-            (0x84, "sty", "zp", 1),
-            (0x94, "sty", "zpx", 1),
-            (0x8c, "sty", "abs", 2),
+            (0x84, "sty", zp, 1),
+            (0x94, "sty", zpx, 1),
+            (0x8c, "sty", abs, 2),
             
-            (0xaa, "tax", "impl", 0),
-            (0xa8, "tay", "impl", 0),
-            (0xba, "tsx", "impl", 0),
-            (0x8a, "txa", "impl", 0),
-            (0x9a, "txs", "impl", 0),
-            (0x98, "tya", "impl", 0)
+            (0xaa, "tax", impl, 0),
+            (0xa8, "tay", impl, 0),
+            (0xba, "tsx", impl, 0),
+            (0x8a, "txa", impl, 0),
+            (0x9a, "txs", impl, 0),
+            (0x98, "tya", impl, 0)
         };
         
         // Some state variables
@@ -251,7 +264,7 @@ namespace HuntaBaddayCPUmod
         // Registers
         byte ir = 0;
         string irInst = "";
-        string irMode = "";
+        int irMode = 0;
         int irAmt = 0;
         byte pcLo = 0;
         byte pcHi = 0;
@@ -273,9 +286,16 @@ namespace HuntaBaddayCPUmod
         byte DBL1 = 0;
         byte DBL2 = 0;
         
-        // Set this to latch data to a register on phi1
-        string loadRegister = "";
-        
+        // Set one of these to latch it after phi2
+        bool loadIr = false;
+        bool loadPCL = false;
+        bool loadPCH = false;
+        bool loadA = false;
+        bool loadX = false;
+        bool loadY = false;
+        bool loadSt = false;
+        bool loadDBL1 = false;
+        bool loadDBL2 = false;
         
         // Set this to end the instruction on next phi2
         bool endInstruction = false;
@@ -304,32 +324,39 @@ namespace HuntaBaddayCPUmod
             
             // Some instructions need to latch data from the data bus on the falling edge in the second clock phase.
             if(phi1){
-                switch(loadRegister){
-                    case "ir": ir = readBus();
-                        break;
-                    case "pclo": pcLo = readBus();
-                        break;
-                    case "pchi": pcHi = readBus();
-                        break;
-                    case "a": acc = readBus();
-                        statusZN(acc);
-                        break;
-                    case "x": indexX = readBus();
-                        statusZN(indexX);
-                        break;
-                    case "y": indexY = readBus();
-                        statusZN(indexY);
-                        break;
-                    case "st": st = (byte)(readBus()&0xcf);
-                        break;
-                    case "dbl1": DBL1 = readBus();
-                        break;
-                    case "dbl2": DBL2 = readBus();
-                        break;
+                if(loadIr){
+                    ir = readBus();
+                } else if(loadPCL){
+                    pcLo = readBus();
+                } else if(loadPCH){
+                    pcHi = readBus();
+                } else if(loadA){
+                    acc = readBus();
+                    statusZN(acc);
+                } else if(loadX){
+                    indexX = readBus();
+                    statusZN(indexX);
+                } else if(loadY){
+                    indexY = readBus();
+                    statusZN(indexY);
+                } else if(loadSt){
+                    st = (byte)(readBus()&0xcf);
+                } else if(loadDBL1){
+                    DBL1 = readBus();
+                } else if(loadDBL2){
+                    DBL2 = readBus();
                 }
-                loadRegister = "";
+                loadIr = false;
+                loadPCL = false;
+                loadPCH = false;
+                loadA = false;
+                loadX = false;
+                loadY = false;
+                loadSt = false;
+                loadDBL1 = false;
+                loadDBL2 = false;
                 setSync(false);
-                Logger.Info("A: "+acc.ToString("X2")+" X: "+indexX.ToString("X2")+" Y: "+indexY.ToString("X2")+" PC: "+pcHi.ToString("X2")+pcLo.ToString("X2")+" D1: "+DBL1.ToString("X2")+" D2: "+DBL2.ToString("X2"));
+                //Logger.Info("A: "+acc.ToString("X2")+" X: "+indexX.ToString("X2")+" Y: "+indexY.ToString("X2")+" PC: "+pcHi.ToString("X2")+pcLo.ToString("X2")+" D1: "+DBL1.ToString("X2")+" D2: "+DBL2.ToString("X2"));
             }
             
             // Setup cpu for a reset
@@ -338,6 +365,7 @@ namespace HuntaBaddayCPUmod
                 resetTrigger = true;
                 insideInterrupt = false;
                 state = 0;
+                st |= 0x04;
                 return;
             } else if(phi1 && resetTrigger){
                 resetTrigger = false;
@@ -370,7 +398,7 @@ namespace HuntaBaddayCPUmod
             
             // Do fetch
             if(state == 0 && phi2){
-                loadRegister = "ir";
+                loadIr = true;
                 wasFetch = true;
                 return;
             } else if(state == 0 && phi1 && wasFetch){
@@ -394,7 +422,7 @@ namespace HuntaBaddayCPUmod
                     irInst = opcodes[opcodeIndex].instruction;
                     irMode = opcodes[opcodeIndex].mode;
                     irAmt = opcodes[opcodeIndex].bytes;
-                    Logger.Info("Inst: "+irInst+" Mode: "+irMode);
+                    //Logger.Info("Inst: "+irInst+" Mode: "+irMode);
                     state = 1;
                     addrState = 1;
                     addressModeDone = false;
@@ -404,6 +432,7 @@ namespace HuntaBaddayCPUmod
                 }
                 setSync(false);
                 wasFetch = false;
+                setAddress16(pcLo, pcHi);
             }
             
             // Dont do anything unless the clock clocked
@@ -470,7 +499,7 @@ namespace HuntaBaddayCPUmod
                     } else {
                         setAddress(0xfffe);
                     }
-                    loadRegister = "pclo";
+                    loadPCL = true;
                     break;
                     case 6:
                     if(interruptType == 0){
@@ -480,7 +509,7 @@ namespace HuntaBaddayCPUmod
                     } else {
                         setAddress(0xffff);
                     }
-                    loadRegister = "pchi";
+                    loadPCH = true;
                     if(interruptType != 0){
                         insideInterrupt = true;
                     }
@@ -498,21 +527,21 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "a";
+                loadA = true;
                 endInstruction = true;
                 break;
                 case "ldx":
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "x";
+                loadX = true;
                 endInstruction = true;
                 break;
                 case "ldy":
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "y";
+                loadY = true;
                 endInstruction = true;
                 break;
                 case "sta":
@@ -545,12 +574,12 @@ namespace HuntaBaddayCPUmod
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
-                    loadRegister = "pchi";
+                    loadPCH = true;
                     pcLo = DBL1;
                     endInstruction = true;
                     break;
@@ -561,12 +590,12 @@ namespace HuntaBaddayCPUmod
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
-                    loadRegister = "dbl2";
+                    loadDBL2 = true;
                     break;
                     case 3:
                     setAddress16(DBL1, DBL2);
@@ -574,11 +603,11 @@ namespace HuntaBaddayCPUmod
                     if(DBL1 == 0){
                         DBL2++;
                     }
-                    loadRegister = "pclo";
+                    loadPCL = true;
                     break;
                     case 4:
                     setAddress16(DBL1, DBL2);
-                    loadRegister = "pchi";
+                    loadPCH = true;
                     endInstruction = true;
                     break;
                 } break;
@@ -586,14 +615,14 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "sbc":
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "sec":
@@ -608,7 +637,7 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "asl":
@@ -627,7 +656,7 @@ namespace HuntaBaddayCPUmod
                 }
                 switch(relState){
                     case 0:
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     clearCarry();
@@ -651,7 +680,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -685,7 +714,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -719,7 +748,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -753,7 +782,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -787,7 +816,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -821,7 +850,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -855,7 +884,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -889,7 +918,7 @@ namespace HuntaBaddayCPUmod
                         endInstruction = true;
                         break;
                     }
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 1:
                     int tmp = pcLo;
@@ -917,7 +946,7 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "cld":
@@ -936,21 +965,21 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "cpx":
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "cpy":
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "dec":
@@ -959,7 +988,7 @@ namespace HuntaBaddayCPUmod
                 }
                 switch(relState){
                     case 0:
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     DBL1--;
@@ -983,7 +1012,7 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "inc":
@@ -992,7 +1021,7 @@ namespace HuntaBaddayCPUmod
                 }
                 switch(relState){
                     case 0:
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     DBL1++;
@@ -1017,7 +1046,7 @@ namespace HuntaBaddayCPUmod
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(sp, 0x01);
@@ -1037,7 +1066,7 @@ namespace HuntaBaddayCPUmod
                     setRW(true);
                     setAddress16(pcLo, pcHi);
                     pcLo = DBL1;
-                    loadRegister = "pchi";
+                    loadPCH = true;
                     endInstruction = true;
                     break;
                 } break;
@@ -1057,7 +1086,7 @@ namespace HuntaBaddayCPUmod
                 }
                 switch(relState){
                     case 0:
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     clearCarry();
@@ -1075,7 +1104,7 @@ namespace HuntaBaddayCPUmod
                 if(doAddressMode()){
                     break;
                 }
-                loadRegister = "dbl1";
+                loadDBL1 = true;
                 endInstruction = true;
                 break;
                 case "rol":
@@ -1096,7 +1125,7 @@ namespace HuntaBaddayCPUmod
                 }
                 switch(relState){
                     case 0:
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     byte carry = (byte)(st&0x1);
@@ -1130,7 +1159,7 @@ namespace HuntaBaddayCPUmod
                 }
                 switch(relState){
                     case 0:
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     byte carry = (byte)(st<<7);
@@ -1157,12 +1186,12 @@ namespace HuntaBaddayCPUmod
                     case 3:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "pclo";
+                    loadPCL = true;
                     break;
                     case 4:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "pchi";
+                    loadPCH = true;
                     break;
                     case 5:
                     setAddress16(pcLo, pcHi);
@@ -1181,17 +1210,17 @@ namespace HuntaBaddayCPUmod
                     case 3:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "st";
+                    loadSt = true;
                     break;
                     case 4:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "pclo";
+                    loadPCL = true;
                     break;
                     case 5:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "pchi";
+                    loadPCH = true;
                     insideInterrupt = false;
                     endInstruction = true;
                     break;
@@ -1233,7 +1262,7 @@ namespace HuntaBaddayCPUmod
                     case 3:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "a";
+                    loadA = true;
                     endInstruction = true;
                     break;
                 } break;
@@ -1248,7 +1277,7 @@ namespace HuntaBaddayCPUmod
                     case 3:
                     sp++;
                     setAddress16(sp, 0x01);
-                    loadRegister = "st";
+                    loadSt = true;
                     endInstruction = true;
                     break;
                 } break;
@@ -1343,11 +1372,11 @@ namespace HuntaBaddayCPUmod
             addressModeAcc = false;
             relState = 0;
             switch(irMode){
-                case "a":
+                case addrAcc:
                 addressModeAcc = true;
                 return false;
                 break;
-                case "imm":
+                case imm:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1355,25 +1384,25 @@ namespace HuntaBaddayCPUmod
                     setBus(0);
                     return false;
                 } break;
-                case "zp":
+                case zp:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(DBL1, 0);
                     return false;
                 } break;
-                case "zpx":
+                case zpx:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(DBL1, 0);
@@ -1383,13 +1412,13 @@ namespace HuntaBaddayCPUmod
                     setAddress16(DBL1, 0);
                     return false;
                 } break;
-                case "zpy":
+                case zpy:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(DBL1, 0);
@@ -1399,35 +1428,35 @@ namespace HuntaBaddayCPUmod
                     setAddress16(DBL1, 0);
                     return false;
                 } break;
-                case "abs":
+                case abs:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
-                    loadRegister = "dbl2";
+                    loadDBL2 = true;
                     break;
                     case 3:
                     setAddress16(DBL1, DBL2);
                     return false;
                 } break;
-                case "absx":
+                case absx:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
-                    loadRegister = "dbl2";
+                    loadDBL2 = true;
                     break;
                     case 3:
                     int n = DBL1+indexX;
@@ -1442,18 +1471,18 @@ namespace HuntaBaddayCPUmod
                     setAddress16(DBL1, DBL2);
                     return false;
                 } break;
-                case "absy":
+                case absy:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
-                    loadRegister = "dbl2";
+                    loadDBL2 = true;
                     break;
                     case 3:
                     int n = DBL1+indexY;
@@ -1468,13 +1497,13 @@ namespace HuntaBaddayCPUmod
                     setAddress16(DBL1, DBL2);
                     return false;
                 } break;
-                case "indx":
+                case indx:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(DBL1, 0);
@@ -1483,32 +1512,32 @@ namespace HuntaBaddayCPUmod
                     case 3:
                     setAddress16(DBL1, 0);
                     DBL1++;
-                    loadRegister = "dbl2";
+                    loadDBL2 = true;
                     break;
                     case 4:
                     setAddress16(DBL1, 0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 5:
                     setAddress16(DBL2, DBL1);
                     return false;
                 } break;
-                case "indy":
+                case indy:
                 switch(addrState){
                     case 1:
                     setAddress16(pcLo, pcHi);
                     incrementPC();
                     setBus(0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 2:
                     setAddress16(DBL1, 0);
                     DBL1++;
-                    loadRegister = "dbl2";
+                    loadDBL2 = true;
                     break;
                     case 3:
                     setAddress16(DBL1, 0);
-                    loadRegister = "dbl1";
+                    loadDBL1 = true;
                     break;
                     case 4:
                     int n = DBL2+indexY;
@@ -1549,20 +1578,34 @@ namespace HuntaBaddayCPUmod
             st |= (byte)(value&0x80);
         }
         protected byte statusCO(byte v1, byte v2){
-            byte output = (byte)(v1+v2+(st&0x1));
-            if((v1&0x80) == 0 && (v1&0x80) == 0 && (v1+v2+(st&0x1) & 0x80) != 0){
+            if((st&0x04) != 0 && irInst == "sbc"){
+                v2 = (byte)(0x99 - (~v2));
+            }
+            int output = v1+v2+(st&0x1);
+            if((st&0x04) != 0){
+                int bcdCarry = 0;
+                if((v1&0x0f)+(v2&0x0f)+(st&0x1) > 0x09){
+                    output += 0x06;
+                    bcdCarry = 1;
+                }
+                if((v1&0xf0)+(v2&0xf0)+bcdCarry > 0x90){
+                    output += 0x60;
+                }
+            }
+            if((v1&0x80) == 0 && (v1&0x80) == 0 && (output & 0x80) != 0){
                 st |= 0b01000000;
-            } else if((v1&0x80) != 0 && (v1&0x80) != 0 && (v1+v2+(st&0x1) & 0x80) == 0){
+            } else if((v1&0x80) != 0 && (v1&0x80) != 0 && (output & 0x80) == 0){
                 st |= 0b01000000;
             } else {
                 st &= 0b10111111;
             }
-            if((v1+v2+(st&0x1)) > 0xff){
+            if(output > 0xff){
                 st |= 0b00000001;
             } else {
                 st &= 0b11111110;
             }
-            return output;
+            return (byte)output;
+            
         }
         protected void setCarry(){
             st |= 0x1;
