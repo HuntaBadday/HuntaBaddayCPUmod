@@ -1,7 +1,7 @@
 # HuntaBaddayCPUmod
 
 A mod for Logic World that adds processors and other useful microchips!\
-Please ping or message me (HuntaBadday on discord) for ANY questions you have. (Related to this mod)
+Please create an issue or ping/message me (huntabadday6502 on discord) for ANY questions or problems you have. (Related to this mod). You may also request new components.
 
 ### Included components
 - LWC3.1 16 bit microprocessor
@@ -10,10 +10,6 @@ Please ping or message me (HuntaBadday on discord) for ANY questions you have. (
 - TSC-6530 Dual timer chip
 - TurnerNet network transmitter/receiver
 - TurnerNet network switch
-
-### To do
-- Add decimal mode to ADC and SBC on the 6502
-- Optimise 6502
 
 ## LWC 3.1
 
@@ -382,3 +378,12 @@ The control register can be accessed while the RS pin is high.
 - 5: Not used
 - 6: Not used
 - 7: Not used
+
+## MOS 6502
+A microprocessor designed by MOS Technologies in 1975. This component is meant to simulate as closely as possible to the real 6502's timings. Please report any problems such as bugs or timing issues.
+
+### Differences
+- N and V flags may not be set correctly when using ADC or SBC in decimal mode.
+
+### Pinout
+<img src="https://ist.uwaterloo.ca/~schepers/MJK/pics/6502.gif" width=300>
