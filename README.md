@@ -335,7 +335,7 @@ The transmitter converts a packet of data into a serial data stream to be receiv
 
 #### I/O
 The left of the device is the serial data output.\
-On the front, in order from left to right is the data i/o (LSB Left), chip select / enable, read, write, RS.\
+On the front, in order from left to right is the data i/o (LSB Right), chip select / enable, read, write, RS.\
 On the right is a reset pin.
 
 ### Data Input
@@ -359,7 +359,7 @@ The receiver receives a serial stream and convert it into readable data. It has 
 
 #### I/O
 The left of the device is the serial data input and a status output when reading the buffer\
-On the front, in order from left to right is the data i/o (LSB Left), chip select / enable, read, write, RS.\
+On the front, in order from left to right is the data i/o (LSB Right), chip select / enable, read, write, RS.\
 On the right is a reset pin.
 
 #### Data Output
