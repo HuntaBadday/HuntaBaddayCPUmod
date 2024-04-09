@@ -262,6 +262,8 @@ To write, put the data on the inputs, the data will be written on the rising edg
 3 - Timer B: High Byte
 4 - Interrupt Control Register (Read IRs / Write mask)
     7 - IR flag (1 = IR Occured / Set-_Clear flag)
+    6 - Unused
+    5 - Unused
     4 - Ext 3
     3 - Ext 2
     2 - Ext 1
