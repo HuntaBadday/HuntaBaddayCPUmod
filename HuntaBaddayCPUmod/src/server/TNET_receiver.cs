@@ -79,10 +79,16 @@ namespace HuntaBaddayCPUmod {
             if(getPin(pin_write) && !lastWritePin && getPin(pin_rs) && getPin(pin_enable)){
                 byte value = readBus();
                 if((value&0x1) != 0){
-                    if(packet_stack.Count != 0){
+                    if(packet_stack.Count != 0 && (value&0x4) != 0){
                         output_position = 0;
                         output_length = stack_lengths[0];
                         Array.Copy(packet_stack[0], 0, output_buffer, 0, 1024);
+                        packet_stack.RemoveAt(0);
+                        stack_lengths.RemoveAt(0);
+                    } else if(packet_stack.Count != 0 && (value&0x4) == 0){
+                        output_position = 0;
+                        output_length = stack_lengths[0]-4;
+                        Array.Copy(packet_stack[0], 0, output_buffer, 0, 1020);
                         packet_stack.RemoveAt(0);
                         stack_lengths.RemoveAt(0);
                     } else {

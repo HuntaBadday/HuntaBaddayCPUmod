@@ -328,7 +328,7 @@ Packet form:
 +----------+----------+---------+---------------+----------+
 | Target   | Source   | Type    | Payload       | Checksum |
 +----------+----------+---------+---------------+----------+
-| 6 octets | 6 octets | 2 octet | 1-1006 octets | 4 octets |
+| 2 octets | 2 octets | 2 octet | 1-1014 octets | 4 octets |
 +----------+----------+---------+---------------+----------+
 ```
 
@@ -337,7 +337,7 @@ The transmitter converts a packet of data into a serial data stream to be receiv
 
 #### I/O
 The left of the device is the serial data output.\
-On the front, in order from left to right is the data i/o (LSB Right), chip select / enable, read, write, RS.\
+On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS.\
 On the right is a reset pin.
 
 ### Data Input
@@ -360,8 +360,8 @@ The control register can be accessed while the RS pin is high.
 The receiver receives a serial stream and convert it into readable data. It has an internal buffer of 1024 bytes. A checksum is calculated automatically and will ignore the packet if the packet's checksum do not match.
 
 #### I/O
-The left of the device is the serial data input and a status output when reading the buffer\
-On the front, in order from left to right is the data i/o (LSB Right), chip select / enable, read, write, RS.\
+The left of the device is the serial data input and a status output when reading the buffer.\
+On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS.\
 On the right is a reset pin.
 
 #### Data Output
@@ -374,7 +374,7 @@ The control register can be accessed while the RS pin is high.
 #### Control Register (Read / Write)
 - 0: Packet available / Start reading next packet
 - 1: Is buffer empty / Clear packet stack & clear buffer
-- 2: Not used
+- 2: _ / Include checksum at the end of the data
 - 3: Not used
 - 4: Not used
 - 5: Not used

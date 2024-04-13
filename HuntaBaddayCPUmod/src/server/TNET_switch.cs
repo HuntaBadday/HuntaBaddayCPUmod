@@ -195,7 +195,7 @@ namespace HuntaBaddayCPUmod {
         List<serial_sender> senders = new List<serial_sender>();
         List<serial_receiver> receivers = new List<serial_receiver>();
         
-        List<ulong> mac_table = new List<ulong>();
+        List<ushort> mac_table = new List<ushort>();
         List<int> source_ports = new List<int>();
         
         protected override void Initialize(){
@@ -222,28 +222,20 @@ namespace HuntaBaddayCPUmod {
             for(int i = 0; i < portCount; i++){
                 if(receivers[i].dataAvailable()){
                     var packet = receivers[i].getPacket();
-                    if(packet.length < 19){
+                    if(packet.length < 11){
                         continue;
                     }
-                    ulong source_mac = 0;
-                    ulong dest_mac = 0;
-                    source_mac |= (ulong)(packet.buffer[6] << 0);
-                    source_mac |= (ulong)(packet.buffer[7] << 8);
-                    source_mac |= (ulong)(packet.buffer[8] << 16);
-                    source_mac |= (ulong)(packet.buffer[9] << 24);
-                    source_mac |= (ulong)(packet.buffer[10] << 32);
-                    source_mac |= (ulong)(packet.buffer[11] << 40);
+                    ushort source_mac = 0;
+                    ushort dest_mac = 0;
+                    source_mac |= (ushort)(packet.buffer[6] << 0);
+                    source_mac |= (ushort)(packet.buffer[7] << 8);
                     
-                    dest_mac |= (ulong)(packet.buffer[0] << 0);
-                    dest_mac |= (ulong)(packet.buffer[1] << 8);
-                    dest_mac |= (ulong)(packet.buffer[2] << 16);
-                    dest_mac |= (ulong)(packet.buffer[3] << 24);
-                    dest_mac |= (ulong)(packet.buffer[4] << 32);
-                    dest_mac |= (ulong)(packet.buffer[5] << 40);
+                    dest_mac |= (ushort)(packet.buffer[0] << 0);
+                    dest_mac |= (ushort)(packet.buffer[1] << 8);
                     
                     updateTable(source_mac, i);
                     int dest_port = getPort(dest_mac);
-                    if(dest_mac == 0xffffffffffff){
+                    if(dest_mac == 0xffff){
                         dest_port = -1;
                     }
                     if(dest_port == -1){
@@ -259,7 +251,7 @@ namespace HuntaBaddayCPUmod {
             }
             QueueLogicUpdate();
         }
-        protected int getPort(ulong mac){
+        protected int getPort(ushort mac){
             int port = -1;
             for(int i = 0; i < mac_table.Count; i++){
                 if(mac_table[i] == mac){
@@ -268,7 +260,7 @@ namespace HuntaBaddayCPUmod {
             }
             return port;
         }
-        protected void updateTable(ulong mac, int new_port){
+        protected void updateTable(ushort mac, int new_port){
             bool found = false;
             for(int i = 0; i < mac_table.Count; i++){
                 if(mac_table[i] == mac){
