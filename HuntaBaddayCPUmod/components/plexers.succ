@@ -1,0 +1,236 @@
+Multiplexer16:
+    column: "HBCM"
+    category: "IC"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0.5, 0, 0.5)
+                scale: (8, 1, 2)
+        inputs:
+            -
+                position: (4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+        outputs:
+            -
+                position: (4.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (3.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (3.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (2.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (2.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (1.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (1.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (0.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (0.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-0.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-0.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-1.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-1.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-3.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+    logicCode: HuntaBaddayCPUmod.Multiplexer16
+    placingRules: Standard
+Demultiplexer16:
+    column: "HBCM"
+    category: "IC"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0.5, 0, 0.5)
+                scale: (8, 1, 2)
+        inputs:
+            -
+                position: (4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (4.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (3.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (3.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (2.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (2.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (1.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (1.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (0.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (0.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-0.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-0.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-1.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-1.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-3.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+        outputs:
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+    logicCode: HuntaBaddayCPUmod.Demultiplexer16
+    placingRules: Standard
+BiPlexer16:
+    column: "HBCM"
+    category: "IC"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0.5, 0, 0.5)
+                scale: (8, 1, 2)
+        inputs:
+            -
+                position: (4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (4.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (3.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (3.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (2.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (2.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (1.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (1.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (0.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (0.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-0.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-0.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-1.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-1.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2.75, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-3.25, 0.5, 1.5)
+                rotation: (90, 0, 0)
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+    logicCode: HuntaBaddayCPUmod.BiPlexer16
+    placingRules: Standard

@@ -389,3 +389,17 @@ A microprocessor designed by MOS Technologies in 1975. This component is meant t
 
 ### Pinout
 <img src="https://ist.uwaterloo.ca/~schepers/MJK/pics/6502.gif" width=300>
+
+## Multiplexers and demultiplexers
+Multiplexers and demultiplexers to route signals.
+
+### Pinout
+On the front are 6 pins. From right to left is:
+- Input ot output
+- Output disable
+- Selector bit 3
+- Selector bit 2
+- Selector bit 1
+- Selector bit 0
+
+On the back are 16 pins for the multiplexed signal.
