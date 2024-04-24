@@ -63,12 +63,14 @@ namespace HuntaBaddayCPUmod {
                 writeBus(output);
                 hasRead = false;
             } else if(getPin(pin_read) && !getPin(pin_rs) && getPin(pin_enable)){
-                if(output_position != output_length){
-                    writeBus(output_buffer[output_position++]);
-                    setPin(pin_empty, false);
-                } else {
-                    writeBus(0);
-                    setPin(pin_empty, true);
+                if(!hasRead){
+                    if(output_position != output_length){
+                        writeBus(output_buffer[output_position++]);
+                        setPin(pin_empty, false);
+                    } else {
+                        writeBus(0);
+                        setPin(pin_empty, true);
+                    }
                 }
                 hasRead = true;
             } else {
