@@ -1,6 +1,8 @@
 HuntaBaddayCPUmod.LWC31: "LWC 3.1"
 HuntaBaddayCPUmod.Buffer8: "8 Bit FIFO"
 HuntaBaddayCPUmod.Buffer16: "16 Bit FIFO"
+HuntaBaddayCPUmod.Buffer8LIFO: "8 Bit LIFO"
+HuntaBaddayCPUmod.Buffer16LIFO: "16 Bit LIFO"
 HuntaBaddayCPUmod.TSC6530: "TSC6530"
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
 HuntaBaddayCPUmod.TNET_Recv: "Receiver"
