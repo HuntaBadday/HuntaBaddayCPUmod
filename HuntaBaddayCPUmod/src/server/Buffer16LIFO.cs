@@ -21,8 +21,6 @@ namespace HuntaBaddayCPUmod {
         bool full = false;
         
         protected override void Initialize(){
-            lastWrite = base.Inputs[writeBuffer].On;
-            lastRead = base.Inputs[readBuffer].On;
         }
         protected override void DoLogicUpdate(){
             if(base.Inputs[resetPin].On){
