@@ -240,8 +240,8 @@ namespace HuntaBaddayCPUmod {
                     }
                     ushort source_mac = 0;
                     ushort dest_mac = 0;
-                    source_mac |= (ushort)(packet.buffer[6] << 0);
-                    source_mac |= (ushort)(packet.buffer[7] << 8);
+                    source_mac |= (ushort)(packet.buffer[2] << 0);
+                    source_mac |= (ushort)(packet.buffer[3] << 8);
                     
                     dest_mac |= (ushort)(packet.buffer[0] << 0);
                     dest_mac |= (ushort)(packet.buffer[1] << 8);
