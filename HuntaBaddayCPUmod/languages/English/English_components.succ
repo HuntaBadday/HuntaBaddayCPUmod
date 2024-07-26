@@ -1,16 +1,24 @@
 HuntaBaddayCPUmod.LWC31: "LWC 3.1"
+HuntaBaddayCPUmod.MOS6502: "MOS 6502"
+
+HuntaBaddayCPUmod.TSC6530: "TSC6530"
+
 HuntaBaddayCPUmod.Buffer8: "8 Bit FIFO"
 HuntaBaddayCPUmod.Buffer16: "16 Bit FIFO"
 HuntaBaddayCPUmod.Buffer8LIFO: "8 Bit LIFO"
 HuntaBaddayCPUmod.Buffer16LIFO: "16 Bit LIFO"
-HuntaBaddayCPUmod.TSC6530: "TSC6530"
+
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
 HuntaBaddayCPUmod.TNET_Recv: "Receiver"
+HuntaBaddayCPUmod.TNET_Recv2: "Receiver INT"
 HuntaBaddayCPUmod.TNET_Switch: "Switch"
-HuntaBaddayCPUmod.MOS6502: "MOS 6502"
-HuntaBaddayCPUmod.Multiplexer16: "16 Output Multiplexer"
-HuntaBaddayCPUmod.Demultiplexer16: "16 Input Demultiplexer"
-HuntaBaddayCPUmod.BiPlexer16: "16 Line Bi-Directional Multiplexer"
+
+HuntaBaddayCPUmod.Multiplexer16Inv: "16 Output Multiplexer"
+HuntaBaddayCPUmod.Demultiplexer16Inv: "16 Input Demultiplexer"
+HuntaBaddayCPUmod.BiPlexer16Inv: "16 Line Bi-Directional Multiplexer"
+HuntaBaddayCPUmod.Multiplexer16: "16 Output Multiplexer Inv. Enable"
+HuntaBaddayCPUmod.Demultiplexer16: "16 Input Demultiplexer Inv. Enable"
+HuntaBaddayCPUmod.BiPlexer16: "16 Line Bi-Directional Multiplexer Inv. Enable"
 
 ComponentColumn.HBCM: "HBCM"
 ComponentCategory.Processors: "Processors"

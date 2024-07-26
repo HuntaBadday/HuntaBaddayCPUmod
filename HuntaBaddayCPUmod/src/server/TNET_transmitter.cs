@@ -12,13 +12,12 @@ namespace HuntaBaddayCPUmod {
         const int pin_output = 8;
         const int pin_reset = 12;
         
-        // Modes:
-        // idle
-        // packet_start
-        // byte_start
-        // byte_send
-        // ipg
-        string current_mode = "idle";
+        const int MODE_IDLE = 0;
+        const int MODE_PACKET_START = 1;
+        const int MODE_BYTE_START = 2;
+        const int MODE_BYTE_SEND = 3;
+        const int MODE_IPG = 4;
+        int current_mode = MODE_IDLE;
         int serial_counter;
         byte byteToSend; // Current byte to send
         
@@ -39,7 +38,7 @@ namespace HuntaBaddayCPUmod {
         }
         protected override void DoLogicUpdate(){
             if(getPin(pin_reset)){
-                current_mode = "idle";
+                current_mode = MODE_IDLE;
                 packet_stack.Clear();
                 stack_lengths.Clear();
                 input_position = 0;
@@ -50,7 +49,7 @@ namespace HuntaBaddayCPUmod {
             }
             if(getPin(pin_read) && getPin(pin_rs) && getPin(pin_enable)){
                 byte output = 0;
-                if(current_mode == "idle"){
+                if(current_mode == MODE_IDLE){
                     output |= 0x1;
                 }
                 if(input_position == 0){
@@ -99,43 +98,43 @@ namespace HuntaBaddayCPUmod {
             input_checksum += value;
         }
         protected void doSerial(){
-            if(current_mode == "idle"){
+            if(current_mode == MODE_IDLE){
                 setPin(pin_output, false);
                 if(packet_stack.Count > 0){
-                    current_mode = "packet_start";
+                    current_mode = MODE_PACKET_START;
                 }
             }
-            if(current_mode == "packet_start"){
+            if(current_mode == MODE_PACKET_START){
                 Array.Copy(packet_stack[0], 0, send_buffer, 0, 1024);
                 send_position = 0;
                 send_length = stack_lengths[0];
                 packet_stack.RemoveAt(0);
                 stack_lengths.RemoveAt(0);
-                current_mode = "byte_start";
+                current_mode = MODE_BYTE_START;
             }
-            if(current_mode == "byte_start"){
+            if(current_mode == MODE_BYTE_START){
                 if(send_position == send_length){
-                    current_mode = "ipg";
+                    current_mode = MODE_IPG;
                 } else {
                     setPin(pin_output, true);
-                    current_mode = "byte_send";
+                    current_mode = MODE_BYTE_SEND;
                     byteToSend = send_buffer[send_position++];
                 }
                 serial_counter = 0;
                 QueueLogicUpdate();
-            } else if(current_mode == "byte_send"){
+            } else if(current_mode == MODE_BYTE_SEND){
                 setPin(pin_output, (byteToSend>>serial_counter & 0x1) == 1);
                 serial_counter++;
                 if(serial_counter == 8){
-                    current_mode = "byte_start";
+                    current_mode = MODE_BYTE_START;
                 }
                 QueueLogicUpdate();
             }
-            if(current_mode == "ipg"){
+            if(current_mode == MODE_IPG){
                 setPin(pin_output, false);
                 serial_counter++;
                 if(serial_counter == 12){
-                    current_mode = "idle";
+                    current_mode = MODE_IDLE;
                 }
                 QueueLogicUpdate();
             }

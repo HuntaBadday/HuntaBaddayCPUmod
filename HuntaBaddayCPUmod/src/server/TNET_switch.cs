@@ -15,7 +15,13 @@ namespace HuntaBaddayCPUmod {
             // byte_start
             // byte_send
             // ipg
-            private string current_mode = "idle";
+            private const int MODE_IDLE = 0;
+            private const int MODE_PACKET_START = 1;
+            private const int MODE_BYTE_START = 2;
+            private const int MODE_BYTE_SEND = 3;
+            private const int MODE_IPG = 4;
+            private int current_mode;
+            
             private int serial_counter;
             private byte byteToSend; // Current byte to send
             
@@ -26,7 +32,7 @@ namespace HuntaBaddayCPUmod {
             private List<byte[]> packet_stack = new List<byte[]>(); // All packets to be sent
             private List<int> stack_lengths = new List<int>(); // Legths of the packets
             public void reset(){
-                current_mode = "idle";
+                current_mode = MODE_IDLE;
                 packet_stack.Clear();
                 stack_lengths.Clear();
             }
@@ -37,41 +43,41 @@ namespace HuntaBaddayCPUmod {
             }
             public bool doSerial(){
                 bool new_state = false;
-                if(current_mode == "idle"){
+                if(current_mode == MODE_IDLE){
                     new_state = false;
                     if(packet_stack.Count > 0){
-                        current_mode = "packet_start";
+                        current_mode = MODE_PACKET_START;
                     }
                 }
-                if(current_mode == "packet_start"){
+                if(current_mode == MODE_PACKET_START){
                     Array.Copy(packet_stack[0], 0, send_buffer, 0, 1024);
                     send_position = 0;
                     send_length = stack_lengths[0];
                     packet_stack.RemoveAt(0);
                     stack_lengths.RemoveAt(0);
-                    current_mode = "byte_start";
+                    current_mode = MODE_BYTE_START;
                 }
-                if(current_mode == "byte_start"){
+                if(current_mode == MODE_BYTE_START){
                     if(send_position == send_length){
-                        current_mode = "ipg";
+                        current_mode = MODE_IPG;
                     } else {
                         new_state = true;
-                        current_mode = "byte_send";
+                        current_mode = MODE_BYTE_SEND;
                         byteToSend = send_buffer[send_position++];
                     }
                     serial_counter = 0;
-                } else if(current_mode == "byte_send"){
+                } else if(current_mode == MODE_BYTE_SEND){
                     new_state = (byteToSend>>serial_counter & 0x1) == 1;
                     serial_counter++;
                     if(serial_counter == 8){
-                        current_mode = "byte_start";
+                        current_mode = MODE_BYTE_START;
                     }
                 }
-                if(current_mode == "ipg"){
+                if(current_mode == MODE_IPG){
                     new_state = false;
                     serial_counter++;
                     if(serial_counter == 12){
-                        current_mode = "idle";
+                        current_mode = MODE_IDLE;
                     }
                 }
                 return new_state;
@@ -88,7 +94,14 @@ namespace HuntaBaddayCPUmod {
             // byte_recv
             // packet_end
             // ipg_wait
-            private string current_mode = "idle";
+            private const int MODE_IDLE = 0;
+            private const int MODE_PACKET_START = 1;
+            private const int MODE_START_WAIT = 2;
+            private const int MODE_BYTE_RECV = 3;
+            private const int MODE_PACKET_END = 4;
+            private const int MODE_IPG_WAIT = 5;
+            private int current_mode;
+            
             private int serial_counter;
             private byte byteToReceive; // Current byte to receive
             
@@ -98,7 +111,7 @@ namespace HuntaBaddayCPUmod {
             private List<byte[]> packet_stack = new List<byte[]>(); // All packets to be sent
             private List<int> stack_lengths = new List<int>(); // Legths of the packets
             public void reset(){
-                current_mode = "ipg_wait";
+                current_mode = MODE_IPG_WAIT;
                 serial_counter = 0;
                 packet_stack.Clear();
                 stack_lengths.Clear();
@@ -122,26 +135,26 @@ namespace HuntaBaddayCPUmod {
                 }
             }
             public void doSerial(bool pin_state){
-                if(current_mode == "idle"){
+                if(current_mode == MODE_IDLE){
                     if(pin_state){
-                        current_mode = "packet_start";
+                        current_mode = MODE_PACKET_START;
                     }
                 }
-                if(current_mode == "packet_start"){
+                if(current_mode == MODE_PACKET_START){
                     receive_position = 0;
-                    current_mode = "byte_recv";
+                    current_mode = MODE_BYTE_RECV;
                     serial_counter = 0;
-                } else if(current_mode == "start_wait"){
+                } else if(current_mode == MODE_START_WAIT){
                     if(pin_state){
-                        current_mode = "byte_recv";
+                        current_mode = MODE_BYTE_RECV;
                         serial_counter = 0;
                     } else {
                         serial_counter++;
                         if(serial_counter == 12){
-                            current_mode = "packet_end";
+                            current_mode = MODE_PACKET_END;
                         }
                     }
-                } else if(current_mode == "byte_recv"){
+                } else if(current_mode == MODE_BYTE_RECV){
                     byteToReceive >>= 1;
                     if(pin_state){
                         byteToReceive |= 0x80;
@@ -151,11 +164,11 @@ namespace HuntaBaddayCPUmod {
                         if(receive_position != 1024){
                             receive_buffer[receive_position++] = byteToReceive;
                         }
-                        current_mode = "start_wait";
+                        current_mode = MODE_START_WAIT;
                         serial_counter = 0;
                     }
                 }
-                if(current_mode == "packet_end"){
+                if(current_mode == MODE_PACKET_END){
                     uint checksum = 0;
                     uint checksumP = 0;
                     if(receive_position >= 5){
@@ -172,16 +185,16 @@ namespace HuntaBaddayCPUmod {
                         stack_lengths.Add(receive_position);
                         Array.Copy(receive_buffer, 0, packet_stack[packet_stack.Count-1], 0, 1024);
                     }
-                    current_mode = "idle";
+                    current_mode = MODE_IDLE;
                 }
-                if(current_mode == "ipg_wait"){
+                if(current_mode == MODE_IPG_WAIT){
                     if(pin_state){
                         serial_counter = 0;
                     } else {
                         serial_counter++;
                     }
                     if(serial_counter == 12){
-                        current_mode = "idle";
+                        current_mode = MODE_IDLE;
                     }
                 }
             }

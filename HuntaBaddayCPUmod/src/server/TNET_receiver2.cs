@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 
 namespace HuntaBaddayCPUmod {
-    public class TNET_Recv : LogicComponent {
+    public class TNET_Recv2 : LogicComponent {
         const int pin_bus = 0;
         const int pin_enable = 8;
         const int pin_read = 9;
@@ -12,6 +12,7 @@ namespace HuntaBaddayCPUmod {
         const int pin_input = 12;
         const int pin_reset = 13;
         const int pin_empty = 8;
+        const int pin_interrupt = 9;
         
         const int MODE_IDLE = 0;
         const int MODE_PACKET_START = 1;
@@ -36,6 +37,7 @@ namespace HuntaBaddayCPUmod {
         
         bool lastWritePin = false;
         bool hasRead = false;
+        bool interrupt_enable = false;
         protected override void Initialize(){
             
         }
@@ -50,6 +52,8 @@ namespace HuntaBaddayCPUmod {
                 output_position = 0;
                 writeBus(0);
                 setPin(pin_empty, false);
+                setPin(pin_interrupt, false);
+                interrupt_enable = false;
                 return;
             }
             if(getPin(pin_read) && getPin(pin_rs) && getPin(pin_enable)){
@@ -104,11 +108,24 @@ namespace HuntaBaddayCPUmod {
                     output_position = 0;
                     output_length = 0;
                 }
+                if((value&0x8) != 0){
+                    interrupt_enable = true;
+                }
+                if((value&0x10) != 0){
+                    interrupt_enable = false;
+                }
             } else if(getPin(pin_write) && !lastWritePin && !getPin(pin_rs) && getPin(pin_enable)){
                 // Do nothing with this
             }
             doSerial();
             lastWritePin = getPin(pin_write);
+            
+            if(interrupt_enable){
+                setPin(pin_interrupt, packet_stack.Count>0);
+            } else {
+                setPin(pin_interrupt, false);
+            }
+            
         }
         
         protected void doSerial(){

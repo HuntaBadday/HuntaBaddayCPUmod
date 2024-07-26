@@ -25,7 +25,7 @@ Remote file: https://huntabadday.com/docs/TSC-LWC31.pdf
 
 ### Examples:
 ###### Multiplication (Shift and add method)
-```x86
+```
 #include "lwc31.asm"
 
 #addr 0x0000
@@ -55,7 +55,7 @@ data:
 ```
 
 ###### Interrupts
-```x86
+```
 #addr 0x0000
 
 #include "../lwc31.asm"
@@ -246,21 +246,21 @@ The receiver receives a serial stream and convert it into readable data. It has 
 #### I/O
 The left of the device is the serial data input and a status output when reading the buffer.\
 On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS.\
-On the right is a reset pin.
+On the right is a reset pin and an interrupt output, this is on the INT version of the receiver and it is HIGH when a packet is available.
 
 #### Data Output
 Reading from the chip while the RS pin is low will read an octet from the internal buffer.\
 The status pin will turn on when the buffer is empty while reading, this pin isn't strictly needed for operation since there is the "buffer empty" bit in the control register.
 
 ### Control Register
-The control register can be accessed while the RS pin is high.
+The control register can be accessed while the RS pin is high. Interrupts available on the second version of the chip.
 
 #### Control Register (Read / Write)
 - 0: Packet available / Start reading next packet
 - 1: Is buffer empty / Clear packet stack & clear buffer
 - 2: _ / Include checksum at the end of the data
-- 3: Not used
-- 4: Not used
+- 3: _ / Enable interrupt
+- 4: _ / Disable interrupt
 - 5: Not used
 - 6: Not used
 - 7: Not used
