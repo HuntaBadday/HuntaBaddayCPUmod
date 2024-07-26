@@ -280,10 +280,12 @@ Multiplexers and demultiplexers to route signals.
 ### Pinout
 On the front are 6 pins. From right to left is:
 - Input ot output
-- Output disable
+- Output enable
 - Selector bit 3
 - Selector bit 2
 - Selector bit 1
 - Selector bit 0
+
+There are versions of the plexers that have an output disable pin in place of the enable.
 
 On the back are 16 pins for the multiplexed signal.
