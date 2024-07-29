@@ -64,6 +64,9 @@ namespace HuntaBaddayCPUmod {
                 if(output_position == output_length){
                     output |= 0x2;
                 }
+                if(packet_stack.Count > 0 && interrupt_enable){
+                    output |= 0x80;
+                }
                 writeBus(output);
                 hasRead = false;
             } else if(getPin(pin_read) && !getPin(pin_rs) && getPin(pin_enable)){

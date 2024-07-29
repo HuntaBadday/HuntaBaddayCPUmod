@@ -263,7 +263,7 @@ The control register can be accessed while the RS pin is high. Interrupts availa
 - 4: _ / Disable interrupt
 - 5: Not used
 - 6: Not used
-- 7: Not used
+- 7: Interrupt occured
 
 ## MOS 6502
 A microprocessor designed by MOS Technologies in 1975. This component is meant to simulate as closely as possible to the real 6502's timings. Please report any problems such as bugs or timing issues.
