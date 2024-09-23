@@ -11,6 +11,8 @@ HuntaBaddayCPUmod.Buffer16LIFO: "16 Bit LIFO"
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
 HuntaBaddayCPUmod.TNET_Recv: "Receiver"
 HuntaBaddayCPUmod.TNET_Recv2: "Receiver INT"
+HuntaBaddayCPUmod.TNET_Trans16: "Transmitter - 16"
+HuntaBaddayCPUmod.TNET_Recv2-16: "Receiver INT - 16"
 HuntaBaddayCPUmod.TNET_Switch: "Switch"
 
 HuntaBaddayCPUmod.Multiplexer16Inv: "16 Output Multiplexer"

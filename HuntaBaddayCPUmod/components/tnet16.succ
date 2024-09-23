@@ -1,0 +1,277 @@
+TNET_Trans16:
+    column: "HBCM"
+    category: "Networking"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0.5, 0, 0.5)
+                scale: (22, 1, 2)
+        inputs:
+            -
+                position: (-10, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-9, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-8, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-7, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-6, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-5, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (5, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (7, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (8, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (9, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (11, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (10.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+                
+            -
+                position: (11.5, 0.5, 0)
+                rotation: (0, 0, -90)
+        outputs:
+            -
+                position: (5, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (4, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-3, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-4, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-5, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-6, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-7, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-8, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-9, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-10, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (-10.5, 0.5, 1)
+                rotation: (0, 0, 90)
+    logicCode: HuntaBaddayCPUmod.TNET_Trans_16
+    placingRules: Standard
+    
+TNET_Recv2-16:
+    column: "HBCM"
+    category: "Networking"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0.5, 0, 0.5)
+                scale: (22, 1, 2)
+        inputs:
+            -
+                position: (-10, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-9, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-8, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-7, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-6, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-5, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (4, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (5, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (7, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (8, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (9, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (11, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (10.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (-10.5, 0.5, 1)
+                rotation: (0, 0, 90)
+                
+            -
+                position: (11.5, 0.5, 0)
+                rotation: (0, 0, -90)
+        outputs:
+            -
+                position: (5, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (4, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (3, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (2, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-3, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-4, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-5, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-6, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-7, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-8, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-9, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-10, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+                
+            -
+                position: (-10.5, 0.5, 0)
+                rotation: (0, 0, 90)
+            -
+                position: (11.5, 0.5, 1)
+                rotation: (0, 0, -90)
+                
+    logicCode: HuntaBaddayCPUmod.TNET_Recv2_16
+    placingRules: Standard

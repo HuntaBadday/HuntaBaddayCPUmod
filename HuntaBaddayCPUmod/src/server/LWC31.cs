@@ -53,7 +53,7 @@ namespace HuntaBaddayCPUmod
         static int rstPin = 16;
         static int clkPin = 17;
         static int useBusPin = 34;
-        static int disableBusPin = 18;
+        static int setCarryPin = 18;
         static int interruptPin = 19;
         static int turboPin = 20;
         
@@ -88,6 +88,8 @@ namespace HuntaBaddayCPUmod
         
         // Last state of clock
         bool lastClkState = false;
+        // Last state of the set carry pin
+        bool lastSetCarry = false;
         
         protected override void DoLogicUpdate(){
             // Setup reset configuration
@@ -103,6 +105,13 @@ namespace HuntaBaddayCPUmod
                 insideInt = false;
                 return;
             }
+            
+            // Set the carry if the set carry pin goes high
+            if(readPin(setCarryPin) && !lastSetCarry){
+                registers[7] |= 0b001;
+            }
+            lastSetCarry = readPin(setCarryPin);
+            
             // Check if the logic update was the clock
             if(readPin(clkPin) == lastClkState){
                 return;
@@ -189,7 +198,7 @@ namespace HuntaBaddayCPUmod
             // Instruction execution
             switch(inst){
                 case BRK:
-                    registers[6]--;
+                    decStack();
                     setAddress(registers[6]);
                     setBus(pc);
                     setUB(1);
@@ -322,7 +331,7 @@ namespace HuntaBaddayCPUmod
                     setUB(1);
                     break;
                 case PUSH:
-                    registers[6]--;
+                    decStack();
                     setAddress(registers[6]);
                     setBus(registers[op1]);
                     setUB(1);
@@ -333,7 +342,7 @@ namespace HuntaBaddayCPUmod
                     setUB(1);
                     break;
                 case JSR:
-                    registers[6]--;
+                    decStack();
                     setAddress(registers[6]);
                     setBus(pc);
                     setUB(1);
@@ -368,14 +377,14 @@ namespace HuntaBaddayCPUmod
                     break;
                 case PLP:
                     registers[7] = readBus();
-                    registers[6]++;
+                    incStack();
                     break;
                 case PUSH:
                     setWrite(1);
                     break;
                 case POP:
                     registers[op1] = readBus();
-                    registers[6]++;
+                    incStack();
                     genStatus(registers[op1]);
                     break;
                 case JSR:
@@ -383,15 +392,23 @@ namespace HuntaBaddayCPUmod
                     break;
                 case RTS:
                     pc = readBus();
-                    registers[6]++;
+                    incStack();
                     break;
                 case RTI:
                     pc = readBus();
-                    registers[6]++;
+                    incStack();
                     break;
             }
         }
         
+        protected void decStack(){
+            ushort tmp = registers[6];
+            registers[6] = (ushort)(tmp&0xfc00 | tmp-1&0x3ff);
+        }
+        protected void incStack(){
+            ushort tmp = registers[6];
+            registers[6] = (ushort)(tmp&0xfc00 | tmp+1&0x3ff);
+        }
         // Setup I/O port for fetch
         protected void setupLoad(){
             CPUstate = 1;
@@ -413,6 +430,9 @@ namespace HuntaBaddayCPUmod
         
         // Generate zero and negative flags
         protected void genStatus(ushort data){
+            if(op1 == 7){
+                return;
+            }
             registers[7] &= 0b1111111111111001;
             if(data == 0){
                 registers[7] |= 0b10;

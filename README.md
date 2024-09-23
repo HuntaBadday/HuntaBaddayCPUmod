@@ -10,6 +10,7 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 - TSC-6530 Dual timer chip
 - TurnerNet network transmitter/receiver
 - TurnerNet network switch
+- 4 bit multiplexers and demultiplexers
 
 ## LWC 3.1
 
@@ -221,11 +222,12 @@ The transmitter converts a packet of data into a serial data stream to be receiv
 
 #### I/O
 The left of the device is the serial data output.\
-On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS.\
-On the right is a reset pin.
+On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS (register select).\
+On the right is a reset pin.\
+16 bit versions of the chip will have a second pin close to the RS, this will enable 16 bit mode.
 
 ### Data Input
-Writing to the chip while the RS pin is low will append data to the internal buffer.
+Writing to the chip while the RS pin is low will append data to the internal buffer. On the 16 bit versions of the chip, two bytes are appended to the internal buffer.
 
 ### Control Register
 The control register can be accessed while the RS pin is high.
@@ -245,12 +247,13 @@ The receiver receives a serial stream and convert it into readable data. It has 
 
 #### I/O
 The left of the device is the serial data input and a status output when reading the buffer.\
-On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS.\
-On the right is a reset pin and an interrupt output, this is on the INT version of the receiver and it is HIGH when a packet is available.
+On the front, in order from left to right is the data I/O (LSB Right), chip select / enable, read, write, RS (register select).\
+(Only for INT version) On the right is a reset pin and an interrupt output, this is on the INT version of the receiver and it is HIGH when a packet is available.\
+16 bit versions of the chip will have a second pin close to the RS, this will enable 16 bit mode.
 
 #### Data Output
 Reading from the chip while the RS pin is low will read an octet from the internal buffer.\
-The status pin will turn on when the buffer is empty while reading, this pin isn't strictly needed for operation since there is the "buffer empty" bit in the control register.
+The status pin will turn on when the buffer is empty while reading, this pin isn't strictly needed for operation since there is the "buffer empty" bit in the control register. On the 16 bit version of the chip, two bytes are read from the buffer and outputted to the IO port when in 16 bit mode, the status pin will turn on if only 1 byte is read instead of 2 when in 16 bit mode.
 
 ### Control Register
 The control register can be accessed while the RS pin is high. Interrupts available on the second version of the chip.

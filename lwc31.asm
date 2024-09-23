@@ -39,6 +39,7 @@
 	mov	[{addr: u16}], {op1: reg}	=> 0b0100 @ op1 @ 0b000000000 @ addr
 	mov [{op2: reg}+{op3: reg}], {op1: reg}	=> 0b0100 @ op1 @ op2 @ 0b1 @ op3 @ 0b00
 	mov	[{op3: reg}+{offst: i16}], {op1: reg}	=> 0b0100 @ op1 @ 0b000 @ 0b1 @ op3 @ 0b00 @ offst
+	mov	[{op3: reg}-{offst: i16}], {op1: reg}	=> 0b0100 @ op1 @ 0b000 @ 0b1 @ op3 @ 0b00 @ offst
 	mov [{offst: i16}+{op3: reg}], {op1: reg} 	=> 0b0100 @ op1 @ 0b000 @ 0b1 @ op3 @ 0b00 @ offst
 	
 	;-------------------
@@ -152,12 +153,10 @@
 		pop r1
 		pop r0
 	}
+	clc => asm{
+		and st, 0b1111111111111110
+	}
+	sec => asm{
+		or st, 0b001
+	}
 }
-
-#bankdef lwc31bank {
-	#bits 16
-	#addr 0
-	#size 0x10000
-	#outp 0
-}
-#bank lwc31bank
