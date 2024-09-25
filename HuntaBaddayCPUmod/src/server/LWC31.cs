@@ -237,22 +237,38 @@ namespace HuntaBaddayCPUmod
                     switch(op3){
                         case ADD:
                             tmp = registers[op1] + registers[op2];
-                            registers[op1] = (ushort)tmp;
+                            if(op1 != 6){
+                                registers[op1] = (ushort)tmp;
+                            } else {
+                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                            }
                             genCarry(tmp);
                             break;
                         case ADC:
                             tmp = registers[op1] + registers[op2] + (registers[7]&1);
-                            registers[op1] = (ushort)tmp;
+                            if(op1 != 6){
+                                registers[op1] = (ushort)tmp;
+                            } else {
+                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                            }
                             genCarry(tmp);
                             break;
                         case SUB:
                             tmp = registers[op1] + (registers[op2]^0xffff) + 1;
-                            registers[op1] = (ushort)tmp;
+                            if(op1 != 6){
+                                registers[op1] = (ushort)tmp;
+                            } else {
+                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                            }
                             genCarry(tmp);
                             break;
                         case SBC:
                             tmp = registers[op1] + (registers[op2]^0xffff) + (registers[7]&1);
-                            registers[op1] = (ushort)tmp;
+                            if(op1 != 6){
+                                registers[op1] = (ushort)tmp;
+                            } else {
+                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                            }
                             genCarry(tmp);
                             break;
                         case SHL:
