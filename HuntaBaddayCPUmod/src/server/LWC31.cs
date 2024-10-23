@@ -33,6 +33,11 @@ namespace HuntaBaddayCPUmod
         const int AND = 8;
         const int OR = 9;
         const int XOR = 10;
+        const int MUL = 11;
+        const int SMUL = 12;
+        const int DIV = 13;
+        const int SDIV = 14;
+        const int NEG = 15;
         
         // Array for how many operands each instruction uses
         int[] opNums = {
@@ -71,7 +76,7 @@ namespace HuntaBaddayCPUmod
         ushort execPhase = 1;
         
         // Array of registers
-        ushort[] registers = {0, 0, 0, 0, 0, 0, 0, 0};
+        ushort[] registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         
         // Variables that the instruction get separated into
         int inst = 0;
@@ -153,9 +158,9 @@ namespace HuntaBaddayCPUmod
             if(CPUstate == 3 && execPhase == 1){
                 // 0000 000 000 0000 00
                 inst = (ir >> 12) & 0b1111;
-                op1 = (ir >> 9) & 0b111;
-                op2 = (ir >> 6) & 0b111;
-                op3 = (ir >> 2) & 0b1111;
+                op1 = (ir >> 8) & 0b1111;
+                op2 = (ir >> 4) & 0b1111;
+                op3 = (ir >> 0) & 0b1111;
                 execPhase1();   // Do the phase
                 
                 // If the instruction supports turbo then skip the second phase
@@ -199,7 +204,7 @@ namespace HuntaBaddayCPUmod
             switch(inst){
                 case BRK:
                     decStack();
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setBus(pc);
                     setUB(1);
                     pc = interruptAddr;
@@ -213,8 +218,8 @@ namespace HuntaBaddayCPUmod
                     genStatus(registers[op1]);
                     break;
                 case LOD:
-                    if((op3 & 0b1000) == 0b1000){
-                        setAddress((ushort)(registers[op2]+registers[op3&0b111]));
+                    if(op3 != 0){
+                        setAddress((ushort)(registers[op2]+registers[op3]));
                     } else {
                         setAddress(registers[op2]);
                     }
@@ -222,8 +227,8 @@ namespace HuntaBaddayCPUmod
                     setUB(1);
                     break;
                 case STO:
-                    if((op3 & 0b1000) == 0b1000){
-                        setAddress((ushort)(registers[op2]+registers[op3&0b111]));
+                    if(op3 != 0){
+                        setAddress((ushort)(registers[op2]+registers[op3]));
                     } else {
                         setAddress(registers[op2]);
                     }
@@ -233,59 +238,61 @@ namespace HuntaBaddayCPUmod
                 case ALU:
                     ushort preVal = registers[op1];
                     int tmp;
+                    ushort q;
+                    ushort r;
                     // Subset instructions of ALU
                     switch(op3){
                         case ADD:
                             tmp = registers[op1] + registers[op2];
-                            if(op1 != 6){
+                            if(op1 != 14){
                                 registers[op1] = (ushort)tmp;
                             } else {
-                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
                             }
                             genCarry(tmp);
                             break;
                         case ADC:
-                            tmp = registers[op1] + registers[op2] + (registers[7]&1);
-                            if(op1 != 6){
+                            tmp = registers[op1] + registers[op2] + (registers[15]&1);
+                            if(op1 != 14){
                                 registers[op1] = (ushort)tmp;
                             } else {
-                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
                             }
                             genCarry(tmp);
                             break;
                         case SUB:
                             tmp = registers[op1] + (registers[op2]^0xffff) + 1;
-                            if(op1 != 6){
+                            if(op1 != 14){
                                 registers[op1] = (ushort)tmp;
                             } else {
-                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
                             }
                             genCarry(tmp);
                             break;
                         case SBC:
-                            tmp = registers[op1] + (registers[op2]^0xffff) + (registers[7]&1);
-                            if(op1 != 6){
+                            tmp = registers[op1] + (registers[op2]^0xffff) + (registers[15]&1);
+                            if(op1 != 14){
                                 registers[op1] = (ushort)tmp;
                             } else {
-                                registers[6] = (ushort)(registers[6]&0xfc00 | tmp&0x03ff);
+                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
                             }
                             genCarry(tmp);
                             break;
                         case SHL:
                             registers[op1] = (ushort)(registers[op1] << 1);
-                            registers[7] = (ushort)((registers[7]&0xfffe) | (preVal >> 15));
+                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal >> 15));
                             break;
                         case ROL:
-                            registers[op1] = (ushort)((registers[op1] << 1) | (registers[7] & 0x1));
-                            registers[7] = (ushort)((registers[7]&0xfffe) | (preVal >> 15));
+                            registers[op1] = (ushort)((registers[op1] << 1) | (registers[15] & 0x1));
+                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal >> 15));
                             break;
                         case SHR:
                             registers[op1] = (ushort)(registers[op1] >> 1);
-                            registers[7] = (ushort)((registers[7]&0xfffe) | (preVal & 0x1));
+                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal & 0x1));
                             break;
                         case ROR:
-                            registers[op1] = (ushort)((registers[op1] >> 1) | ((registers[7] & 0x1) << 15));
-                            registers[7] = (ushort)((registers[7]&0xfffe) | (preVal & 0x1));
+                            registers[op1] = (ushort)((registers[op1] >> 1) | ((registers[15] & 0x1) << 15));
+                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal & 0x1));
                             break;
                         case AND:
                             registers[op1] = (ushort)(registers[op1] & registers[op2]);
@@ -296,13 +303,41 @@ namespace HuntaBaddayCPUmod
                         case XOR:
                             registers[op1] = (ushort)(registers[op1] ^ registers[op2]);
                             break;
+                        case MUL:
+                            tmp = registers[op1]*registers[op2];
+                            registers[op1] = (ushort)(tmp);
+                            registers[13] = (ushort)(tmp>>16);
+                            genCarry(tmp);
+                            break;
+                        case SMUL:
+                            tmp = (short)registers[op1] * (short)registers[op2];
+                            registers[op1] = (ushort)(tmp);
+                            registers[13] = (ushort)(tmp>>16);
+                            
+                            genCarry(tmp);
+                            break;
+                        case DIV:
+                            q = (ushort)(registers[op1] / registers[op2]);
+                            r = (ushort)(registers[op1] % registers[op2]);
+                            registers[op1] = q;
+                            registers[13] = r;
+                            break;
+                        case SDIV:
+                            q = (ushort)((short)registers[op1] / (short)registers[op2]);
+                            r = (ushort)((short)registers[op1] % (short)registers[op2]);
+                            registers[op1] = q;
+                            registers[13] = r;
+                            break;
+                        case NEG:
+                            registers[op1] = (ushort)((registers[op1]^0xffff) + 1);
+                            break;
                     }
                     genStatus(registers[op1]);
                     
                     // If the shift instruction is used and the second operand is set to constant data
                     // which isn't used, then decrement the pc so the next instruction isn't skipped.
                     inc = 0;
-                    if(op3 >= 4 && op3 <= 7){
+                    if((op3 >= 4 && op3 <= 7) || op3 == 15){
                         if(op2 == 0){
                             pc--;
                         }
@@ -320,7 +355,7 @@ namespace HuntaBaddayCPUmod
                     if((op3 & 0b1000) != 0){
                         invert = 0b111;
                     }
-                    if(((registers[7] ^ invert) & mask) != 0){
+                    if(((registers[15] ^ invert) & mask) != 0){
                         pc = registers[op1];
                     }
                     break;
@@ -328,9 +363,9 @@ namespace HuntaBaddayCPUmod
                     if(op3 == 0){
                         interruptAddr = registers[op1];
                     } else if(op3 == 1){
-                        registers[7] |= 0b1000;
+                        registers[15] |= 0b1000;
                     } else if(op3 == 2){
-                        registers[7] &= 0b1111111111110111;
+                        registers[15] &= 0b1111111111110111;
                     }
                     
                     inc = 0;
@@ -342,35 +377,35 @@ namespace HuntaBaddayCPUmod
                     pc -= inc;
                     break;
                 case PLP:
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setRead(1);
                     setUB(1);
                     break;
                 case PUSH:
                     decStack();
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setBus(registers[op1]);
                     setUB(1);
                     break;
                 case POP:
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setRead(1);
                     setUB(1);
                     break;
                 case JSR:
                     decStack();
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setBus(pc);
                     setUB(1);
                     pc = registers[op1];
                     break;
                 case RTS:
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setRead(1);
                     setUB(1);
                     break;
                 case RTI:
-                    setAddress(registers[6]);
+                    setAddress(registers[14]);
                     setRead(1);
                     setUB(1);
                     insideInt = false;
@@ -392,7 +427,7 @@ namespace HuntaBaddayCPUmod
                     setWrite(1);
                     break;
                 case PLP:
-                    registers[7] = readBus();
+                    registers[15] = readBus();
                     incStack();
                     break;
                 case PUSH:
@@ -418,12 +453,12 @@ namespace HuntaBaddayCPUmod
         }
         
         protected void decStack(){
-            ushort tmp = registers[6];
-            registers[6] = (ushort)(tmp&0xfc00 | tmp-1&0x3ff);
+            ushort tmp = registers[14];
+            registers[14] = (ushort)(tmp&0xfc00 | tmp-1&0x3ff);
         }
         protected void incStack(){
-            ushort tmp = registers[6];
-            registers[6] = (ushort)(tmp&0xfc00 | tmp+1&0x3ff);
+            ushort tmp = registers[14];
+            registers[14] = (ushort)(tmp&0xfc00 | tmp+1&0x3ff);
         }
         // Setup I/O port for fetch
         protected void setupLoad(){
@@ -437,24 +472,24 @@ namespace HuntaBaddayCPUmod
         
         // Set the carry flag depending on the input
         protected void genCarry(int data){
-            registers[7] &= 0b1111111111111110;
+            registers[15] &= 0b1111111111111110;
             // Check if there was an overflow from an addition
-            if(data >= 0x10000){
-                registers[7] |= 0b1;
+            if((uint)data >= 0x10000){
+                registers[15] |= 0b1;
             }
         }
         
         // Generate zero and negative flags
         protected void genStatus(ushort data){
-            if(op1 == 7){
+            if(op1 == 15){
                 return;
             }
-            registers[7] &= 0b1111111111111001;
+            registers[15] &= 0b1111111111111001;
             if(data == 0){
-                registers[7] |= 0b10;
+                registers[15] |= 0b10;
             }
             if((data & 0x8000) == 0x8000){
-                registers[7] |= 0b100;
+                registers[15] |= 0b100;
             }
         }
         

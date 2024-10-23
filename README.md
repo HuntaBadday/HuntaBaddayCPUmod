@@ -4,7 +4,7 @@ A mod for Logic World that adds processors and other useful microchips!\
 Please create an issue or ping/message me (huntabadday6502 on discord) for ANY questions or problems you have. (Related to this mod). You may also request new components.
 
 ### Included components
-- LWC3.1 16 bit microprocessor
+- LWC31 16 bit microprocessor
 - MOS 6502 microprocessor
 - 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
 - TSC-6530 Dual timer chip
@@ -12,14 +12,12 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 - TurnerNet network switch
 - 4 bit multiplexers and demultiplexers
 
-## LWC 3.1
+## LWC 31
 
 ### Helpful Tools:
-Instruction Reference: https://docs.google.com/spreadsheets/d/15QtVbXtz8gos2C4d7pLwn_2SpXMISwSytKTilIrm0DM/edit#gid=0
-
 CustomASM assembler: https://github.com/hlorenzi/customasm \
 CustomASM instruction definitions: lwc31.asm\
-lwc31.asm also replaces instructions like "ALU" and "JIF" with thier expansions.
+lwc31.asm also replaces instructions like "ALU", "JIF" and "INT" with thier expansions, also adds abbreviations for LOD and STO, as well as macros for clearing and setting the carry.
 
 LWC31 Processor documentation: TSC-LWC31.pdf
 Remote file: https://huntabadday.com/docs/TSC-LWC31.pdf
@@ -171,7 +169,7 @@ To write, put the data on the inputs, the data will be written on the rising edg
 ```
 
 ### Interval Timers
-Each interval consists of a 16-bit read-only Timer Counter and a 16-bit write only Timer Latch. Data written to the timer are latched in the Timer Latch, while data read from the timer are the present contents of the Time Counter. The timers can be used independently or linked for extended operations. The various timer modes allow generation of time delays and variable frequency output. Utilizing the CNT input, the timers can count external pulses or measure frequency, pulse width and delay times of external signals. Each time has an associated control register, providing independant control of the following functions:
+Each interval timer consists of a 16-bit read-only Timer Counter and a 16-bit write only Timer Latch. Data written to the timer are latched in the Timer Latch, while data read from the timer are the present contents of the Time Counter. The timers can be used independently or linked for extended operations. The various timer modes allow generation of time delays and variable frequency output. Utilizing the CNT input, the timers can count external pulses or measure frequency, pulse width and delay times of external signals. Each timer has an associated control register, providing independant control of the following functions:
 
 #### Start/Stop
 A control bit allows the timer to be started and stopped.
