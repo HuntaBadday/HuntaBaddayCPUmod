@@ -1,8 +1,10 @@
 using LogicAPI.Server.Components;
+using System;
 
 namespace HuntaBaddayCPUmod {
     
     public class TSC6530 : LogicComponent {
+        public override bool HasPersistentValues => true;
         const int databus = 0;
         const int CSpin = 8;
         const int Rpin = 9;
@@ -326,9 +328,95 @@ namespace HuntaBaddayCPUmod {
         protected bool getInput(int num){
             return base.Inputs[num].On;
         }
+        
         // Write a pin
         protected void setOutput(int num, bool state){
             base.Outputs[num].On = state;
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            // Variables to save
+            /*
+            bool lastClock;
+            bool lastCNT;
+            bool lastWrite;
+            byte lastExt;
+            bool hasICRread;
+            
+            byte ICRData;
+            byte ICRMask;
+            byte CRA;
+            byte CRB;
+            
+            byte TAL;
+            byte TAH;
+            byte TBL;
+            byte TBH;
+            byte TALL;
+            byte TAHL;
+            byte TBLL;
+            byte TBHL;
+            bool TAOut;
+            bool TBOut;
+            */
+            
+            byte[] data = new byte[19];
+            
+            data[0] = Convert.ToByte(lastClock);
+            data[1] = Convert.ToByte(lastCNT);
+            data[2] = Convert.ToByte(lastWrite);
+            data[3] = lastExt;
+            data[4] = Convert.ToByte(hasICRread);
+            
+            data[5] = ICRData;
+            data[6] = ICRMask;
+            data[7] = CRA;
+            data[8] = CRB;
+            
+            data[9] = TAL;
+            data[10] = TAH;
+            data[11] = TBL;
+            data[12] = TBH;
+            data[13] = TALL;
+            data[14] = TAHL;
+            data[15] = TBLL;
+            data[16] = TBHL;
+            data[17] = Convert.ToByte(TAOut);
+            data[18] = Convert.ToByte(TBOut);
+            
+            return data;
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if(data == null){
+                // New object
+                return;
+            } if(data.Length != 19){
+                // Bad data
+                return;
+            }
+            
+            lastClock = Convert.ToBoolean(data[0]);
+            lastCNT = Convert.ToBoolean(data[1]);
+            lastWrite = Convert.ToBoolean(data[2]);
+            lastExt = data[3];
+            hasICRread = Convert.ToBoolean(data[4]);
+            
+            ICRData = data[5];
+            ICRMask = data[6];
+            CRA = data[7];
+            CRB = data[8];
+            
+            TAL = data[9];
+            TAH = data[10];
+            TBL = data[11];
+            TBH = data[12];
+            TALL = data[13];
+            TAHL = data[14];
+            TBLL = data[15];
+            TBHL = data[16];
+            TAOut = Convert.ToBoolean(data[17]);
+            TBOut = Convert.ToBoolean(data[18]);
         }
     }
 }

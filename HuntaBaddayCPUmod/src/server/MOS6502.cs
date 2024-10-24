@@ -1,10 +1,12 @@
 using LogicAPI.Server.Components;
+using System;
 
 namespace HuntaBaddayCPUmod
 {
     public class MOS6502 : LogicComponent
     {
-        // Reference for me to know what input and output id each pin is
+        public override bool HasPersistentValues => true;
+        // Reference to know what input and output id each pin is
         // I 0      I 19
         // I 1      O 19
         // O 0      I 18
@@ -263,7 +265,7 @@ namespace HuntaBaddayCPUmod
         
         // Registers
         byte ir = 0;
-        string irInst = "";
+        string irInst = "   ";
         int irMode = 0;
         int irAmt = 0;
         byte pcLo = 0;
@@ -1677,6 +1679,159 @@ namespace HuntaBaddayCPUmod
                 }
             }
             return -1;
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            // All saved variables:
+            /*
+            // Some states
+            bool lastClkState = false;
+            bool pause = false;
+            bool lastRdy = false;
+            bool lastOFpinState = false;
+            bool phi1 = false;
+            bool phi2 = false;
+            bool isPhi2 = false;
+            bool resetTrigger = false;
+            bool resetTriggerInt = false;
+            bool wasFetch = false;
+            bool insideInterrupt = false;
+            int interruptType = 0;
+            
+            // Registers
+            byte ir = 0;
+            string irInst = "   "; // 3 bytes always
+            int irMode = 0;
+            int irAmt = 0;
+            byte pcLo = 0;
+            byte pcHi = 0;
+            byte sp = 0;
+            byte st = 0;
+            
+            byte acc = 0;
+            byte indexX = 0;
+            byte indexY = 0;
+            
+            int state = 0;
+            int addrState = 0;
+            int relState = 0;
+            bool addressModeDone = false;
+            bool addressModeAcc = false;
+            
+            byte DBL1 = 0;
+            byte DBL2 = 0;
+            bool loadIr = false;
+            bool loadPCL = false;
+            bool loadPCH = false;
+            bool loadA = false;
+            bool loadX = false;
+            bool loadY = false;
+            bool loadSt = false;
+            bool loadDBL1 = false;
+            bool loadDBL2 = false;
+            bool endInstruction = false;
+            */
+            
+            byte[] data = new byte[38];
+            data[0] = Convert.ToByte(lastClkState);
+            data[1] = Convert.ToByte(pause);
+            data[2] = Convert.ToByte(lastRdy);
+            data[3] = Convert.ToByte(lastOFpinState);
+            data[4] = Convert.ToByte(phi1);
+            data[5] = Convert.ToByte(phi2);
+            data[6] = Convert.ToByte(isPhi2);
+            data[7] = Convert.ToByte(resetTrigger);
+            data[8] = Convert.ToByte(resetTriggerInt);
+            data[9] = Convert.ToByte(wasFetch);
+            data[10] = Convert.ToByte(insideInterrupt);
+            data[11] = (byte)interruptType; // Never more than a byte
+            
+            data[12] = (byte)irMode; // Never more than a byte
+            data[13] = (byte)irAmt; // Never more than a byte
+            data[14] = pcLo;
+            data[15] = pcHi;
+            data[16] = sp;
+            data[17] = st;
+            
+            data[18] = acc;
+            data[19] = indexX;
+            data[20] = indexY;
+            
+            data[21] = (byte)state; // Never more thana byte
+            data[22] = (byte)addrState; // Never more than a byte
+            data[23] = (byte)relState; // Never more than a byte
+            
+            data[24] = Convert.ToByte(addressModeDone);
+            data[25] = Convert.ToByte(addressModeAcc);
+            
+            data[26] = DBL1;
+            data[27] = DBL2;
+            data[28] = Convert.ToByte(loadIr);
+            data[29] = Convert.ToByte(loadPCL);
+            data[30] = Convert.ToByte(loadPCH);
+            data[31] = Convert.ToByte(loadA);
+            data[32] = Convert.ToByte(loadX);
+            data[33] = Convert.ToByte(loadY);
+            data[34] = Convert.ToByte(loadSt);
+            data[35] = Convert.ToByte(loadDBL1);
+            data[36] = Convert.ToByte(loadDBL2);
+            data[37] = Convert.ToByte(endInstruction);
+            
+            return data;
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if(data == null){
+                // New object
+                return;
+            } else if(data.Length != 38){
+                // Bad data
+                return;
+            }
+            
+            lastClkState = Convert.ToBoolean(data[0]);
+            pause = Convert.ToBoolean(data[1]);
+            lastRdy = Convert.ToBoolean(data[2]);
+            lastOFpinState = Convert.ToBoolean(data[3]);
+            phi1 = Convert.ToBoolean(data[4]);
+            phi2 = Convert.ToBoolean(data[5]);
+            isPhi2 = Convert.ToBoolean(data[6]);
+            resetTrigger = Convert.ToBoolean(data[7]);
+            resetTriggerInt = Convert.ToBoolean(data[8]);
+            wasFetch = Convert.ToBoolean(data[9]);
+            insideInterrupt = Convert.ToBoolean(data[10]);
+            interruptType = (int)data[11];
+            
+            irMode = (int)data[12];
+            irAmt = (int)data[13];
+            pcLo = data[14];
+            pcHi = data[15];
+            sp = data[16];
+            st = data[17];
+            
+            acc = data[18];
+            indexX = data[19];
+            indexY = data[20];
+            
+            state = (int)data[21];
+            addrState = (int)data[22];
+            relState = (int)data[23];
+            
+            addressModeDone = Convert.ToBoolean(data[24]);
+            addressModeAcc = Convert.ToBoolean(data[25]);
+            
+            DBL1 = data[26];
+            DBL2 = data[27];
+            loadIr = Convert.ToBoolean(data[28]);
+            loadPCL = Convert.ToBoolean(data[29]);
+            loadPCH = Convert.ToBoolean(data[30]);
+            loadA = Convert.ToBoolean(data[31]);
+            loadX = Convert.ToBoolean(data[32]);
+            loadY = Convert.ToBoolean(data[33]);
+            loadSt = Convert.ToBoolean(data[34]);
+            loadDBL1 = Convert.ToBoolean(data[35]);
+            loadDBL2 = Convert.ToBoolean(data[36]);
+            endInstruction = Convert.ToBoolean(data[37]);
         }
     }
 }

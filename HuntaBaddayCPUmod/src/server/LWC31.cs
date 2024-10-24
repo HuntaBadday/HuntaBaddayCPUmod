@@ -1,9 +1,12 @@
 using LogicAPI.Server.Components;
+using System;
 
 namespace HuntaBaddayCPUmod
 {
     public class LWC31 : LogicComponent
     {
+        public override bool HasPersistentValues => true;
+        
         // Define constants for each instruction and operation
         const int BRK = 0;
         const int JMP = 1;
@@ -544,6 +547,91 @@ namespace HuntaBaddayCPUmod
         // Read a pin's state
         protected bool readPin(int pin){
             return base.Inputs[pin].On;
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            // Variables to save (in order)
+            /*
+            ushort pc = 0;
+            ushort ir = 0;
+            
+            ushort CPUstate = 0;
+            ushort execPhase = 1;
+            
+            int inst = 0;
+            int op1 = 0;
+            int op2 = 0;
+            int op3 = 0;
+            
+            ushort interruptAddr = 0;
+            bool insideInt = false;
+            bool lastClkState = false;
+            bool lastSetCarry = false;
+            
+            ushort[] registers = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            */
+            
+            byte[] data = new byte[47];
+            
+            data[0] = (byte)(pc&0xff);
+            data[1] = (byte)(pc>>8);
+            
+            data[2] = (byte)(ir&0xff);
+            data[3] = (byte)(ir>>8);
+            
+            data[4] = (byte)CPUstate;
+            data[5] = (byte)execPhase;
+            
+            data[6] = (byte)inst;
+            data[7] = (byte)op1;
+            data[8] = (byte)op2;
+            data[9] = (byte)op3;
+            
+            data[10] = (byte)(interruptAddr&0xff);
+            data[11] = (byte)(interruptAddr>>8);
+            
+            data[12] = Convert.ToByte(insideInt);
+            data[13] = Convert.ToByte(lastClkState);
+            data[14] = Convert.ToByte(lastSetCarry);
+            
+            for(int i = 0; i < 16; i++){
+                data[15+i*2] = (byte)(registers[i]&0xff);
+                data[16+i*2] = (byte)(registers[i]>>8);
+            }
+            
+            return data;
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if(data == null){
+                // New object
+                return;
+            } if(data.Length != 47){
+                // Bad data
+                return;
+            }
+            
+            pc = (ushort)(data[0] | (data[1]<<8));
+            ir = (ushort)(data[2] | (data[3]<<8));
+            
+            CPUstate = (ushort)data[4];
+            execPhase = (ushort)data[5];
+            
+            inst = (ushort)data[6];
+            op1 = (ushort)data[7];
+            op2 = (ushort)data[8];
+            op3 = (ushort)data[9];
+            
+            interruptAddr = (ushort)(data[10] | (data[11]<<8));
+            
+            insideInt = Convert.ToBoolean(data[12]);
+            lastClkState = Convert.ToBoolean(data[13]);
+            lastSetCarry = Convert.ToBoolean(data[14]);
+            
+            for(int i = 0; i < 16; i++){
+                registers[i] = (ushort)(data[15+i*2] | (data[16+i*2]<<8));
+            }
+            
         }
     }
 }

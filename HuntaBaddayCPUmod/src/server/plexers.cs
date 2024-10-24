@@ -1,4 +1,5 @@
 using LogicAPI.Server.Components;
+using System;
 
 // NOTE TO MYSELF
 // THE PLEXERS THAT SAY INV ARE THE NORMAL ONE!!
@@ -60,6 +61,7 @@ namespace HuntaBaddayCPUmod {
     }
     
     public class BiPlexer16 : LogicComponent {
+        public override bool HasPersistentValues => true;
         const int plexPin = 0;
         const int enablePin = 4;
         const int frontInputPin = 5;
@@ -74,6 +76,7 @@ namespace HuntaBaddayCPUmod {
             }
             previousPlex = plex;
         }
+        
         protected int readPlex(){
             int data = 0;
             for(int i = 0; i < 4; i++){
@@ -84,8 +87,25 @@ namespace HuntaBaddayCPUmod {
             }
             return data;
         }
+        
         public override bool InputAtIndexShouldTriggerComponentLogicUpdates(int inputIndex){
-            return inputIndex==plexPin || inputIndex==plexPin+1 || inputIndex==plexPin+2 || inputIndex==plexPin+3 ||inputIndex==enablePin;
+            return inputIndex==plexPin || inputIndex==plexPin+1 || inputIndex==plexPin+2 || inputIndex==plexPin+3 || inputIndex==enablePin;
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            byte[] data = new byte[1];
+            data[0] = (byte)previousPlex;
+            return data;
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if(data == null){
+                // New object
+                return;
+            }
+            if(data.Length == 1){
+                previousPlex = (int)data[0];
+            }
         }
     }
     public class Multiplexer16Inv : LogicComponent {
@@ -141,6 +161,7 @@ namespace HuntaBaddayCPUmod {
     }
     
     public class BiPlexer16Inv : LogicComponent {
+        public override bool HasPersistentValues => true;
         const int plexPin = 0;
         const int enablePin = 4;
         const int frontInputPin = 5;
@@ -148,6 +169,7 @@ namespace HuntaBaddayCPUmod {
         int previousPlex = 0;
         
         protected override void DoLogicUpdate(){
+            
             int plex = readPlex();
             base.Inputs[backInputPin].RemovePhasicLinkWith(base.Inputs[frontInputPin+previousPlex]);
             if(base.Inputs[enablePin].On){
@@ -155,6 +177,7 @@ namespace HuntaBaddayCPUmod {
             }
             previousPlex = plex;
         }
+        
         protected int readPlex(){
             int data = 0;
             for(int i = 0; i < 4; i++){
@@ -165,8 +188,25 @@ namespace HuntaBaddayCPUmod {
             }
             return data;
         }
+        
         public override bool InputAtIndexShouldTriggerComponentLogicUpdates(int inputIndex){
             return inputIndex==plexPin || inputIndex==plexPin+1 || inputIndex==plexPin+2 || inputIndex==plexPin+3 ||inputIndex==enablePin;
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            byte[] data = new byte[1];
+            data[0] = (byte)previousPlex;
+            return data;
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if(data == null){
+                // New object
+                return;
+            }
+            if(data.Length == 1){
+                previousPlex = (int)data[0];
+            }
         }
     }
 }

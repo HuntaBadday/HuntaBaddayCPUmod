@@ -15,16 +15,27 @@ namespace HuntaBaddayCPUmod {
         const int bufferFull = 9;
         
         byte[] memory = new byte[0x10000];
-        ushort ptr1 = 0;
-        ushort ptr2 = 0;
-        bool lastWrite = false;
-        bool lastRead = false;
-        bool full = false;
+        ushort ptr1;
+        ushort ptr2;
+        bool lastWrite;
+        bool lastRead;
+        bool full;
         
         protected override void Initialize(){
         }
         protected override void DoLogicUpdate(){
             if(base.Inputs[resetPin].On){
+                // Do this junk so spamming reset doesn't lag the simulation
+                if (full){
+                    for(int i = 0; i < 0x10000; i++){
+                        memory[i] = 0;
+                    }
+                } else {
+                    for(int i = ptr2; i < ptr1; i++){
+                        memory[i] = 0;
+                    }
+                }
+                
                 ptr1 = 0;
                 ptr2 = 0;
                 full = false;
@@ -38,6 +49,7 @@ namespace HuntaBaddayCPUmod {
             }
             if(base.Inputs[readBuffer].On && !lastRead && (ptr1 != ptr2 || full)){
                 writeOutput(memory[(int)ptr2]);
+                memory[(int)ptr2] = 0;
                 ptr2++;
                 full = false;
             }
@@ -57,55 +69,77 @@ namespace HuntaBaddayCPUmod {
             lastRead = base.Inputs[readBuffer].On;
         }
         
-        // Used to save / load cpu state
+        // Used to save / load state and data
         protected override byte[] SerializeCustomData(){
-            return null;
-            byte[] data = new byte[0x10000 + 2 + 2];
+            // Structure:
+            // x0 - xFFFF - Data
+            // x10000 - x10001 - ptr1
+            // x10002 - x10003 - ptr2
+            // x10004 - lastWrite
+            // x10005 - lastRead
+            // x10006 - full
+            
+            byte[] data = new byte[0x10000 + 2 + 2 + 3];
             
             Buffer.BlockCopy(memory, 0, data, 0, 0x10000);
             
-            data[0x10000] = (byte)(ptr1>>8);
-            data[0x10001] = (byte)(ptr1&0xff);
+            data[0x10000] = (byte)(ptr1&0xff);
+            data[0x10001] = (byte)(ptr1>>8);
             
-            data[0x10002] = (byte)(ptr2>>8);
-            data[0x10003] = (byte)(ptr2&0xff);
+            data[0x10002] = (byte)(ptr2&0xff);
+            data[0x10003] = (byte)(ptr2>>8);
+            
+            data[0x10004] = Convert.ToByte(lastWrite);
+            data[0x10005] = Convert.ToByte(lastRead);
+            data[0x10006] = Convert.ToByte(full);
             
             MemoryStream memstream = new MemoryStream();
             memstream.Position = 0;
             DeflateStream compressor = new DeflateStream(memstream, CompressionLevel.Optimal, true);
+            
             compressor.Write(data, 0, data.Length);
             compressor.Flush();
+            
             int length = (int)memstream.Position;
             memstream.Position = 0;
             byte[] output = new byte[length];
             memstream.Read(output, 0, length);
             
-            memstream.Dispose();
-            compressor.Dispose();
-            
             return output;
         }
         protected override void DeserializeData(byte[] data){
-            return;
             if(data == null){
                 // New object
-				//return;
+                ptr1 = 0;
+                ptr2 = 0;
+                lastWrite = false;
+                lastRead = false;
+                full = false;
+				return;
 			}
             
-            byte[] customdata = new byte[0x10000 + 2 + 2];
-            MemoryStream memstream = new MemoryStream(customdata);
+            byte[] customdata = new byte[0x10000 + 2 + 2 + 3];
+            
+            MemoryStream memstream = new MemoryStream(data);
             memstream.Position = 0;
             DeflateStream decompressor = new DeflateStream(memstream, CompressionMode.Decompress);
             int length = decompressor.Read(customdata, 0, customdata.Length);
             
-            memstream.Dispose();
-            decompressor.Dispose();
+            if(length == (0x10000 + 2 + 2 + 3)){
+                Buffer.BlockCopy(customdata, 0, memory, 0, 0x10000);
             
-            if(length == (0x10000 + 2 + 2)){
-                Buffer.BlockCopy(data, 0, memory, 0, 0x10000);
-            
-                ptr1 = (ushort)((customdata[0x10000]<<8) | (customdata[0x10001]));
-                ptr2 = (ushort)((customdata[0x10002]<<8) | (customdata[0x10003]));
+                ptr1 = (ushort)((customdata[0x10000]) | (customdata[0x10001]<<8));
+                ptr2 = (ushort)((customdata[0x10002]) | (customdata[0x10003]<<8));
+                
+                lastWrite = Convert.ToBoolean(customdata[0x10004]);
+                lastRead = Convert.ToBoolean(customdata[0x10005]);
+                full = Convert.ToBoolean(customdata[0x10006]);
+            } else {
+                ptr1 = 0;
+                ptr2 = 0;
+                lastWrite = false;
+                lastRead = false;
+                full = false;
             }
             return;
         }
