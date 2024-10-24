@@ -320,14 +320,24 @@ namespace HuntaBaddayCPUmod
                             genCarry(tmp);
                             break;
                         case DIV:
-                            q = (ushort)(registers[op1] / registers[op2]);
-                            r = (ushort)(registers[op1] % registers[op2]);
+                            if(registers[op2] == 0){
+                                q = 0xffff;
+                                r = registers[op1];
+                            } else {
+                                q = (ushort)(registers[op1] / registers[op2]);
+                                r = (ushort)(registers[op1] % registers[op2]);
+                            }
                             registers[op1] = q;
                             registers[13] = r;
                             break;
                         case SDIV:
-                            q = (ushort)((short)registers[op1] / (short)registers[op2]);
-                            r = (ushort)((short)registers[op1] % (short)registers[op2]);
+                            if(registers[op2] == 0){
+                                q = 0xffff;
+                                r = registers[op1];
+                            } else {
+                                q = (ushort)((short)registers[op1] / (short)registers[op2]);
+                                r = (ushort)((short)registers[op1] % (short)registers[op2]);
+                            }
                             registers[op1] = q;
                             registers[13] = r;
                             break;
