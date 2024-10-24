@@ -321,8 +321,8 @@ namespace HuntaBaddayCPUmod
                             break;
                         case DIV:
                             if(registers[op2] == 0){
-                                q = 0xffff;
-                                r = registers[op1];
+                                q = 0;
+                                r = 0;
                             } else {
                                 q = (ushort)(registers[op1] / registers[op2]);
                                 r = (ushort)(registers[op1] % registers[op2]);
@@ -332,8 +332,8 @@ namespace HuntaBaddayCPUmod
                             break;
                         case SDIV:
                             if(registers[op2] == 0){
-                                q = 0xffff;
-                                r = registers[op1];
+                                q = 0;
+                                r = 0;
                             } else {
                                 q = (ushort)((short)registers[op1] / (short)registers[op2]);
                                 r = (ushort)((short)registers[op1] % (short)registers[op2]);
