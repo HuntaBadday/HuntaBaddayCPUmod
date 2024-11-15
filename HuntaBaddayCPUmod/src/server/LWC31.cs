@@ -107,7 +107,7 @@ namespace HuntaBaddayCPUmod
                 setWrite(0);
                 setRead(1);
                 setUB(1);
-                registers[7] |= 0b1000;
+                registers[15] |= 0b1000;
                 CPUstate = 0;
                 lastClkState = readPin(clkPin);
                 insideInt = false;
@@ -116,7 +116,7 @@ namespace HuntaBaddayCPUmod
             
             // Set the carry if the set carry pin goes high
             if(readPin(setCarryPin) && !lastSetCarry){
-                registers[7] |= 0b001;
+                registers[15] |= 0b001;
             }
             lastSetCarry = readPin(setCarryPin);
             
@@ -138,7 +138,7 @@ namespace HuntaBaddayCPUmod
             if(CPUstate == 1 && readPin(clkPin)){
                 CPUstate = 2;
                 // If the interrupt pin is enabled inject a "brk" instruction to the instruction register
-                if(readPin(interruptPin) && !insideInt && (registers[7] & 0b1000) == 0){
+                if(readPin(interruptPin) && !insideInt && (registers[15] & 0b1000) == 0){
                     ir = 0;
                 } else {
                     ir = readBus();
