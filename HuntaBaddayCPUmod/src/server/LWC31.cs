@@ -283,19 +283,27 @@ namespace HuntaBaddayCPUmod
                             break;
                         case SHL:
                             registers[op1] = (ushort)(registers[op1] << 1);
-                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal >> 15));
+                            if (op1 != 15){
+                                registers[15] = (ushort)((registers[15]&0xfffe) | (preVal >> 15));
+                            }
                             break;
                         case ROL:
                             registers[op1] = (ushort)((registers[op1] << 1) | (registers[15] & 0x1));
-                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal >> 15));
+                            if (op1 != 15){
+                                registers[15] = (ushort)((registers[15]&0xfffe) | (preVal >> 15));
+                            }
                             break;
                         case SHR:
                             registers[op1] = (ushort)(registers[op1] >> 1);
-                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal & 0x1));
+                            if (op1 != 15){
+                                registers[15] = (ushort)((registers[15]&0xfffe) | (preVal & 0x1));
+                            }
                             break;
                         case ROR:
                             registers[op1] = (ushort)((registers[op1] >> 1) | ((registers[15] & 0x1) << 15));
-                            registers[15] = (ushort)((registers[15]&0xfffe) | (preVal & 0x1));
+                            if (op1 != 15){
+                                registers[15] = (ushort)((registers[15]&0xfffe) | (preVal & 0x1));
+                            }
                             break;
                         case AND:
                             registers[op1] = (ushort)(registers[op1] & registers[op2]);
