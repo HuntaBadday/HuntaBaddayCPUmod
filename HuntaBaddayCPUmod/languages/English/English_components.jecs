@@ -8,6 +8,11 @@ HuntaBaddayCPUmod.Buffer16: "16 Bit FIFO"
 HuntaBaddayCPUmod.Buffer8LIFO: "8 Bit LIFO"
 HuntaBaddayCPUmod.Buffer16LIFO: "16 Bit LIFO"
 
+HuntaBaddayCPUmod.Buffer8_sw: "8 Bit FIFO Switched"
+HuntaBaddayCPUmod.Buffer16_sw: "16 Bit FIFO Switched"
+HuntaBaddayCPUmod.Buffer8LIFO_sw: "8 Bit LIFO Switched"
+HuntaBaddayCPUmod.Buffer16LIFO_sw: "16 Bit LIFO Switched"
+
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
 HuntaBaddayCPUmod.TNET_Recv: "Receiver"
 HuntaBaddayCPUmod.TNET_Recv2: "Receiver INT"
