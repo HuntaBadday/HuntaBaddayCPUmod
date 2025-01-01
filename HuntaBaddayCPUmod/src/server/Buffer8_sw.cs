@@ -56,11 +56,14 @@ namespace HuntaBaddayCPUmod {
                 writeOutput(0);
             }
             
-            if(ptr1 != ptr2 || full){
-                base.Outputs[dataAvailable].On = true;
-            } else {
-                base.Outputs[dataAvailable].On = false;
+            if(!base.Inputs[readBuffer].On) {
+                if(ptr1 != ptr2 || full){
+                    base.Outputs[dataAvailable].On = true;
+                } else {
+                    base.Outputs[dataAvailable].On = false;
+                }
             }
+            
             if(full){
                 base.Outputs[bufferFull].On = true;
             } else {
