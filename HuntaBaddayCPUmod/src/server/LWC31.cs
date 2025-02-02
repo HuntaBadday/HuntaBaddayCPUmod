@@ -140,9 +140,13 @@ namespace HuntaBaddayCPUmod
                 // If the interrupt pin is enabled inject a "brk" instruction to the instruction register
                 if(readPin(interruptPin) && !insideInt && (registers[15] & 0b1000) == 0){
                     ir = 0;
+                    registers[15] &= 0b1111111111101111;
                 } else {
                     ir = readBus();
                     pc++;
+                    if (ir == 0) {
+                        registers[15] |= 0b10000;
+                    }
                 }
                 setAddress(pc);
                 return;
