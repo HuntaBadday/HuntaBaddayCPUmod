@@ -1,0 +1,762 @@
+TSC6540:
+    column: "HBCM"
+    category: "IC"
+    
+    prefab:
+            blocks:
+                -
+                    color: 2e2e2e
+                    position: (0, 0, 0.5)
+                    scale: (13, 1, 2)
+            
+            inputs:
+                -
+                    position:
+                        x: -5.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -5.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -0.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -0.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: 0.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 0.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 1.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: 1.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 2.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 2.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 2.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 3.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 3.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 3.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 4.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 4.33
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 4.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 5.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: 5.66
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 6.00
+                        y: 0.5
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                
+            outputs:
+                -
+                    position:
+                        x: -5.33
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -5.00
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.66
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.33
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.00
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.66
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.33
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.00
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.66
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.33
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.00
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.66
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.33
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.00
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -0.66
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -0.33
+                        y: 0.7
+                        z: -0.5
+                    rotation:
+                        x: -90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: -6.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -5.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -5.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -5.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -4.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -3.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: -3.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -2.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -1.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: -0.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: 0.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 0.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 0.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 1.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 1.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 1.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 2.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 2.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 2.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 3.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 3.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 3.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 4.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 4.33
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 4.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 5.00
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                
+                -
+                    position:
+                        x: 5.66
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                -
+                    position:
+                        x: 6
+                        y: 0.5
+                        z: 1.5
+                    rotation:
+                        x: 90
+                        y: 0
+                        z: 0
+                
+    logicCode: HuntaBaddayCPUmod.TSC6540
+    placingRules: Standard

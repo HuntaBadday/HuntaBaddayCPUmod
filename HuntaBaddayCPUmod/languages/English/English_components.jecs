@@ -2,6 +2,7 @@ HuntaBaddayCPUmod.LWC31: "LWC 3.1"
 HuntaBaddayCPUmod.MOS6502: "MOS 6502"
 
 HuntaBaddayCPUmod.TSC6530: "TSC6530"
+HuntaBaddayCPUmod.TSC6540: "TSC6540"
 
 HuntaBaddayCPUmod.Buffer8: "8 Bit FIFO"
 HuntaBaddayCPUmod.Buffer16: "16 Bit FIFO"

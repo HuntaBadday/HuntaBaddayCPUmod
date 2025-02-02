@@ -11,9 +11,9 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 - TurnerNet network transmitter/receiver
 - TurnerNet network switch
 - 4 bit multiplexers and demultiplexers
+- TSC-6540 Video chip
 
 ## LWC 31
-
 ### Helpful Tools:
 CustomASM assembler: https://github.com/hlorenzi/customasm \
 CustomASM instruction definitions: lwc31.asm\
@@ -290,3 +290,101 @@ On the front are 6 pins. From right to left is:
 There are versions of the plexers that have an output disable pin in place of the enable.
 
 On the back are 16 pins for the multiplexed signal.
+
+## TSC6540 Video Chip
+The TSC6540 is a video chip which can be useful for driving a bitmap screen. This chip is capable of driving text, as well as displaying custom graphics.
+
+### Pinout
+#### Computer facing side (Side with input pegs) (From left to right):
+- Data pins: D15 - D0
+- Enable (To allow the device to read/write to the data bus)
+- Read
+- Write
+- Address pins: A10 - A0 (Address pin A10 can virtually be used as a select to select between text memory and internal control registers)
+- DE (While HIGH, draw to the screen)
+- RST (Clears the internal draw buffer)
+
+#### Screen facing side (Side with output pegs) (From left to right):
+- Fill (While HIGH, set the whole screen to the selected colour)
+- Set (Draw the colour to the selected X/Y location)
+- Colour: C0 - C15
+- X position: X0 - X7
+- Y position: Y0 - Y7
+
+### How to use:
+#### Text buffer:
+Reading / writing to the text buffer can be done when access the chip at addresses 0x000 - 0x3FF.
+
+#### Internal control registers:
+Reading / writing to the internal control registers can be done when accessing the chip at addresses 0x400 - 0x40F.
+<br>
+I.E.: 0x0 - 0xF with A10 HIGH.
+
+#### Internal control register list:
+```
+0x0        : VRAM Address (Auto increment)
+0x1        : VRAM Read/Write
+0x2        : Screen Buffer Address (Auto increment)
+0x3        : Screen Buffer Read/Write
+0x4        : Resolution X (Set the display width)
+0x5        : Resolution Y (Set the display height)
+0x6        : Text Dimension X (Set the text window width)
+0x7        : Text Dimension Y (Set the text window height)
+0x8        : Text offset X (Set the text window offset from the left)
+0x9        : Text offset Y (Set the text window offset from the top)
+0xA        : Control register (Extra control register)
+0xB        : Text scroll (Scroll text up by an amount)
+0xC        : Graphic display Y/X (Bits 0-7: Graphics display X position; 8-15: Graphics display Y position)
+0xD        : Graphic display vector (On write, display a graphic defined in VRAM at the specified address, at the specified location by register 0xC)
+0xE        : Currently unused
+0xF        : Character set location (Vector pointing to a custom character set) (0 to use default character set)
+```
+
+###### Extra control register:
+A write to this register with the specified bit set to 1 will perform the specified action.
+```
+0: Clear all (Resets to the colour in the first slot; set to default character set; Sets all characters to spaces)
+1: Clear text (Sets all characters to spaces)
+2: Reset colour memory (Resets to the colour in the first slot)
+3: 
+4: 
+5: 
+6:  
+7: Redraw (Redraws all of the text) (This really shouldn't be used)
+```
+
+#### VRAM
+You can read and write to the internal VRAM memory by using control register 0x1, the address you read or write to can be set using control register 0x0. When reading or writing to VRAM, the address register is incremented automatically.
+
+#### Internal VRAM memory map:
+```
+0x0000 - 0x0400: Text buffer (This is also accessed using normal writes to the chip from addresses 0x000 - 0x3FF)
+0x0400 - 0x07FF: Text foreground colour (Defines the foreground colour of every character)
+0x0800 - 0x0BFF: Text background colour (Defines the background colour of every character)
+0x0C00 - 0x0C7F: Characters 0x80 to 0xff when using the default character set
+0x0C80 - 0xFFFF: Free memory
+```
+
+#### Custom character sets
+To use a custom character set, upload the character data to VRAM, and set control register 0xF to point to the start of this data.
+A character set contains a list of characters, where each character is defined by 8, 8-bit bytes. Each byte represents one line of the character, each bit in the byte representing a pixel, an on bit is set to the foreground colour, and off bit is set to the background colour.
+This makes every character exactly 8x8 pixels.
+
+#### Displaying graphics
+To display a graphic, you must upload a graphic to the chip, and make a graphic definition. The graphic is a list of colour values, each representing a single pixel.
+<br>
+A graphic definition is made of 3, 16 bit bytes:
+```
+0: Res X (Graphic width)
+1: Res Y (Graphic height)
+2: Data vector (Vector pointing to the start of the graphic data)
+```
+
+#### Getting started (Basic chip setup):
+1. Set resolution to screen width and height.
+2. Set text dimensions to fill the screen.
+3. Set X and Y offset to 0.
+4. Set character set vector to 0 (Use the default character set).
+5. Set VRAM address 0x0400 to foreground colour for text.
+6. Set VRAM address 0x0800 to background colour for text.
+7. Write 0x0001 to control register 0xA to clear the text, and to set all of the colour memory.
