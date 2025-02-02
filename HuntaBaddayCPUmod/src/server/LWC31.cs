@@ -43,27 +43,27 @@ namespace HuntaBaddayCPUmod
         const int NEG = 15;
         
         // Array for how many operands each instruction uses
-        int[] opNums = {
+        static readonly int[] opNums = {
             0, 1, 2, 2, 2, 2, 2, 1, 0, 1, 0, 1, 0, 1, 0, 0
         };
         
         // All instructions that can have turbo
-        int[] perfBypass = {
+        static readonly int[] perfBypass = {
             0, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0
         };
         
         // All pin numbers
-        static int addressPin = 0;
-        static int WritePin = 16;
-        static int ReadPin = 17;
-        static int dataPinW = 18;
-        static int dataPinR = 0;
-        static int rstPin = 16;
-        static int clkPin = 17;
-        static int useBusPin = 34;
-        static int setCarryPin = 18;
-        static int interruptPin = 19;
-        static int turboPin = 20;
+        const int addressPin = 0;
+        const int WritePin = 16;
+        const int ReadPin = 17;
+        const int dataPinW = 18;
+        const int dataPinR = 0;
+        const int rstPin = 16;
+        const int clkPin = 17;
+        const int useBusPin = 34;
+        const int setCarryPin = 18;
+        const int interruptPin = 19;
+        const int turboPin = 20;
         
         // Program counter and instruction register
         ushort pc = 0;
@@ -134,7 +134,7 @@ namespace HuntaBaddayCPUmod
                 return;
             }
             
-            // Fetech phase
+            // Fetch phase
             if(CPUstate == 1 && readPin(clkPin)){
                 CPUstate = 2;
                 // If the interrupt pin is enabled inject a "brk" instruction to the instruction register
@@ -159,7 +159,7 @@ namespace HuntaBaddayCPUmod
             
             // Execute first phase of instruction
             if(CPUstate == 3 && execPhase == 1){
-                // 0000 000 000 0000 00
+                // 0000 0000 0000 0000
                 inst = (ir >> 12) & 0b1111;
                 op1 = (ir >> 8) & 0b1111;
                 op2 = (ir >> 4) & 0b1111;
@@ -172,12 +172,14 @@ namespace HuntaBaddayCPUmod
                 } else {
                     execPhase = 2;
                 }
+                registers[14] &= registers[13];
                 return;
             }
             // Execute phase 2
             if(CPUstate == 3 && execPhase == 2 && readPin(clkPin)){
                 execPhase2();
                 execPhase = 3;
+                registers[14] &= registers[13];
                 return;
             }
             // Phase 3 is just to check the falling-edge of the clock to initialize the next fetch.
@@ -187,7 +189,7 @@ namespace HuntaBaddayCPUmod
             }
         }
         
-        protected void execPhase1(){
+        private void execPhase1(){
             // If constant data is used then incrment the pc
             // so the constant data isn't executed.
             ushort inc = 0;
@@ -207,7 +209,7 @@ namespace HuntaBaddayCPUmod
             switch(inst){
                 case BRK:
                     decStack();
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setBus(pc);
                     setUB(1);
                     pc = interruptAddr;
@@ -222,7 +224,11 @@ namespace HuntaBaddayCPUmod
                     break;
                 case LOD:
                     if(op3 != 0){
-                        setAddress((ushort)(registers[op2]+registers[op3]));
+                        if (op2 == 14 || op3 == 14) {
+                            setAddress((ushort)(registers[op2]+registers[op3]+registers[12]));
+                        } else {
+                            setAddress((ushort)(registers[op2]+registers[op3]));
+                        }
                     } else {
                         setAddress(registers[op2]);
                     }
@@ -231,7 +237,11 @@ namespace HuntaBaddayCPUmod
                     break;
                 case STO:
                     if(op3 != 0){
-                        setAddress((ushort)(registers[op2]+registers[op3]));
+                        if (op2 == 14 || op3 == 14) {
+                            setAddress((ushort)(registers[op2]+registers[op3]+registers[12]));
+                        } else {
+                            setAddress((ushort)(registers[op2]+registers[op3]));
+                        }
                     } else {
                         setAddress(registers[op2]);
                     }
@@ -247,38 +257,22 @@ namespace HuntaBaddayCPUmod
                     switch(op3){
                         case ADD:
                             tmp = registers[op1] + registers[op2];
-                            if(op1 != 14){
-                                registers[op1] = (ushort)tmp;
-                            } else {
-                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
-                            }
+                            registers[op1] = (ushort)tmp;
                             genCarry(tmp);
                             break;
                         case ADC:
                             tmp = registers[op1] + registers[op2] + (registers[15]&1);
-                            if(op1 != 14){
-                                registers[op1] = (ushort)tmp;
-                            } else {
-                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
-                            }
+                            registers[op1] = (ushort)tmp;
                             genCarry(tmp);
                             break;
                         case SUB:
                             tmp = registers[op1] + (registers[op2]^0xffff) + 1;
-                            if(op1 != 14){
-                                registers[op1] = (ushort)tmp;
-                            } else {
-                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
-                            }
+                            registers[op1] = (ushort)tmp;
                             genCarry(tmp);
                             break;
                         case SBC:
                             tmp = registers[op1] + (registers[op2]^0xffff) + (registers[15]&1);
-                            if(op1 != 14){
-                                registers[op1] = (ushort)tmp;
-                            } else {
-                                registers[14] = (ushort)(registers[14]&0xfc00 | tmp&0x03ff);
-                            }
+                            registers[op1] = (ushort)tmp;
                             genCarry(tmp);
                             break;
                         case SHL:
@@ -317,13 +311,13 @@ namespace HuntaBaddayCPUmod
                         case MUL:
                             tmp = registers[op1]*registers[op2];
                             registers[op1] = (ushort)(tmp);
-                            registers[13] = (ushort)(tmp>>16);
+                            registers[11] = (ushort)(tmp>>16);
                             genCarry(tmp);
                             break;
                         case SMUL:
                             tmp = (short)registers[op1] * (short)registers[op2];
                             registers[op1] = (ushort)(tmp);
-                            registers[13] = (ushort)(tmp>>16);
+                            registers[11] = (ushort)(tmp>>16);
                             
                             genCarry(tmp);
                             break;
@@ -336,7 +330,7 @@ namespace HuntaBaddayCPUmod
                                 r = (ushort)(registers[op1] % registers[op2]);
                             }
                             registers[op1] = q;
-                            registers[13] = r;
+                            registers[11] = r;
                             break;
                         case SDIV:
                             if(registers[op2] == 0){
@@ -347,7 +341,7 @@ namespace HuntaBaddayCPUmod
                                 r = (ushort)((short)registers[op1] % (short)registers[op2]);
                             }
                             registers[op1] = q;
-                            registers[13] = r;
+                            registers[11] = r;
                             break;
                         case NEG:
                             registers[op1] = (ushort)((registers[op1]^0xffff) + 1);
@@ -398,42 +392,42 @@ namespace HuntaBaddayCPUmod
                     pc -= inc;
                     break;
                 case PLP:
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setRead(1);
                     setUB(1);
                     break;
                 case PUSH:
                     decStack();
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setBus(registers[op1]);
                     setUB(1);
                     break;
                 case POP:
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setRead(1);
                     setUB(1);
                     break;
                 case JSR:
                     decStack();
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setBus(pc);
                     setUB(1);
                     pc = registers[op1];
                     break;
                 case RTS:
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setRead(1);
                     setUB(1);
                     break;
                 case RTI:
-                    setAddress(registers[14]);
+                    setAddress((ushort)(registers[14]+registers[12]));
                     setRead(1);
                     setUB(1);
                     insideInt = false;
                     break;
             }
         }
-        protected void execPhase2(){
+        private void execPhase2(){
             // This is the second phase for instructions that need the data bus
             // You can see there are only a few here, that's where turbo comes from.
             switch(inst){
@@ -473,16 +467,18 @@ namespace HuntaBaddayCPUmod
             }
         }
         
-        protected void decStack(){
-            ushort tmp = registers[14];
-            registers[14] = (ushort)(tmp&0xfc00 | tmp-1&0x3ff);
+        private void incStack() {
+            registers[14]++;
+            registers[14] &= registers[13];
         }
-        protected void incStack(){
-            ushort tmp = registers[14];
-            registers[14] = (ushort)(tmp&0xfc00 | tmp+1&0x3ff);
+        
+        private void decStack() {
+            registers[14]--;
+            registers[14] &= registers[13];
         }
+        
         // Setup I/O port for fetch
-        protected void setupLoad(){
+        private void setupLoad(){
             CPUstate = 1;
             setAddress(pc);
             setBus(0);
@@ -492,7 +488,7 @@ namespace HuntaBaddayCPUmod
         }
         
         // Set the carry flag depending on the input
-        protected void genCarry(int data){
+        private void genCarry(int data){
             registers[15] &= 0b1111111111111110;
             // Check if there was an overflow from an addition
             if((uint)data >= 0x10000){
@@ -501,7 +497,7 @@ namespace HuntaBaddayCPUmod
         }
         
         // Generate zero and negative flags
-        protected void genStatus(ushort data){
+        private void genStatus(ushort data){
             if(op1 == 15){
                 return;
             }
@@ -515,7 +511,7 @@ namespace HuntaBaddayCPUmod
         }
         
         // Output data to address port
-        protected void setAddress(ushort address){
+        private void setAddress(ushort address){
             for(int i = 0; i < 16; i++){
                 int state = (address>>i) & 1;
                 if(state == 1){
@@ -527,7 +523,7 @@ namespace HuntaBaddayCPUmod
         }
         
         // Output data to data bus
-        protected void setBus(ushort data){
+        private void setBus(ushort data){
             for(int i = 0; i < 16; i++){
                 int state = (data>>i) & 1;
                 if(state == 1){
@@ -539,7 +535,7 @@ namespace HuntaBaddayCPUmod
         }
         
         // Read the data bus
-        protected ushort readBus(){
+        private ushort readBus(){
             ushort data = 0;
             for(int i = 0; i < 16; i++){
                 data >>= 1;
@@ -551,19 +547,19 @@ namespace HuntaBaddayCPUmod
         }
         
         // Set write pin
-        protected void setWrite(ushort state){
+        private void setWrite(ushort state){
             base.Outputs[WritePin].On = state != 0;
         }
         // Set readpin
-        protected void setRead(ushort state){
+        private void setRead(ushort state){
             base.Outputs[ReadPin].On = state != 0;
         }
         // Set pin for when CPU is using the bus
-        protected void setUB(ushort state){
+        private void setUB(ushort state){
             base.Outputs[useBusPin].On = state != 0;
         }
         // Read a pin's state
-        protected bool readPin(int pin){
+        private bool readPin(int pin){
             return base.Inputs[pin].On;
         }
         
