@@ -234,7 +234,11 @@ namespace HuntaBaddayCPUmod
                             setAddress((ushort)(registers[op2]+registers[op3]));
                         }
                     } else {
-                        setAddress(registers[op2]);
+                        if (op2 == 14) {
+                            setAddress((ushort)(registers[op2]+registers[12]));
+                        } else {
+                            setAddress(registers[op2]);
+                        }
                     }
                     setRead(1);
                     setUB(1);
@@ -247,7 +251,11 @@ namespace HuntaBaddayCPUmod
                             setAddress((ushort)(registers[op2]+registers[op3]));
                         }
                     } else {
-                        setAddress(registers[op2]);
+                        if (op2 == 14) {
+                            setAddress((ushort)(registers[op2]+registers[12]));
+                        } else {
+                            setAddress(registers[op2]);
+                        }
                     }
                     setBus(registers[op1]);
                     setUB(1);

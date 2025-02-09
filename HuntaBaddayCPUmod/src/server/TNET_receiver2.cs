@@ -4,6 +4,8 @@ using System;
 
 namespace HuntaBaddayCPUmod {
     public class TNET_Recv2 : LogicComponent {
+        public override bool HasPersistentValues => true;
+        
         const int pin_bus = 0;
         const int pin_enable = 8;
         const int pin_read = 9;
@@ -20,7 +22,7 @@ namespace HuntaBaddayCPUmod {
         const int MODE_BYTE_RECV = 3;
         const int MODE_PACKET_END = 4;
         const int MODE_IPG_WAIT = 5;
-        int current_mode = MODE_IDLE;
+        int current_mode = MODE_IPG_WAIT;
         
         int serial_counter;
         byte byteToReceive; // Current byte to receive
@@ -222,6 +224,18 @@ namespace HuntaBaddayCPUmod {
                 base.Outputs[i].On = (output&0x1) == 1;
                 output >>= 1;
             }
+        }
+        
+        protected override byte[] SerializeCustomData() {
+            byte[] data = new byte[1];
+            data[0] = interrupt_enable ? (byte)0xff : (byte)0x00;
+            return data;
+        }
+        
+        protected override void DeserializeData(byte[] data) {
+            if (data == null)
+                return;
+            interrupt_enable = data[0] == 0xff;
         }
     }
 }
