@@ -2,6 +2,7 @@ using LogicAPI.Server.Components;
 
 namespace HuntaBaddayCPUmod {
     public class LWC33_Comp : LogicComponent {
+        public override bool HasPersistentValues => true;
         
         TSC_LWC33 cpu = new TSC_LWC33();
         
@@ -131,6 +132,14 @@ namespace HuntaBaddayCPUmod {
                 Outputs[SEGMENT+i].On = (segment&1) == 1;
                 segment >>= 1;
             }
+        }
+        
+        protected override byte[] SerializeCustomData() {
+            return cpu.serializeCPUState();
+        }
+        
+        protected override void DeserializeData(byte[] data) {
+            cpu.deserializeCPUState(data);
         }
         
         // Make sure only these pins trigger logic update

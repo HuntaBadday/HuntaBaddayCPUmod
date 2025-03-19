@@ -7,6 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Reference Include="LogicAPI">
+        <HintPath>..\LogicWorld\Server\LogicAPI.dll</HintPath>
+      </Reference>
       <Reference Include="LogicAPI.Server">
         <HintPath>..\LogicWorld\Server\LogicAPI.Server.dll</HintPath>
       </Reference>

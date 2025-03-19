@@ -1,3 +1,6 @@
+using System.IO;
+using System.Linq;
+
 namespace HuntaBaddayCPUmod {
     public class TSC_LWC33 {
         // Constants for each opcode
@@ -804,12 +807,168 @@ namespace HuntaBaddayCPUmod {
         
         // Convert CPU state to byte[]
         public byte[] serializeCPUState() {
-            return null;
+            // Order which it is written and read
+            /*
+            ushort[] registers = new ushort[16];
+            ushort[] subRegisters = new ushort[16];
+            ushort[] registersBackup = new ushort[16];
+            
+            ushort pc;
+            ushort ir;
+            
+            int cpuState = -1;
+            
+            int inst;
+            int op1;
+            int op2;
+            int op3;
+            
+            bool insideInt = false;
+            bool goToFetch = false;
+            int pcInc = 0;
+            bool virtEnabled = false;
+            
+            int readFromDev = 0;
+            bool shouldWriteDevState = false;
+            
+            public ushort dataBusInput;
+            public ushort dataBusOutput;
+            public ushort addressOutput;
+            public ushort segmentOutput;
+            public ushort deviceBusInput;
+            public ushort deviceBusOutput;
+            public ushort deviceAddrOutput;
+            
+            public bool readState;
+            public bool writeState;
+            public bool devReadState;
+            public bool devWriteState;
+            
+            public bool setCarryState;
+            public byte auxState;
+            public byte interruptPinStates;
+            
+            public bool clockState;
+            public bool pauseState;
+            public bool syncState;
+            public bool resetState;
+            
+            bool lastClockState = false;
+            bool lastSetCarryState = false;
+            byte lastAuxState = 0;
+            */
+            
+            MemoryStream outputStream = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(outputStream);
+            
+            for (int i = 0; i <= 15; i++) {
+                writer.Write(registers[i]);
+                writer.Write(subRegisters[i]);
+                writer.Write(registersBackup[i]);
+            }
+            
+            writer.Write(pc);
+            writer.Write(ir);
+            
+            writer.Write(cpuState);
+            
+            writer.Write(inst);
+            writer.Write(op1);
+            writer.Write(op2);
+            writer.Write(op3);
+            
+            writer.Write(insideInt);
+            writer.Write(goToFetch);
+            writer.Write(pcInc);
+            writer.Write(virtEnabled);
+            
+            writer.Write(readFromDev);
+            writer.Write(shouldWriteDevState);
+            
+            writer.Write(dataBusInput);
+            writer.Write(dataBusOutput);
+            writer.Write(addressOutput);
+            writer.Write(segmentOutput);
+            writer.Write(deviceBusInput);
+            writer.Write(deviceBusOutput);
+            writer.Write(deviceAddrOutput);
+            
+            writer.Write(readState);
+            writer.Write(writeState);
+            writer.Write(devReadState);
+            writer.Write(devWriteState);
+            
+            writer.Write(setCarryState);
+            writer.Write(auxState);
+            writer.Write(interruptPinStates);
+            
+            writer.Write(clockState);
+            writer.Write(pauseState);
+            writer.Write(syncState);
+            writer.Write(resetState);
+            
+            writer.Write(lastClockState);
+            writer.Write(lastSetCarryState);
+            writer.Write(lastAuxState);
+            
+            return outputStream.ToArray();
         }
         
         // Set CPU state from byte[]
         public void deserializeCPUState(byte[] data) {
+            if (data == null) return;
+            MemoryStream input = new MemoryStream(data);
+            BinaryReader reader = new BinaryReader(input);
             
+            for (int i = 0; i <= 15; i++) {
+                registers[i] = reader.ReadUInt16();
+                subRegisters[i] = reader.ReadUInt16();
+                registersBackup[i] = reader.ReadUInt16();
+            }
+            
+            pc = reader.ReadUInt16();
+            ir = reader.ReadUInt16();
+            
+            cpuState = reader.ReadInt32();
+            
+            inst = reader.ReadInt32();
+            op1 = reader.ReadInt32();
+            op2 = reader.ReadInt32();
+            op3 = reader.ReadInt32();
+            
+            insideInt = reader.ReadBoolean();
+            goToFetch = reader.ReadBoolean();
+            pcInc = reader.ReadInt32();
+            virtEnabled = reader.ReadBoolean();
+            
+            readFromDev = reader.ReadInt32();
+            shouldWriteDevState = reader.ReadBoolean();
+            
+            dataBusInput = reader.ReadUInt16();
+            dataBusOutput = reader.ReadUInt16();
+            addressOutput = reader.ReadUInt16();
+            segmentOutput = reader.ReadUInt16();
+            deviceBusInput = reader.ReadUInt16();
+            deviceBusOutput = reader.ReadUInt16();
+            deviceAddrOutput = reader.ReadUInt16();
+            
+            readState = reader.ReadBoolean();
+            writeState = reader.ReadBoolean();
+            devReadState = reader.ReadBoolean();
+            devWriteState = reader.ReadBoolean();
+            
+            setCarryState = reader.ReadBoolean();
+            auxState = reader.ReadByte();
+            interruptPinStates = reader.ReadByte();            
+            
+            clockState = reader.ReadBoolean();
+            pauseState = reader.ReadBoolean();
+            syncState = reader.ReadBoolean();
+            resetState = reader.ReadBoolean();
+            
+            lastClockState = reader.ReadBoolean();
+            lastSetCarryState = reader.ReadBoolean();
+            lastAuxState = reader.ReadByte();
         }
     }
 }
