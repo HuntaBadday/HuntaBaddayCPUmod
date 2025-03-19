@@ -220,18 +220,13 @@ namespace HuntaBaddayCPUmod {
                 return;
             }
             
-            // Complete device bus operation
-            if ((cpuState == 1 || cpuState == 4 ) && clockHigh) {
-                if (shouldWriteDevState) {
-                    shouldWriteDevState = false;
-                    devWriteState = true;
-                }
-                if (readFromDev != 0) {
-                    writeReg(readFromDev, readDeviceBus());
-                }
-            } else if ((cpuState == 1 || cpuState == 4 )&& clockLow) {
+            // Complete device bus write operation, this is separate from reading, as writing should always be finished
+            // But when reading the cpu can be paused before it reads the data
+            if ((cpuState == 1 || cpuState == 4 ) && clockHigh && shouldWriteDevState) {
+                devWriteState = true;
+            } else if ((cpuState == 1 || cpuState == 4 ) && clockLow && shouldWriteDevState) {
+                shouldWriteDevState = false;
                 devWriteState = false;
-                devReadState = false;
                 writeDeviceBus(0);
                 setDeviceID(0);
             }
@@ -249,6 +244,11 @@ namespace HuntaBaddayCPUmod {
             
             // Fetch instruction
             if (cpuState == 1 && clockHigh) {
+                // Do device bus read if requested by previous instruction
+                if (readFromDev != 0) {
+                    writeReg(readFromDev, readDeviceBus());
+                    genZN(readDeviceBus());
+                }
                 // If interrupt, replace for load IR to BRK with OP1 = INT#
                 if ((interruptPinStates & ~registers[ST]>>8 & 0xf) != 0 && !insideInt) {
                     int inum = pinsToNum(interruptPinStates);
@@ -264,6 +264,10 @@ namespace HuntaBaddayCPUmod {
                 }
                 syncState = false;
             } else if (cpuState == 1 && clockLow) {
+                // Clean up device bus output
+                devReadState = false;
+                setDeviceID(0);
+                
                 // Read constant value on second phase of fetch
                 registers[0] = readDataBus();
                 cpuState = 2;
@@ -535,6 +539,7 @@ namespace HuntaBaddayCPUmod {
                     break;
                 case LOD:
                     writeReg(op1, readDataBus());
+                    if (op1 != ST) genZN(readDataBus());
                     break;
                 case STO:
                     writeState = true;
@@ -554,6 +559,7 @@ namespace HuntaBaddayCPUmod {
                     break;
                 case POP:
                     writeReg(op1, readDataBus());
+                    if (op1 != ST) genZN(readDataBus());
                     incSp();
                     break;
                 case JSR:
@@ -579,64 +585,65 @@ namespace HuntaBaddayCPUmod {
             int tmp2;
             ushort q;
             ushort r;
+            ushort output = 0;
             switch (op3) {
                 case ADD:
                     tmp = registers[op1] + registers[op2];
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     genCarry(tmp);
                     break;
                 case ADC:
                     tmp = registers[op1] + registers[op2] + (registers[ST]&F_CARRY);
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     genCarry(tmp);
                     break;
                 case SUB:
                     tmp = registers[op1] + (registers[op2]^0xffff) + 1;
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     genCarry(tmp);
                     break;
                 case SBC:
                     tmp = registers[op1] + (registers[op2]^0xffff) + (registers[15]&1);
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     genCarry(tmp);
                     break;
                 case AND:
-                    if (doWriteback) writeReg(op1, (ushort)(registers[op1]&registers[op2]));
+                    output = (ushort)(registers[op1]&registers[op2]);
                     break;
                 case OR:
-                    if (doWriteback) writeReg(op1, (ushort)(registers[op1]|registers[op2]));
+                    output = (ushort)(registers[op1]|registers[op2]);
                     break;
                 case XOR:
-                    if (doWriteback) writeReg(op1, (ushort)(registers[op1]^registers[op2]));
+                    output = (ushort)(registers[op1]^registers[op2]);
                     break;
                 case SHL:
                     registers[RR] = registers[op1];
                     tmp = registers[op1] << registers[op2];
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     break;
                 case ROL:
                     tmp2 = registers[RR];
                     registers[RR] = registers[op1];
                     tmp = registers[op1] << registers[op2];
                     tmp |= tmp2 >> (16-registers[op2]);
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     break;
                 case SHR:
                     registers[RR] = registers[op1];
                     tmp = registers[op1] >> registers[op2];
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     break;
                 case ROR:
                     tmp2 = registers[RR];
                     registers[RR] = registers[op1];
                     tmp = registers[op1] >> registers[op2];
                     tmp |= tmp2 << (16-registers[op2]);
-                    if (doWriteback) writeReg(op1, (ushort)tmp);
+                    output = (ushort)tmp;
                     break;
                 case MUL:
                     tmp = registers[op1]*registers[op2];
                     if (doWriteback) {
-                        writeReg(op1, (ushort)tmp);
+                        output = (ushort)tmp;
                         registers[RR] = (ushort)(tmp>>16);
                     }
                     genCarry(tmp);
@@ -644,7 +651,7 @@ namespace HuntaBaddayCPUmod {
                 case SMUL:
                     tmp = (short)registers[op1] * (short)registers[op2];
                     if (doWriteback) {
-                        writeReg(op1, (ushort)tmp);
+                        output = (ushort)tmp;
                         registers[RR] = (ushort)(tmp>>16);
                     }
                     genCarry(tmp);
@@ -658,7 +665,7 @@ namespace HuntaBaddayCPUmod {
                         r = (ushort)(registers[op1] % registers[op2]);
                     }
                     if (doWriteback) {
-                        writeReg(op1, q);
+                        output = q;
                         registers[RR] = r;
                     }
                     break;
@@ -671,13 +678,16 @@ namespace HuntaBaddayCPUmod {
                         r = (ushort)((short)registers[op1] % (short)registers[op2]);
                     }
                     if (doWriteback) {
-                        writeReg(op1, q);
+                        output = q;
                         registers[RR] = r;
                     }
                     break;
             }
+            if (doWriteback) {
+                writeReg(op1, output);
+            }
             if (op1 != ST) {
-                genZN(registers[op1]);
+                genZN(output);
             }
         }
         
