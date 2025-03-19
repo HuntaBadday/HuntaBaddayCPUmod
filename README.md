@@ -5,6 +5,7 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 
 ### Included components
 - LWC31 16 bit microprocessor
+- LWC33 16 bit microprocessor
 - MOS 6502 microprocessor
 - 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
 - TSC-6530 Dual timer chip
@@ -95,6 +96,11 @@ irq:
 #addr 0xffff
 #d16 init   ; Start vector pointing to init
 ```
+
+## LWC 33
+No documentation yet.
+<br>
+Except for: https://docs.google.com/spreadsheets/d/1v1xfn7EJRyUyvGW_dy4vbZQG2pKG-EaYQxawBvIN3sM/edit?usp=sharing
 
 ## 8, 16 bit FIFO buffers
 ### Usage
