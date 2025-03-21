@@ -7,12 +7,16 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 - LWC31 16 bit microprocessor
 - LWC33 16 bit microprocessor
 - MOS 6502 microprocessor
+- 16 bit x 16 bit address RAM
 - 8 and 16 bit FIFO (First in / First out) buffers (64k words each)
 - TSC-6530 Dual timer chip
 - TurnerNet network transmitter/receiver
 - TurnerNet network switch
 - 4 bit multiplexers and demultiplexers
 - TSC-6540 Video chip
+
+### Credits
+- CheeseUtilMod's code for helping me figure out the custom data and file loading system.
 
 ## LWC 31
 ### Helpful Tools:
@@ -101,6 +105,23 @@ irq:
 No documentation yet.
 <br>
 Except for: https://docs.google.com/spreadsheets/d/1v1xfn7EJRyUyvGW_dy4vbZQG2pKG-EaYQxawBvIN3sM/edit?usp=sharing
+
+## 16x16 RAM
+Pinout (Looking from top down):
+```
+AAAAAAAAAAAAAAAA EL
+===================
+DDDDDDDDDDDDDDDD RW
+```
+- A - Address (LSB on the right)
+- D - Data I/O (LSB on the right), connect the outputs to the inputs for bidirectional data.
+- E - Enable (Or chip select), must be active to read/write
+- R - Read
+- W - Write
+- L - Load file
+
+### Upload files to ram
+To upload a file from your computer, into the RAM chip, run the `cloadram FILE` command in the console, where FILE is the path to the file to load.
 
 ## 8, 16 bit FIFO buffers
 ### Usage
