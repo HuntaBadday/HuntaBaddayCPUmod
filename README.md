@@ -121,7 +121,9 @@ DDDDDDDDDDDDDDDD RW
 - L - Load file
 
 ### Upload files to ram
-To upload a file from your computer, into the RAM chip, run the `cloadram FILE` command in the console, where FILE is the path to the file to load.
+To upload a file from your computer, into the RAM chip, run the `loadraml FILE` or `loadramh` commands in the console, where FILE is the path to the file to load.
+<br>
+The difference between the two is that one loads in low byte order, and the other loads in high byte order.
 
 ## 8, 16 bit FIFO buffers
 ### Usage
