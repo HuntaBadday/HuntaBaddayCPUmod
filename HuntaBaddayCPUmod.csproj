@@ -7,6 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <Reference Include="JimmysUnityUtilities">
+        <HintPath>..\LogicWorld\Server\JimmysUnityUtilities.dll</HintPath>
+      </Reference>
       <Reference Include="LICC">
         <HintPath>..\LogicWorld\Logic_World_Data\Managed\LICC.dll</HintPath>
       </Reference>

@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using JimmysUnityUtilities.Random;
 
 namespace HuntaBaddayCPUmod {
     public class TSC_LWC33 {
@@ -29,7 +30,7 @@ namespace HuntaBaddayCPUmod {
         const int AND = 4;
         const int OR = 5;
         const int XOR = 6;
-        // -- blank space for ALU 7
+        const int RAND = 7;
         const int SHL = 8;
         const int ROL = 9;
         const int SHR = 10;
@@ -74,6 +75,9 @@ namespace HuntaBaddayCPUmod {
         const ushort F_ABSACCESS = 0b10000000000000;
         const ushort F_UNSAFE = 0b100000000000000;
         const ushort F_BRK = 0b1000000000000000;
+        
+        // Randomizer
+        private static readonly JRandom random = new JRandom();
         
         // Instruction operand lengths
         static readonly int[] opNums = {
@@ -619,6 +623,9 @@ namespace HuntaBaddayCPUmod {
                     break;
                 case XOR:
                     output = (ushort)(registers[op1]^registers[op2]);
+                    break;
+                case RAND:
+                    output = (ushort)(random.UInt16()%(registers[op2]+1));
                     break;
                 case SHL:
                     registers[RR] = registers[op1];
