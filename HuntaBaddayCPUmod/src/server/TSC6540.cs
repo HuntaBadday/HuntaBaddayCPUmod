@@ -369,6 +369,7 @@ namespace HuntaBaddayCPUmod {
                 return;
             }
             int index = XYtoIndex(x, y);
+            if (index >= screenBuffer.Length) return;
             if ((screenBuffer[index] != colour) && (x >= 0) && (y >= 0) && (x <= 255) && (y <= 255) || forceDraw && (screenBuffer[index] != 0)) {
                 screenBuffer[index] = colour;
                 SBAction newAction = new SBAction();

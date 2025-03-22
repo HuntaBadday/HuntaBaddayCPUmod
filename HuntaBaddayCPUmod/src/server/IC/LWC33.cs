@@ -494,7 +494,7 @@ namespace HuntaBaddayCPUmod {
                     // Break if jump does not occur
                     if ((registers[ST] & mask) != 0 == invert) break;
                     
-                    writeDataBus(pc);
+                    writeDataBus((ushort)(pc+pcInc));
                     
                     decSp();
                     readState = false;
