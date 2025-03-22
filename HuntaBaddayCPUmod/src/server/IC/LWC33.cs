@@ -251,6 +251,7 @@ namespace HuntaBaddayCPUmod {
                 if (readFromDev != 0) {
                     writeReg(readFromDev, readDeviceBus());
                     genZN(readDeviceBus());
+                    readFromDev = 0;
                 }
                 // If interrupt, replace for load IR to BRK with OP1 = INT#
                 if ((interruptPinStates & ~registers[ST]>>8 & 0xf) != 0 && !insideInt) {
