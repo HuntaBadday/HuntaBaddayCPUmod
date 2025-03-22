@@ -3,6 +3,7 @@ HuntaBaddayCPUmod.LWC33: "LWC 33"
 HuntaBaddayCPUmod.MOS6502: "MOS 6502"
 
 HuntaBaddayCPUmod.TSC6530: "TSC6530"
+HuntaBaddayCPUmod.TSC6530_Comp: "Compact TSC6530"
 HuntaBaddayCPUmod.TSC6540: "TSC6540"
 
 HuntaBaddayCPUmod.Buffer8: "8 Bit FIFO"
@@ -15,6 +16,16 @@ HuntaBaddayCPUmod.Buffer16_sw: "16 Bit FIFO Switched"
 HuntaBaddayCPUmod.Buffer8LIFO_sw: "8 Bit LIFO Switched"
 HuntaBaddayCPUmod.Buffer16LIFO_sw: "16 Bit LIFO Switched"
 
+HuntaBaddayCPUmod.Buffer8_Comp: "Compact 8 Bit FIFO"
+HuntaBaddayCPUmod.Buffer16_Comp: "Compact 16 Bit FIFO"
+HuntaBaddayCPUmod.Buffer8LIFO_Comp: "Compact 8 Bit LIFO"
+HuntaBaddayCPUmod.Buffer16LIFO_Comp: "Compact 16 Bit LIFO"
+
+HuntaBaddayCPUmod.Buffer8_sw_Comp: "Compact 8 Bit FIFO Switched"
+HuntaBaddayCPUmod.Buffer16_sw_Comp: "Compact 16 Bit FIFO Switched"
+HuntaBaddayCPUmod.Buffer8LIFO_sw_Comp: "Compact 8 Bit LIFO Switched"
+HuntaBaddayCPUmod.Buffer16LIFO_sw_Comp: "Compact 16 Bit LIFO Switched"
+
 HuntaBaddayCPUmod.Memory16x16: "16bx16a RAM"
 
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
@@ -24,11 +35,16 @@ HuntaBaddayCPUmod.TNET_Trans16: "Transmitter - 16"
 HuntaBaddayCPUmod.TNET_Recv2-16: "Receiver INT - 16"
 HuntaBaddayCPUmod.TNET_Switch: "Switch"
 
-HuntaBaddayCPUmod.Multiplexer16Inv: "16 Output Multiplexer"
-HuntaBaddayCPUmod.Demultiplexer16Inv: "16 Input Demultiplexer"
+HuntaBaddayCPUmod.TNET_Trans_Comp: "Compact Transmitter"
+HuntaBaddayCPUmod.TNET_Recv2_Comp: "Compact Receiver INT"
+HuntaBaddayCPUmod.TNET_Trans16_Comp: "Compact Transmitter - 16"
+HuntaBaddayCPUmod.TNET_Recv2-16_Comp: "Compact Receiver INT - 16"
+
+HuntaBaddayCPUmod.Multiplexer16Inv: "16 Output Demultiplexer"
+HuntaBaddayCPUmod.Demultiplexer16Inv: "16 Input Multiplexer"
 HuntaBaddayCPUmod.BiPlexer16Inv: "16 Line Bi-Directional Multiplexer"
-HuntaBaddayCPUmod.Multiplexer16: "16 Output Multiplexer Inv. Enable"
-HuntaBaddayCPUmod.Demultiplexer16: "16 Input Demultiplexer Inv. Enable"
+HuntaBaddayCPUmod.Multiplexer16: "16 Output Demultiplexer Inv. Enable"
+HuntaBaddayCPUmod.Demultiplexer16: "16 Input Multiplexer Inv. Enable"
 HuntaBaddayCPUmod.BiPlexer16: "16 Line Bi-Directional Multiplexer Inv. Enable"
 
 ComponentColumn.HBCM: "HBCM"

@@ -1,0 +1,174 @@
+TNET_Trans_Comp:
+    column: "HBCM"
+    category: "Networking"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0, 0, 0)
+                scale: (5, 1, 1)
+        inputs:
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (2.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+                
+            -
+                position: (2.5, 0.5, 0)
+                rotation: (0, 0, -90)
+        outputs:
+            -
+                position: (0.33, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.33, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.66, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.33, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.66, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2.5, 0.5, 0)
+                rotation: (0, 0, 90)
+    logicCode: HuntaBaddayCPUmod.TNET_Trans
+    placingRules: Standard
+
+TNET_Recv2_Comp:
+    column: "HBCM"
+    category: "Networking"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0, 0, 0)
+                scale: (5, 1, 1)
+        inputs:
+            -
+                position: (-2, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (1, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (1.66, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (2.33, 0.5, -0.5)
+                rotation: (-90, 0, 0)
+            
+            -
+                position: (-2.5, 0.5, 0.33)
+                rotation: (0, 0, 90)
+                
+            -
+                position: (2.5, 0.5, -0.33)
+                rotation: (0, 0, -90)
+        outputs:
+            -
+                position: (0.33, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (0, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.33, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-0.66, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.33, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-1.66, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+            -
+                position: (-2, 0.7, -0.5)
+                rotation: (-90, 0, 0)
+                
+            -
+                position: (-2.5, 0.5, -0.25)
+                rotation: (0, 0, 90)
+            -
+                position: (2.5, 0.5, 0.25)
+                rotation: (0, 0, -90)
+                
+    logicCode: HuntaBaddayCPUmod.TNET_Recv2
+    placingRules: Standard
