@@ -251,12 +251,6 @@ namespace HuntaBaddayCPUmod {
             
             // Fetch instruction
             if (cpuState == 1 && clockHigh) {
-                // Do device bus read if requested by previous instruction
-                if (readFromDev != 0) {
-                    writeReg(readFromDev, readDeviceBus());
-                    genZN(readDeviceBus());
-                    readFromDev = 0;
-                }
                 // If interrupt, replace for load IR to BRK with OP1 = INT#
                 if ((interruptPinStates & ~registers[ST]>>8 & 0xf) != 0 && !insideInt) {
                     int inum = pinsToNum(interruptPinStates);
@@ -272,6 +266,14 @@ namespace HuntaBaddayCPUmod {
                 }
                 syncState = false;
             } else if (cpuState == 1 && clockLow) {
+                // Do device bus read if requested by previous instruction
+                // Done on clock low to give time for device to respond
+                if (readFromDev != 0) {
+                    writeReg(readFromDev, readDeviceBus());
+                    genZN(readDeviceBus());
+                    readFromDev = 0;
+                }
+                
                 // Clean up device bus output
                 devReadState = false;
                 setDeviceID(0);
