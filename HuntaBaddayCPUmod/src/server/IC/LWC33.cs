@@ -320,6 +320,7 @@ namespace HuntaBaddayCPUmod {
             
             // Clean up end of instruction
             if (cpuState == 3 && clockLow) {
+                registers[SP] &= isVirt ? subRegisters[VMEMSM] : subRegisters[SM];
                 pc += (ushort)pcInc;
                 // If pause, clear outputs, otherwise setup next fetch
                 if (pauseState) {
