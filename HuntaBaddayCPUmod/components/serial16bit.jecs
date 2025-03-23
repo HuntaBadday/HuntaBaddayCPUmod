@@ -185,16 +185,16 @@ SerialTrans16:
                     x: 90
                     y: 0
                     z: 0
-            # Serial out
+            # Send done
             -
                 position:
                     x: 3.5
                     y: 0.5
                     z: 0
                 rotation:
-                    x: -90
+                    x: 0
                     y: 0
-                    z: 0
+                    z: -90
     logicCode: HuntaBaddayCPUmod.SerialTrans16
     placingRules: Standard
 
