@@ -33,6 +33,8 @@ HuntaBaddayCPUmod.SerialRecv16: "16 Bit Serial Receiver"
 
 HuntaBaddayCPUmod.Memory16x16: "16bx16a RAM"
 
+HuntaBaddayCPUmod.counter16bit: "16 Bit Counter"
+
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"
 HuntaBaddayCPUmod.TNET_Recv: "Receiver"
 HuntaBaddayCPUmod.TNET_Recv2: "Receiver INT"
