@@ -68,10 +68,10 @@ TNET_Trans16_Comp:
                 rotation: (-90, 0, 0)
             
             -
-                position: (4, 0.5, -0.5)
+                position: (4.33, 0.5, -0.5)
                 rotation: (-90, 0, 0)
             -
-                position: (4.33, 0.5, -0.5)
+                position: (4, 0.5, -0.5)
                 rotation: (-90, 0, 0)
                 
             -
@@ -203,10 +203,10 @@ TNET_Recv2-16_Comp:
                 rotation: (-90, 0, 0)
             
             -
-                position: (4, 0.5, -0.5)
+                position: (4.33, 0.5, -0.5)
                 rotation: (-90, 0, 0)
             -
-                position: (4.33, 0.5, -0.5)
+                position: (4, 0.5, -0.5)
                 rotation: (-90, 0, 0)
             
             -
