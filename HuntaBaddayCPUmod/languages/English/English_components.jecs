@@ -26,6 +26,11 @@ HuntaBaddayCPUmod.Buffer16_sw_Comp: "Compact 16 Bit FIFO Switched"
 HuntaBaddayCPUmod.Buffer8LIFO_sw_Comp: "Compact 8 Bit LIFO Switched"
 HuntaBaddayCPUmod.Buffer16LIFO_sw_Comp: "Compact 16 Bit LIFO Switched"
 
+HuntaBaddayCPUmod.SerialTrans8: "8 Bit Serial Transmitter"
+HuntaBaddayCPUmod.SerialRecv8: "8 Bit Serial Receiver"
+HuntaBaddayCPUmod.SerialTrans16: "16 Bit Serial Transmitter"
+HuntaBaddayCPUmod.SerialRecv16: "16 Bit Serial Receiver"
+
 HuntaBaddayCPUmod.Memory16x16: "16bx16a RAM"
 
 HuntaBaddayCPUmod.TNET_Trans: "Transmitter"

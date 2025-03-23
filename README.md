@@ -140,6 +140,49 @@ The difference between the two is that one loads in low byte order, and the othe
 #### Read / Write
 To write, put the data on the inputs, the data will be written on the rising edge of the write pin. Data will be read to the outputs on the rising edge of the read pin.
 
+## Serial Transmitter and Receivers
+Converters to transmit and receive serial data. Comes in 8 and 16 bit versions.
+
+### Transmitter pinout
+```
+          S
+===========F
+DDDDDDDD WW
+
+S - Serial output.
+D - Data input.
+WW - Two write signals, both must be active to write.
+F - One tick pulse when finished transmitting.
+
+Least significant bit of data is on the right.
+```
+
+### Receiver pinout
+```
+          S
+===========
+DDDDDDDD  F
+
+S - Serial input.
+D - Data output.
+F - One tick pulse when data is received.
+
+Least significant bit of data is on the right.
+```
+
+### Protocol
+```
+Data direction
+==>
++--------+-+
+|DDDDDDDD|S|
++--------+-+
+
+Serial packet starts with one start bit, followed by the data, least significant bit first.
+```
+
+
+
 ## TSC6530 interval timer chip (Basically the timer part of the MOS6526 Complex Interface Adapter)
 ### Features
 - Two 16 bit internal timers
