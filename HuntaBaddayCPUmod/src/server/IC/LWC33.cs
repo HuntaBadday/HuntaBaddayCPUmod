@@ -447,6 +447,8 @@ namespace HuntaBaddayCPUmod {
                                 registers[15] = registersBackup[15];
                             } else if((registers[op1]&0b100) != 0) {
                                 for(int i = 1; i <= 13; i++) registers[i] = registersBackup[i];
+                            } else if((registers[op1]&0b1000) != 0) {
+                                registers[15] = registersBackup[15];
                             }
                         } else {
                             // Write subregister
