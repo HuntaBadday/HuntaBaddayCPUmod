@@ -164,5 +164,83 @@ namespace HuntaBaddayCPUmod {
             return index == SERIN;
         }
     }
+    
+    public class SerialRecv8_sw : LogicComponent {
+        public override bool HasPersistentValues => true;
+        
+        const int SERIN = 0;
+        const int READ = 1;
+        const int DATAOUT = 0;
+        const int FLAG = 8;
+        
+        byte currentByte;
+        byte output;
+        byte recvCount;
+        bool receiving = false;
+        
+        protected override void DoLogicUpdate() {
+            if (!receiving) Outputs[FLAG].On = false;
+            if (!receiving && Inputs[SERIN].On) {
+                recvCount = 0;
+                receiving = true;
+                QueueLogicUpdate();
+            } else if (receiving) {
+                currentByte >>= 1;
+                if (Inputs[SERIN].On)
+                    currentByte |= 0x80;
+                if (++recvCount >= 8) {
+                    receiving = false;
+                    Outputs[FLAG].On = true;
+                    output = currentByte;
+                }
+                QueueLogicUpdate();
+            }
+            
+            if (Inputs[READ].On && Inputs[READ+1].On) {
+                writeData(output);
+            } else {
+                writeData(0);
+            }
+        }
+        
+        void writeData(byte data) {
+            for (int i = 0; i < 8; i++) {
+                Outputs[DATAOUT+i].On = (data & 0x80) != 0;
+                data <<= 1;
+            }
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            MemoryStream m = new MemoryStream();
+            BinaryWriter w = new BinaryWriter(m);
+            
+            w.Write(currentByte);
+            w.Write(output);
+            w.Write(recvCount);
+            w.Write(receiving);
+            
+            return m.ToArray();
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if (data == null) return;
+            
+            MemoryStream m = new MemoryStream(data);
+            BinaryReader r = new BinaryReader(m);
+            
+            try {
+                currentByte = r.ReadByte();
+                output = r.ReadByte();
+                recvCount = r.ReadByte();
+                receiving = r.ReadBoolean();
+            } catch (EndOfStreamException ex) {
+                Logger.Error("SerialRecv8 - Error loading data");
+            }
+        }
+        
+        public override bool InputAtIndexShouldTriggerComponentLogicUpdates(int index) {
+            return index == SERIN || index == READ || index == READ+1;
+        }
+    }
 }
 

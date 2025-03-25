@@ -1,7 +1,10 @@
+using System;
 using LogicAPI.Server.Components;
 
 namespace HuntaBaddayCPUmod {
     public class Counter16 : LogicComponent {
+        public override bool HasPersistentValues => true;
+        
         const int DATAIN = 0;
         const int SET = 16;
         const int READ = 17;
@@ -50,6 +53,16 @@ namespace HuntaBaddayCPUmod {
                 Outputs[DATAOUT+i].On = (data&1) != 0;
                 data >>= 1;
             }
+        }
+        
+        protected override byte[] SerializeCustomData(){
+            return BitConverter.GetBytes(counterValue);
+        }
+        
+        protected override void DeserializeData(byte[] data){
+            if (data == null) return;
+            if (data.Length != 2) return;
+            counterValue = BitConverter.ToUInt16(data);
         }
     }
 }
