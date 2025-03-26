@@ -36,7 +36,6 @@
 }
 
 #ruledef {
-	brk	=> 0x0000
 	brk {i: u4}	=> 0x0 @ i @ 0x00
 	
 	; -- Jumping
@@ -48,7 +47,6 @@
 	jmp ({op1: reg})	=> 0x1 @ op1 @ 0b1000 @ 0b1000
 	
 	jmp short {addr: u16}	=> 0x1 @ 0x0 @ 0b0100 @ 0b1000 @ (addr-$-1)`16
-	rjmp {addr: u16}	=> 0x1 @ 0x0 @ 0b0100 @ 0b1000 @ (addr-$-1)`16
 	
 	bcs {addr: u16}	=> 0x1 @ 0x0 @ 0b0100 @ 0b0001 @ (addr-$-1)`16
 	bcc {addr: u16}	=> 0x1 @ 0x0 @ 0b0100 @ 0b1001 @ (addr-$-1)`16
@@ -90,12 +88,16 @@
 	mov {op1: reg}, [{op3: reg}+{offset: i16}]	=> 0x3 @ op1 @ 0x0 @ op3 @ offset
 	mov {op1: reg}, [{op3: reg}-{offset: i16}]	=> 0x3 @ op1 @ 0x0 @ op3 @ -offset`16
 	mov {op1: reg}, [{offset: i16}+{op3: reg}]	=> 0x3 @ op1 @ 0x0 @ op3 @ offset
+	mov {op1: reg}, [{op2: reg}+{op3: reg}]	=> 0x3 @ op1 @ op2 @ op3
 	
 	mov [{op2: reg}], {op1: reg}	=> 0x4 @ op1 @ op2 @ 0x0
+	mov [{op2: reg}], {data: i16}	=> 0x4 @ 0x0 @ op2 @ 0x0 @ data
 	mov [{addr: u16}], {op1: reg}	=> 0x4 @ op1 @ 0x0 @ 0x0 @ addr
 	mov [{op3: reg}+{offset: i16}], {op1: reg}	=> 0x4 @ op1 @ 0x0 @ op3 @ offset
 	mov [{op3: reg}-{offset: i16}], {op1: reg}	=> 0x4 @ op1 @ 0x0 @ op3 @ -offset`16
 	mov [{offset: i16}+{op3: reg}], {op1: reg}	=> 0x4 @ op1 @ 0x0 @ op3 @ offset
+	mov [{op2: reg}+{op3: reg}], {op1: reg}	=> 0x4 @ op1 @ op2 @ op3
+	mov [{op2: reg}+{op3: reg}], {data: i16}	=> 0x4 @ 0x0 @ op2 @ op3 @ data
 	
 	; ALU
 	
@@ -154,6 +156,12 @@
 	xors {op1: reg}, {op2: reg}	=> 0x6 @ op1 @ op2 @ 0x6
 	xors {op1: reg}, {data: i16}	=> 0x6 @ op1 @ 0x0 @ 0x6 @ data
 	xors {data: i16}, {op2: reg}	=> 0x6 @ 0x0 @ op2 @ 0x6 @ data
+	
+	rand {op1: reg}, {op2: reg}	=> 0x5 @ op1 @ op2 @ 0x7
+	rand {op1: reg}, {data: i16}	=> 0x5 @ op1 @ 0x0 @ 0x7 @ data
+	
+	rands {op1: reg}, {op2: reg}	=> 0x6 @ op1 @ op2 @ 0x7
+	rands {op1: reg}, {data: i16}	=> 0x6 @ op1 @ 0x0 @ 0x7 @ data
 	
 	shl {op1: reg}, {op2: reg}	=> 0x5 @ op1 @ op2 @ 0x8
 	shl {op1: reg}, {data: i16}	=> 0x5 @ op1 @ 0x0 @ 0x8 @ data
@@ -239,11 +247,14 @@
 	jps {op1: reg}, {seg: u4}	=> 0x8 @ op1 @ seg @ 0x0
 	jps {addr: u16}, {seg: u4}	=> 0x8 @ 0x0 @ seg @ 0x0 @ addr
 	
-	jmp far {op1: reg}-{seg: u4}	=> 0x8 @ op1 @ seg @ 0x0
-	jmp far {addr: u16}-{seg: u4}	=> 0x8 @ 0x0 @ seg @ 0x0 @ addr
+	jmp far {op1: reg}, {seg: u4}	=> 0x8 @ op1 @ seg @ 0x0
+	jmp far {addr: u16}, {seg: u4}	=> 0x8 @ 0x0 @ seg @ 0x0 @ addr
 	
 	jvm {op1: reg}	=> 0x8 @ op1 @ 0x0 @ 0x1
 	jvm {addr: u16}	=> 0x8 @ 0x0 @ 0x0 @ 0x1 @ addr
+	
+	jmp virt {op1: reg}	=> 0x8 @ op1 @ 0x0 @ 0x1
+	jmp virt {addr: u16}	=> 0x8 @ 0x0 @ 0x0 @ 0x1 @ addr
 	
 	; -- Device I/O
 	
@@ -251,6 +262,7 @@
 	in {op1: reg}, {dev: u16}	=> 0x9 @ op1 @ 0x0 @ 0x0 @ dev
 	
 	out {op2: reg}, {op1: reg} 	=> 0x9 @ op1 @ op2 @ 0x1
+	out {op2: reg}, {data: i16} 	=> 0x9 @ 0x0 @ op2 @ 0x1 @ data
 	out {dev: u16}, {op1: reg}	=> 0x9 @ op1 @ 0x0 @ 0x1 @ dev
 	
 	; -- Stack
@@ -298,8 +310,8 @@
 	sez	=> asm {or st, 0x0002}
 	clz	=> asm {and st, !0x0002}
 	
-	sem	=> asm {or st, 0x0004}
-	clm	=> asm {and st, !0x0004}
+	sen	=> asm {or st, 0x0004}
+	cln	=> asm {and st, !0x0004}
 	
 	sax0	=> asm {or st, 0x0010}
 	clx0	=> asm {and st, !0x0010}

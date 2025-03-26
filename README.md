@@ -102,9 +102,14 @@ irq:
 ```
 
 ## LWC 33
-No documentation yet.
+CustomASM assembler: https://github.com/hlorenzi/customasm
 <br>
-Except for: https://docs.google.com/spreadsheets/d/1v1xfn7EJRyUyvGW_dy4vbZQG2pKG-EaYQxawBvIN3sM/edit?usp=sharing
+lwc33.asm is the instruction definition for CustomASM.
+<br>
+<br>
+LWC33 programming and hardware manual: https://huntabadday.com/docs/TSC-LWC33.pdf
+<br>
+Machine architecture reference sheet: https://docs.google.com/spreadsheets/d/1v1xfn7EJRyUyvGW_dy4vbZQG2pKG-EaYQxawBvIN3sM/edit?usp=sharing
 
 ## 16x16 RAM
 Pinout (Looking from top down):
