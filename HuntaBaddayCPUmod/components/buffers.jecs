@@ -1,6 +1,6 @@
 Buffer8:
     column: "HBCM"
-    category: "IC"
+    category: "Buffers"
     prefab:
         blocks:
             -
@@ -205,7 +205,7 @@ Buffer8:
     
 Buffer16:
     column: "HBCM"
-    category: "IC"
+    category: "Buffers"
     prefab:
         blocks:
             -
@@ -556,7 +556,7 @@ Buffer16:
     
 Buffer8LIFO:
     column: "HBCM"
-    category: "IC"
+    category: "Buffers"
     prefab:
         blocks:
             -
@@ -761,7 +761,7 @@ Buffer8LIFO:
     
 Buffer16LIFO:
     column: "HBCM"
-    category: "IC"
+    category: "Buffers"
     prefab:
         blocks:
             -

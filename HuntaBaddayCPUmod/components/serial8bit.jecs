@@ -1,6 +1,6 @@
 SerialTrans8:
     column: "HBCM"
-    category: "IC"
+    category: "Networking"
     prefab:
         blocks:
             -
@@ -127,7 +127,7 @@ SerialTrans8:
 
 SerialRecv8:
     column: "HBCM"
-    category: "IC"
+    category: "Networking"
     prefab:
         blocks:
             -
@@ -235,7 +235,7 @@ SerialRecv8:
 
 SerialRecv8_sw:
     column: "HBCM"
-    category: "IC"
+    category: "Networking"
     prefab:
         blocks:
             -

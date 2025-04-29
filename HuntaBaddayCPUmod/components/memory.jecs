@@ -1,6 +1,6 @@
 Memory16x16:
     column: "HBCM"
-    category: "IC"
+    category: "Memory"
     prefab:
         blocks:
             -
