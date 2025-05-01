@@ -13,10 +13,10 @@ namespace HuntaBaddayCPUmod {
         const int RESET = 9;
         
         const int COLUMNSOUT = 0;
-        const int ROWSOUT = 8;
-        const int CHARACTEROUT = 16;
-        const int CONTROLOUT = 24;
-        const int BELL = 32;
+        const int ROWSOUT = 6;
+        const int CHARACTEROUT = 12;
+        const int CONTROLOUT = 20;
+        const int BELL = 28;
         
         bool loadFromSave = false;
         

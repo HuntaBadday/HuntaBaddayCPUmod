@@ -13,6 +13,7 @@ namespace HuntaBaddayCPUmod {
         protected override void Initialize() {
             WorldHook.worldLoading += () => {
                 TerminalControllerMenu.init();
+                //SplitFlapControllerMenu.init();
             };
             Logger.Info("HuntaBaddayCPUmod - Loaded Client");
         }

@@ -62,7 +62,12 @@ ComponentCategory.IC: "Integrated Circuit"
 ComponentCategory.Networking: "Networking"
 ComponentCategory.Buffers: "Buffers"
 ComponentCategory.Memory: "Memory"
+#ComponentCategory.Fun: "Fun"
 
 HuntaBaddayCPUmod.TermController: "Terminal Controller"
 HuntaBaddayCPUmod.TermContMenuWidth: "Columns"
 HuntaBaddayCPUmod.TermContMenuHeight: "Rows"
+
+#HuntaBaddayCPUmod.SplitFlapController: "Split Flap Controller"
+#HuntaBaddayCPUmod.SplitFlapContDelay: "Flip Delay"
+#HuntaBaddayCPUmod.SplitFlapContAmount: "Flip Amount"
