@@ -62,3 +62,7 @@ ComponentCategory.IC: "Integrated Circuit"
 ComponentCategory.Networking: "Networking"
 ComponentCategory.Buffers: "Buffers"
 ComponentCategory.Memory: "Memory"
+
+HuntaBaddayCPUmod.TermController: "Terminal Controller"
+HuntaBaddayCPUmod.TermContMenuWidth: "Columns"
+HuntaBaddayCPUmod.TermContMenuHeight: "Rows"

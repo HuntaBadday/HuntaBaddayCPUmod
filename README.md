@@ -14,6 +14,7 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 - TurnerNet network switch
 - 4 bit multiplexers and demultiplexers
 - TSC-6540 Video chip
+- Terminal Controller for CheeseUtil text display
 
 ### Credits
 - CheeseUtilMod's code for helping me figure out the custom data and file loading system.
@@ -465,3 +466,50 @@ A graphic definition is made of 3, 16 bit bytes:
 5. Set VRAM address 0x0400 to foreground colour for text.
 6. Set VRAM address 0x0800 to background colour for text.
 7. Write 0x0001 to control register 0xA to clear the text, and to set all of the colour memory.
+
+## Terminal Controller
+The terminal controller is used to make the text display from CheeseUtilMod into a terminal which supports escape sequences for actions such as moving the cursor.
+
+### Pinout
+- On the front is a grid of outputs which correspond directly to the inputs on the CheeseUtil text display.
+- While facing the back of the component, on the rear face is the data input, least significant bit on the right. On the left side is a reset input, and a bell output for when a character of 0x07 is sent to the controller. On the right side is write pin to send the data to the controller.
+
+### Normal operation
+While in normal operation, sending text characters to the controller will print the character on the display, and advance the cursor forward.
+Any non text characters are not printed.
+
+### Control codes
+```
+0x07 (BEL) Bell, enables the BELL pin for one tick.
+0x08 (BS) Backspace, Moves the cursor left (but may "backwards wrap" if cursor is at start of line), deleting the character before the current position.
+0x0A (LF) Line Feed, Moves to the next line and returns the cursor to the left, scrolls the display up if at bottom of the screen.
+0x0C (FF) Form Feed, Clears the screen and returns the cursor to the upper-left.
+0x1B (ESC) Escape, starts all the escape sequences.
+```
+
+### Escape sequences
+Currently, only CSI (Control Sequence Introducer) commands are supported.
+A CSI command is started with an ESC character followed by a '[' character. A CSI sequence contains any amount of decimal number parameters separated by a ';', ended by a character in the range of 0x40 to 0x7E.
+<br>
+(See: https://en.wikipedia.org/wiki/ANSI_escape_code#CSIsection)
+<br>
+List of supported CSI sequences:
+`CUU, CUD, CUF, CUB, CNL, CPL, CHA, CUP, ED, EL, SU, SD, HVP, SGR`
+<br>
+```
+Implemented custom sequences:
+CSI s (Save current cursor position)
+CSI u (Restore saved cursor position)
+```
+
+### Select Graphics Rendition (SGR)
+Supported SGR attributes:
+```
+3: Enable cursor blink
+7: Enable reverse character printing
+25: Disable cursor blink
+27: Disable reverse character printing
+```
+
+### Setting terminal dimensions
+The controller can be edited to bring up a GUI to set the terminal dimensions.

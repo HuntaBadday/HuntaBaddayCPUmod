@@ -1,0 +1,422 @@
+TermController:
+    column: "HBCM"
+    category: "IC"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0.5, 0, 0)
+                scale: (6, 2, 1)
+        inputs:
+            # Data input
+            -
+                position:
+                    x: -2
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1.33
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2.66
+                    y: 0.5
+                    z: 0.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # Write
+            -
+                position:
+                    x: -2.5
+                    y: 0.5
+                    z: 0
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
+            
+            # Reset
+            -
+                position:
+                    x: 3.5
+                    y: 0.5
+                    z: 0
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+            
+        outputs:
+            # Column output
+            -
+                position:
+                    x: -2
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1.33
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2.66
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # Row output
+            -
+                position:
+                    x: -2
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1.33
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2.66
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # Character output
+            -
+                position:
+                    x: -2
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1.33
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2.66
+                    y: 1.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # Clear screen
+            -
+                position:
+                    x: -2
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Set character
+            -
+                position:
+                    x: -1.33
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Set cursor position
+            -
+                position:
+                    x: -0.66
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Enable cursor blink
+            -
+                position:
+                    x: 0
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Scroll up
+            -
+                position:
+                    x: 0.66
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Scroll down
+            -
+                position:
+                    x: 1.33
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Scroll left
+            -
+                position:
+                    x: 2
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Scroll right
+            -
+                position:
+                    x: 2.66
+                    y: 1.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # Bell
+            -
+                position:
+                    x: 3.5
+                    y: 1.5
+                    z: 0
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+    logicCode: HuntaBaddayCPUmod.TerminalController
+    clientCode: HuntaBaddayCPUmod.TerminalControllerClient
+    placingRules: Standard

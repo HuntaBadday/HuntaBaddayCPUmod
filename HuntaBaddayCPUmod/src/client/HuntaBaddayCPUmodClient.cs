@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using LogicAPI.Client;
-using LICC;
 using System.IO;
-using LogicLog;
+using EccsLogicWorldAPI.Client.Hooks;
+using LICC;
+using LogicAPI.Client;
 
 namespace HuntaBaddayCPUmod {
     public class HuntaBaddayCPUmodClient : ClientMod {
@@ -12,6 +11,9 @@ namespace HuntaBaddayCPUmod {
         static HuntaBaddayCPUmodClient() {}
 
         protected override void Initialize() {
+            WorldHook.worldLoading += () => {
+                TerminalControllerMenu.init();
+            };
             Logger.Info("HuntaBaddayCPUmod - Loaded Client");
         }
         
