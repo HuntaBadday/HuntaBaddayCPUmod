@@ -20,7 +20,7 @@ namespace HuntaBaddayCPUmod {
                             .fixedSize(500, 45)
                             .setInterval(1)
                             .setMin(1)
-                            .setMax(64)
+                            .setMax(256)
                         )
                     )
                     .addContainer("Box2", container => container
@@ -31,7 +31,7 @@ namespace HuntaBaddayCPUmod {
                             .fixedSize(500, 45)
                             .setInterval(1)
                             .setMin(1)
-                            .setMax(64)
+                            .setMax(256)
                         )
                     )
                 )

@@ -160,6 +160,24 @@ TermController:
                     x: -90
                     y: 0
                     z: 0
+            -
+                position:
+                    x: 2
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2.66
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
             
             # Row output
             -
@@ -210,6 +228,24 @@ TermController:
             -
                 position:
                     x: 1.33
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 2.66
                     y: 0.75
                     z: -0.5
                 rotation:
