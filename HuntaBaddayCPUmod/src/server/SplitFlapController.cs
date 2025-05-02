@@ -28,6 +28,7 @@ namespace HuntaBaddayCPUmod {
         int cursorY;
         
         List<Action> actions = new List<Action>();
+        bool isDrawing = false;
         
         byte controlState;
         
@@ -104,7 +105,7 @@ namespace HuntaBaddayCPUmod {
                 }
             }
             
-            if (Inputs[FLIP].On) {
+            if (Inputs[FLIP].On && !isDrawing) {
                 for (int y = 0; y < 64; y++) {
                     for (int x = 0; x < 64; x++) {
                         int i = y*64 + x;
@@ -116,6 +117,8 @@ namespace HuntaBaddayCPUmod {
                         }
                     }
                 }
+                makeAction(0, 0, 0, 0xff, false);
+                isDrawing = true;
             }
             
             if (Inputs[RESET].On) {
@@ -124,6 +127,7 @@ namespace HuntaBaddayCPUmod {
                     realScreen[i] = 0x20; // ' '
                 }
                 actions.Clear();
+                isDrawing = false;
                 makeAction(0, 0, 0, 0b1, false);
             }
             
@@ -144,17 +148,25 @@ namespace HuntaBaddayCPUmod {
         }
         
         void DoNextAction() {
-            if (actions.Count == 0) return;
+            if (actions.Count == 0) {
+                isDrawing = false;
+                return;
+            }
+            
             Action a = actions[0];
             actions.RemoveAt(0);
             
-            a.control |= (byte)(controlState&0b1000);
-            writeData(a.column, COLUMNS);
-            writeData(a.row, ROWS);
-            writeData(a.character, CHARACTER);
-            writeData(a.control, CONTROL);
+            if (a.control != 0xff) {
+                a.control |= (byte)(controlState&0b1000);
+                writeData(a.column, COLUMNS);
+                writeData(a.row, ROWS);
+                writeData(a.character, CHARACTER);
+                writeData(a.control, CONTROL);
+            } else {
+                isDrawing = false;
+            }
             
-            if (actions.Count != 0) QueueLogicUpdate();
+            if (actions.Count != 0 || Inputs[FLIP].On) QueueLogicUpdate();
         }
         
         byte readColumns() {
@@ -220,6 +232,8 @@ namespace HuntaBaddayCPUmod {
                         cursorX = reader.ReadInt32();
                         cursorY = reader.ReadInt32();
                         
+                        isDrawing = reader.ReadBoolean();
+                        
                         for (int i = 0; i < 4096; i++) {
                             screenBuffer[i] = reader.ReadByte();
                             realScreen[i] = reader.ReadByte();
@@ -245,6 +259,8 @@ namespace HuntaBaddayCPUmod {
             int cursorX;
             int cursorY;
             
+            bool isDrawing;
+            
             byte[] screenBuffer = new byte[4096];
             byte[] realScreen = new byte[4096];
             List<Action> actions = new List<Action>();
@@ -256,6 +272,8 @@ namespace HuntaBaddayCPUmod {
             
             writer.Write(cursorX);
             writer.Write(cursorY);
+            
+            writer.Write(isDrawing);
             
             for (int i = 0; i < 4096; i++) {
                 writer.Write(screenBuffer[i]);

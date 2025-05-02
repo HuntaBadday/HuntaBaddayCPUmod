@@ -67,6 +67,7 @@ namespace HuntaBaddayCPUmod {
         const ushort F_CARRY = 0b1;
         const ushort F_ZERO = 0b10;
         const ushort F_NEG = 0b100;
+        const ushort F_REL = 0b1000;
         const ushort F_INT1 = 0b100000000;
         const ushort F_INT2 = 0b1000000000;
         const ushort F_INT3 = 0b10000000000;
@@ -388,43 +389,49 @@ namespace HuntaBaddayCPUmod {
                         genZN(registers[op2]);
                     }
                     break;
-                case LOD:
+                case LOD: {
+                    int offset = (registers[ST]&F_REL) != 0 ? pc : 0; // If rel mode enabled, do an offset from the SP
                     // Check if this is indexed
                     if (op3 != 0) {
                         // Special to load from effective stack location if using sp
                         if (op2 == SP || op3 == SP) {
                             setAddress((ushort)(registers[op2]+registers[op3]+getEffectiveBP()));
                         } else {
-                            setAddress((ushort)(registers[op2]+registers[op3]));
+                            setAddress((ushort)(registers[op2]+registers[op3]+offset));
                         }
                     } else {
                         // Special to load from effective stack location if using sp
                         if (op2 == SP) {
                             setAddress((ushort)(registers[op2]+getEffectiveBP()));
                         } else {
-                            setAddress(registers[op2]);
+                            setAddress((ushort)(registers[op2]+offset));
                         }
                     }
                     goToFetch = false;
+                    registers[ST] &= ~F_REL & 0xffff;
                     break;
-                case STO:
+                }
+                case STO: {
+                    int offset = (registers[ST]&F_REL) != 0 ? pc : 0; // If rel mode enabled, do an offset from the SP
                     if (op3 != 0) {
                         if (op2 == SP || op3 == SP) {
                             setAddress((ushort)(registers[op2]+registers[op3]+getEffectiveBP()));
                         } else {
-                            setAddress((ushort)(registers[op2]+registers[op3]));
+                            setAddress((ushort)(registers[op2]+registers[op3]+offset));
                         }
                     } else {
                         if (op2 == SP) {
                             setAddress((ushort)(registers[op2]+getEffectiveBP()));
                         } else {
-                            setAddress(registers[op2]);
+                            setAddress((ushort)(registers[op2]+offset));
                         }
                     }
                     goToFetch = false;
                     readState = false;
                     writeDataBus(registers[op1]);
+                    registers[ST] &= ~F_REL & 0xffff;
                     break;
+                }
                 case ALU:
                     doALU();
                     break;
@@ -434,7 +441,11 @@ namespace HuntaBaddayCPUmod {
                 case SBR:
                     if (op3 == 0) {
                         // Read subregister
-                        writeReg(op1, subRegisters[op2]);
+                        if (op2 == CONTROL) {
+                            writeReg(op1, pc);
+                        } else {
+                            writeReg(op1, subRegisters[op2]);
+                        }
                     // Do not allow access unless in unsafe mode or not in virtual mode, but allow subregister 15
                     } else if (!isVirt || (registers[ST]&F_UNSAFE) != 0 || op2 == CONTROL) {
                         // Special case for CONTROL register
