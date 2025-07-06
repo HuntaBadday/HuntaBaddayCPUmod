@@ -58,191 +58,250 @@ namespace HuntaBaddayCPUmod
         const int impl = 9;
         const int addrAcc = 10;
         
+        const int ADC = 0;
+        const int AND = 1;
+        const int ASL = 2;
+        const int BCC = 3;
+        const int BCS = 4;
+        const int BEQ = 5;
+        const int BIT = 6;
+        const int BMI = 7;
+        const int BNE = 8;
+        const int BPL = 9;
+        const int BRK = 10;
+        const int BVC = 11;
+        const int BVS = 12;
+        const int CLC = 13;
+        const int CLD = 14;
+        const int CLI = 15;
+        const int CLV = 16;
+        const int CMP = 17;
+        const int CPX = 18;
+        const int CPY = 19;
+        const int DEC = 20;
+        const int DEX = 21;
+        const int DEY = 22;
+        const int EOR = 23;
+        const int INC = 24;
+        const int INX = 25;
+        const int INY = 26;
+        const int JMP = 27;
+        const int JSR = 28;
+        const int LDA = 29;
+        const int LDX = 30;
+        const int LDY = 31;
+        const int LSR = 32;
+        const int NOP = 33;
+        const int ORA = 34;
+        const int PHA = 35;
+        const int PHP = 36;
+        const int PLA = 37;
+        const int PLP = 38;
+        const int ROL = 39;
+        const int ROR = 40;
+        const int RTI = 41;
+        const int RTS = 42;
+        const int SBC = 43;
+        const int SEC = 44;
+        const int SED = 45;
+        const int SEI = 46;
+        const int STA = 47;
+        const int STX = 48;
+        const int STY = 49;
+        const int TAX = 50;
+        const int TAY = 51;
+        const int TSX = 52;
+        const int TXA = 53;
+        const int TXS = 54;
+        const int TYA = 55;
+        
+        const int JMPIND = 56;
+        
         // List of instructions
-        (int opcode, string instruction, int mode, int bytes)[] opcodes = new[]{
-            (0x00, "brk", impl, 0),
+        (int opcode, int instruction, int mode, int bytes)[] opcodes = new[]{
+            (0x00, BRK, impl, 0),
             
-            (0x69, "adc", imm, 1),
-            (0x65, "adc", zp, 1),
-            (0x75, "adc", zpx, 1),
-            (0x6d, "adc", abs, 2),
-            (0x7d, "adc", absx, 2),
-            (0x79, "adc", absy, 2),
-            (0x61, "adc", indx, 1),
-            (0x71, "adc", indy, 1),
+            (0x69, ADC, imm, 1),
+            (0x65, ADC, zp, 1),
+            (0x75, ADC, zpx, 1),
+            (0x6d, ADC, abs, 2),
+            (0x7d, ADC, absx, 2),
+            (0x79, ADC, absy, 2),
+            (0x61, ADC, indx, 1),
+            (0x71, ADC, indy, 1),
             
-            (0x29, "and", imm, 1),
-            (0x25, "and", zp, 1),
-            (0x35, "and", zpx, 1),
-            (0x2d, "and", abs, 2),
-            (0x3d, "and", absx, 2),
-            (0x39, "and", absy, 2),
-            (0x21, "and", indx, 1),
-            (0x31, "and", indy, 1),
+            (0x29, AND, imm, 1),
+            (0x25, AND, zp, 1),
+            (0x35, AND, zpx, 1),
+            (0x2d, AND, abs, 2),
+            (0x3d, AND, absx, 2),
+            (0x39, AND, absy, 2),
+            (0x21, AND, indx, 1),
+            (0x31, AND, indy, 1),
             
-            (0x0a, "asl", addrAcc, 0),
-            (0x06, "asl", zp, 1),
-            (0x16, "asl", zpx, 1),
-            (0x0e, "asl", abs, 2),
-            (0x1e, "asl", absx, 2),
+            (0x0a, ASL, addrAcc, 0),
+            (0x06, ASL, zp, 1),
+            (0x16, ASL, zpx, 1),
+            (0x0e, ASL, abs, 2),
+            (0x1e, ASL, absx, 2),
             
-            (0x90, "bcc", imm, 1),
-            (0xb0, "bcs", imm, 1),
-            (0xd0, "bne", imm, 1),
-            (0xf0, "beq", imm, 1),
-            (0x10, "bpl", imm, 1),
-            (0x30, "bmi", imm, 1),
-            (0x50, "bvc", imm, 1),
-            (0x70, "bvs", imm, 1),
+            (0x90, BCC, imm, 1),
+            (0xb0, BCS, imm, 1),
+            (0xd0, BNE, imm, 1),
+            (0xf0, BEQ, imm, 1),
+            (0x10, BPL, imm, 1),
+            (0x30, BMI, imm, 1),
+            (0x50, BVC, imm, 1),
+            (0x70, BVS, imm, 1),
             
-            (0x24, "bit", zp, 1),
-            (0x2c, "bit", abs, 2),
+            (0x24, BIT, zp, 1),
+            (0x2c, BIT, abs, 2),
             
-            (0x18, "clc", impl, 0),
-            (0xd8, "cld", impl, 0),
-            (0x58, "cli", impl, 0),
-            (0xb8, "clv", impl, 0),
+            (0x18, CLC, impl, 0),
+            (0xd8, CLD, impl, 0),
+            (0x58, CLI, impl, 0),
+            (0xb8, CLV, impl, 0),
             
-            (0xc9, "cmp", imm, 1),
-            (0xc5, "cmp", zp, 1),
-            (0xd5, "cmp", zpx, 1),
-            (0xcd, "cmp", abs, 2),
-            (0xdd, "cmp", absx, 2),
-            (0xd9, "cmp", absy, 2),
-            (0xc1, "cmp", indx, 1),
-            (0xd1, "cmp", indy, 1),
+            (0xc9, CMP, imm, 1),
+            (0xc5, CMP, zp, 1),
+            (0xd5, CMP, zpx, 1),
+            (0xcd, CMP, abs, 2),
+            (0xdd, CMP, absx, 2),
+            (0xd9, CMP, absy, 2),
+            (0xc1, CMP, indx, 1),
+            (0xd1, CMP, indy, 1),
             
-            (0xe0, "cpx", imm, 1),
-            (0xe4, "cpx", zp, 1),
-            (0xec, "cpx", abs, 2),
+            (0xe0, CPX, imm, 1),
+            (0xe4, CPX, zp, 1),
+            (0xec, CPX, abs, 2),
             
-            (0xc0, "cpy", imm, 1),
-            (0xc4, "cpy", zp, 1),
-            (0xcc, "cpy", abs, 2),
+            (0xc0, CPY, imm, 1),
+            (0xc4, CPY, zp, 1),
+            (0xcc, CPY, abs, 2),
             
-            (0xc6, "dec", zp, 1),
-            (0xd6, "dec", zpx, 1),
-            (0xce, "dec", abs, 2),
-            (0xde, "dec", absx, 2),
+            (0xc6, DEC, zp, 1),
+            (0xd6, DEC, zpx, 1),
+            (0xce, DEC, abs, 2),
+            (0xde, DEC, absx, 2),
             
-            (0xca, "dex", impl, 0),
-            (0x88, "dey", impl, 0),
+            (0xca, DEX, impl, 0),
+            (0x88, DEY, impl, 0),
             
-            (0x49, "eor", imm, 1),
-            (0x45, "eor", zp, 1),
-            (0x55, "eor", zpx, 1),
-            (0x4d, "eor", abs, 2),
-            (0x5d, "eor", absx, 2),
-            (0x59, "eor", absy, 2),
-            (0x41, "eor", indx, 1),
-            (0x51, "eor", indy, 1),
+            (0x49, EOR, imm, 1),
+            (0x45, EOR, zp, 1),
+            (0x55, EOR, zpx, 1),
+            (0x4d, EOR, abs, 2),
+            (0x5d, EOR, absx, 2),
+            (0x59, EOR, absy, 2),
+            (0x41, EOR, indx, 1),
+            (0x51, EOR, indy, 1),
             
-            (0xe6, "inc", zp, 1),
-            (0xf6, "inc", zpx, 1),
-            (0xee, "inc", abs, 2),
-            (0xfe, "inc", absx, 2),
+            (0xe6, INC, zp, 1),
+            (0xf6, INC, zpx, 1),
+            (0xee, INC, abs, 2),
+            (0xfe, INC, absx, 2),
             
-            (0xe8, "inx", impl, 0),
-            (0xc8, "iny", impl, 0),
+            (0xe8, INX, impl, 0),
+            (0xc8, INY, impl, 0),
             
-            (0x4c, "jmp", abs, 2),
-            (0x6c, "jmpind", abs, 2),
+            (0x4c, JMP, abs, 2),
+            (0x6c, JMPIND, abs, 2),
             
-            (0x20, "jsr", abs, 2),
+            (0x20, JSR, abs, 2),
             
-            (0xa9, "lda", imm, 1),
-            (0xa5, "lda", zp, 1),
-            (0xb5, "lda", zpx, 1),
-            (0xad, "lda", abs, 2),
-            (0xbd, "lda", absx, 2),
-            (0xb9, "lda", absy, 2),
-            (0xa1, "lda", indx, 1),
-            (0xb1, "lda", indy, 1),
+            (0xa9, LDA, imm, 1),
+            (0xa5, LDA, zp, 1),
+            (0xb5, LDA, zpx, 1),
+            (0xad, LDA, abs, 2),
+            (0xbd, LDA, absx, 2),
+            (0xb9, LDA, absy, 2),
+            (0xa1, LDA, indx, 1),
+            (0xb1, LDA, indy, 1),
             
-            (0xa2, "ldx", imm, 1),
-            (0xa6, "ldx", zp, 1),
-            (0xb6, "ldx", zpy, 1),
-            (0xae, "ldx", abs, 2),
-            (0xbe, "ldx", absy, 2),
+            (0xa2, LDX, imm, 1),
+            (0xa6, LDX, zp, 1),
+            (0xb6, LDX, zpy, 1),
+            (0xae, LDX, abs, 2),
+            (0xbe, LDX, absy, 2),
             
-            (0xa0, "ldy", imm, 1),
-            (0xa4, "ldy", zp, 1),
-            (0xb4, "ldy", zpx, 1),
-            (0xac, "ldy", abs, 2),
-            (0xbc, "ldy", absx, 2),
+            (0xa0, LDY, imm, 1),
+            (0xa4, LDY, zp, 1),
+            (0xb4, LDY, zpx, 1),
+            (0xac, LDY, abs, 2),
+            (0xbc, LDY, absx, 2),
             
-            (0x4a, "lsr", addrAcc, 0),
-            (0x46, "lsr", zp, 1),
-            (0x56, "lsr", zpx, 1),
-            (0x4e, "lsr", abs, 2),
-            (0x5e, "lsr", absx, 2),
+            (0x4a, LSR, addrAcc, 0),
+            (0x46, LSR, zp, 1),
+            (0x56, LSR, zpx, 1),
+            (0x4e, LSR, abs, 2),
+            (0x5e, LSR, absx, 2),
             
-            (0xea, "nop", impl, 0),
+            (0xea, NOP, impl, 0),
             
-            (0x09, "ora", imm, 1),
-            (0x05, "ora", zp, 1),
-            (0x15, "ora", zpx, 1),
-            (0x0d, "ora", abs, 2),
-            (0x1d, "ora", absx, 2),
-            (0x19, "ora", absy, 2),
-            (0x01, "ora", indx, 1),
-            (0x11, "ora", indy, 1),
+            (0x09, ORA, imm, 1),
+            (0x05, ORA, zp, 1),
+            (0x15, ORA, zpx, 1),
+            (0x0d, ORA, abs, 2),
+            (0x1d, ORA, absx, 2),
+            (0x19, ORA, absy, 2),
+            (0x01, ORA, indx, 1),
+            (0x11, ORA, indy, 1),
             
-            (0x48, "pha", impl, 0),
-            (0x08, "php", impl, 0),
-            (0x68, "pla", impl, 0),
-            (0x28, "plp", impl, 0),
+            (0x48, PHA, impl, 0),
+            (0x08, PHP, impl, 0),
+            (0x68, PLA, impl, 0),
+            (0x28, PLP, impl, 0),
             
-            (0x2a, "rol", addrAcc, 0),
-            (0x26, "rol", zp, 1),
-            (0x36, "rol", zpx, 1),
-            (0x2e, "rol", abs, 2),
-            (0x3e, "rol", absx, 2),
+            (0x2a, ROL, addrAcc, 0),
+            (0x26, ROL, zp, 1),
+            (0x36, ROL, zpx, 1),
+            (0x2e, ROL, abs, 2),
+            (0x3e, ROL, absx, 2),
             
-            (0x6a, "ror", addrAcc, 0),
-            (0x66, "ror", zp, 1),
-            (0x76, "ror", zpx, 1),
-            (0x6e, "ror", abs, 2),
-            (0x7e, "ror", absx, 2),
+            (0x6a, ROR, addrAcc, 0),
+            (0x66, ROR, zp, 1),
+            (0x76, ROR, zpx, 1),
+            (0x6e, ROR, abs, 2),
+            (0x7e, ROR, absx, 2),
             
-            (0x40, "rti", impl, 0),
-            (0x60, "rts", impl, 0),
+            (0x40, RTI, impl, 0),
+            (0x60, RTS, impl, 0),
             
-            (0xe9, "sbc", imm, 1),
-            (0xe5, "sbc", zp, 1),
-            (0xf5, "sbc", zpx, 1),
-            (0xed, "sbc", abs, 2),
-            (0xfd, "sbc", absx, 2),
-            (0xf9, "sbc", absy, 2),
-            (0xe1, "sbc", indx, 1),
-            (0xf1, "sbc", indy, 1),
+            (0xe9, SBC, imm, 1),
+            (0xe5, SBC, zp, 1),
+            (0xf5, SBC, zpx, 1),
+            (0xed, SBC, abs, 2),
+            (0xfd, SBC, absx, 2),
+            (0xf9, SBC, absy, 2),
+            (0xe1, SBC, indx, 1),
+            (0xf1, SBC, indy, 1),
             
-            (0x38, "sec", impl, 0),
-            (0xf8, "sed", impl, 0),
-            (0x78, "sei", impl, 0),
+            (0x38, SEC, impl, 0),
+            (0xf8, SED, impl, 0),
+            (0x78, SEI, impl, 0),
             
-            (0x85, "sta", zp, 1),
-            (0x95, "sta", zpx, 1),
-            (0x8d, "sta", abs, 2),
-            (0x9d, "sta", absx, 2),
-            (0x99, "sta", absy, 2),
-            (0x81, "sta", indx, 1),
-            (0x81, "sta", indy, 1),
+            (0x85, STA, zp, 1),
+            (0x95, STA, zpx, 1),
+            (0x8d, STA, abs, 2),
+            (0x9d, STA, absx, 2),
+            (0x99, STA, absy, 2),
+            (0x81, STA, indx, 1),
+            (0x81, STA, indy, 1),
             
-            (0x86, "stx", zp, 1),
-            (0x96, "stx", zpy, 1),
-            (0x8e, "stx", abs, 2),
+            (0x86, STX, zp, 1),
+            (0x96, STX, zpy, 1),
+            (0x8e, STX, abs, 2),
             
-            (0x84, "sty", zp, 1),
-            (0x94, "sty", zpx, 1),
-            (0x8c, "sty", abs, 2),
+            (0x84, STY, zp, 1),
+            (0x94, STY, zpx, 1),
+            (0x8c, STY, abs, 2),
             
-            (0xaa, "tax", impl, 0),
-            (0xa8, "tay", impl, 0),
-            (0xba, "tsx", impl, 0),
-            (0x8a, "txa", impl, 0),
-            (0x9a, "txs", impl, 0),
-            (0x98, "tya", impl, 0)
+            (0xaa, TAX, impl, 0),
+            (0xa8, TAY, impl, 0),
+            (0xba, TSX, impl, 0),
+            (0x8a, TXA, impl, 0),
+            (0x9a, TXS, impl, 0),
+            (0x98, TYA, impl, 0)
         };
         
         // Some state variables
@@ -265,7 +324,7 @@ namespace HuntaBaddayCPUmod
         
         // Registers
         byte ir = 0;
-        string irInst = "   ";
+        int irInst = -1;
         int irMode = 0;
         int irAmt = 0;
         byte pcLo = 0;
@@ -424,7 +483,7 @@ namespace HuntaBaddayCPUmod
                     irInst = opcodes[opcodeIndex].instruction;
                     irMode = opcodes[opcodeIndex].mode;
                     irAmt = opcodes[opcodeIndex].bytes;
-                    //Logger.Info("Inst: "+irInst+" Mode: "+irMode);
+                    
                     state = 1;
                     addrState = 1;
                     addressModeDone = false;
@@ -463,7 +522,7 @@ namespace HuntaBaddayCPUmod
         // Main instruction execution
         protected void phi1exec(){
             switch(irInst){
-                case "brk":
+                case BRK:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -522,31 +581,31 @@ namespace HuntaBaddayCPUmod
                     setRW(true);
                 }
                 break;
-                case "nop":
+                case NOP:
                 endInstruction = true;
                 break;
-                case "lda":
+                case LDA:
                 if(doAddressMode()){
                     break;
                 }
                 loadA = true;
                 endInstruction = true;
                 break;
-                case "ldx":
+                case LDX:
                 if(doAddressMode()){
                     break;
                 }
                 loadX = true;
                 endInstruction = true;
                 break;
-                case "ldy":
+                case LDY:
                 if(doAddressMode()){
                     break;
                 }
                 loadY = true;
                 endInstruction = true;
                 break;
-                case "sta":
+                case STA:
                 if(doAddressMode()){
                     break;
                 }
@@ -554,7 +613,7 @@ namespace HuntaBaddayCPUmod
                 setBus(acc);
                 endInstruction = true;
                 break;
-                case "stx":
+                case STX:
                 if(doAddressMode()){
                     break;
                 }
@@ -562,7 +621,7 @@ namespace HuntaBaddayCPUmod
                 setBus(indexX);
                 endInstruction = true;
                 break;
-                case "sty":
+                case STY:
                 if(doAddressMode()){
                     break;
                 }
@@ -570,7 +629,7 @@ namespace HuntaBaddayCPUmod
                 setBus(indexY);
                 endInstruction = true;
                 break;
-                case "jmp":
+                case JMP:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -586,7 +645,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "jmpind":
+                case JMPIND:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -613,36 +672,36 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "adc":
+                case ADC:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "sbc":
+                case SBC:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "sec":
+                case SEC:
                 st |= 0b00000001;
                 endInstruction = true;
                 break;
-                case "clc":
+                case CLC:
                 st &= 0b11111110;
                 endInstruction = true;
                 break;
-                case "and":
+                case AND:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "asl":
+                case ASL:
                 if(doAddressMode()){
                     break;
                 }
@@ -672,7 +731,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bcc":
+                case BCC:
                 if(doAddressMode()){
                     break;
                 }
@@ -706,7 +765,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bcs":
+                case BCS:
                 if(doAddressMode()){
                     break;
                 }
@@ -740,7 +799,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bne":
+                case BNE:
                 if(doAddressMode()){
                     break;
                 }
@@ -774,7 +833,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "beq":
+                case BEQ:
                 if(doAddressMode()){
                     break;
                 }
@@ -808,7 +867,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bpl":
+                case BPL:
                 if(doAddressMode()){
                     break;
                 }
@@ -842,7 +901,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bmi":
+                case BMI:
                 if(doAddressMode()){
                     break;
                 }
@@ -876,7 +935,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bvc":
+                case BVC:
                 if(doAddressMode()){
                     break;
                 }
@@ -910,7 +969,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bvs":
+                case BVS:
                 if(doAddressMode()){
                     break;
                 }
@@ -944,47 +1003,47 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "bit":
+                case BIT:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "cld":
+                case CLD:
                 st &= 0b11110111;
                 endInstruction = true;
                 break;
-                case "cli":
+                case CLI:
                 st &= 0b11111011;
                 endInstruction = true;
                 break;
-                case "clv":
+                case CLV:
                 st &= 0b10111111;
                 endInstruction = true;
                 break;
-                case "cmp":
+                case CMP:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "cpx":
+                case CPX:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "cpy":
+                case CPY:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "dec":
+                case DEC:
                 if(doAddressMode()){
                     break;
                 }
@@ -1000,24 +1059,24 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "dex":
+                case DEX:
                 indexX--;
                 statusZN(indexX);
                 endInstruction = true;
                 break;
-                case "dey":
+                case DEY:
                 indexY--;
                 statusZN(indexY);
                 endInstruction = true;
                 break;
-                case "eor":
+                case EOR:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "inc":
+                case INC:
                 if(doAddressMode()){
                     break;
                 }
@@ -1033,17 +1092,17 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "inx":
+                case INX:
                 indexX++;
                 statusZN(indexX);
                 endInstruction = true;
                 break;
-                case "iny":
+                case INY:
                 indexY++;
                 statusZN(indexY);
                 endInstruction = true;
                 break;
-                case "jsr":
+                case JSR:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1072,7 +1131,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "lsr":
+                case LSR:
                 if(doAddressMode()){
                     break;
                 }
@@ -1102,14 +1161,14 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "ora":
+                case ORA:
                 if(doAddressMode()){
                     break;
                 }
                 loadDBL1 = true;
                 endInstruction = true;
                 break;
-                case "rol":
+                case ROL:
                 if(doAddressMode()){
                     break;
                 }
@@ -1143,7 +1202,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "ror":
+                case ROR:
                 if(doAddressMode()){
                     break;
                 }
@@ -1177,7 +1236,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "rts":
+                case RTS:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1201,7 +1260,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "rti":
+                case RTI:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1227,7 +1286,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "pha":
+                case PHA:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1240,7 +1299,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "php":
+                case PHP:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1253,7 +1312,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "pla":
+                case PLA:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1268,7 +1327,7 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "plp":
+                case PLP:
                 switch(state){
                     case 1:
                     setAddress16(pcLo, pcHi);
@@ -1283,39 +1342,39 @@ namespace HuntaBaddayCPUmod
                     endInstruction = true;
                     break;
                 } break;
-                case "sed":
+                case SED:
                 st |= 0x08;
                 endInstruction = true;
                 break;
-                case "sei":
+                case SEI:
                 st |= 0x04;
                 endInstruction = true;
                 break;
-                case "tax":
+                case TAX:
                 indexX = acc;
                 statusZN(indexX);
                 endInstruction = true;
                 break;
-                case "tay":
+                case TAY:
                 indexY = acc;
                 statusZN(indexY);
                 endInstruction = true;
                 break;
-                case "tsx":
+                case TSX:
                 indexX = sp;
                 statusZN(indexX);
                 endInstruction = true;
                 break;
-                case "txa":
+                case TXA:
                 acc = indexX;
                 statusZN(acc);
                 endInstruction = true;
                 break;
-                case "txs":
+                case TXS:
                 sp = indexX;
                 endInstruction = true;
                 break;
-                case "tya":
+                case TYA:
                 acc = indexY;
                 statusZN(acc);
                 endInstruction = true;
@@ -1326,39 +1385,39 @@ namespace HuntaBaddayCPUmod
         // Some instructions overlap the final step with the fetch cycle
         protected void fetchExec(){
             switch(irInst){
-                case "adc":
+                case ADC:
                 acc = statusCO(acc, DBL1);
                 statusZN(acc);
                 break;
-                case "sbc":
+                case SBC:
                 DBL1 = (byte)(~DBL1);
                 acc = statusCO(acc, DBL1);
                 statusZN(acc);
                 break;
-                case "and":
+                case AND:
                 acc &= DBL1;
                 statusZN(acc);
                 break;
-                case "bit":
+                case BIT:
                 byte tmp = (byte)(acc&DBL1);
                 statusZN(tmp);
                 st &= 0x3f;
                 st |= (byte)(DBL1&0xc0);
                 break;
-                case "cmp":
+                case CMP:
                 compare(acc, DBL1);
                 break;
-                case "cpx":
+                case CPX:
                 compare(indexX, DBL1);
                 break;
-                case "cpy":
+                case CPY:
                 compare(indexY, DBL1);
                 break;
-                case "eor":
+                case EOR:
                 acc ^= DBL1;
                 statusZN(acc);
                 break;
-                case "ora":
+                case ORA:
                 acc |= DBL1;
                 statusZN(acc);
                 break;
@@ -1580,7 +1639,7 @@ namespace HuntaBaddayCPUmod
             st |= (byte)(value&0x80);
         }
         protected byte statusCO(byte v1, byte v2){
-            if((st&0x04) != 0 && irInst == "sbc"){
+            if((st&0x04) != 0 && irInst == SBC){
                 v2 = (byte)(0x99 - (~v2));
             }
             int output = v1+v2+(st&0x1);
@@ -1700,7 +1759,7 @@ namespace HuntaBaddayCPUmod
             
             // Registers
             byte ir = 0;
-            string irInst = "   "; // 3 bytes always
+            string irInst = -1; // 3 bytes always (NOT SAVED)
             int irMode = 0;
             int irAmt = 0;
             byte pcLo = 0;
@@ -1757,7 +1816,7 @@ namespace HuntaBaddayCPUmod
             data[19] = indexX;
             data[20] = indexY;
             
-            data[21] = (byte)state; // Never more thana byte
+            data[21] = (byte)state; // Never more than a byte
             data[22] = (byte)addrState; // Never more than a byte
             data[23] = (byte)relState; // Never more than a byte
             
