@@ -14,6 +14,7 @@ namespace HuntaBaddayCPUmod {
             WorldHook.worldLoading += () => {
                 TerminalControllerMenu.init();
                 SplitFlapControllerMenu.init();
+                AddressDecoderMenu.Init();
             };
             Logger.Info("HuntaBaddayCPUmod - Loaded Client");
         }
