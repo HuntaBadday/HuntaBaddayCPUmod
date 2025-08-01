@@ -47,6 +47,7 @@ namespace HuntaBaddayCPUmod {
             if(base.Inputs[readBuffer].On && !lastRead && (ptr != 0 || full)){
                 ptr--;
                 writeOutput(memory[(int)ptr]);
+                base.Outputs[dataAvailable].On = true; // Force the output to be on in case read and write was done at the same time
                 memory[(int)ptr] = 0;
                 full = false;
             } else if(!base.Inputs[readBuffer].On) {

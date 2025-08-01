@@ -426,6 +426,7 @@ namespace HuntaBaddayCPUmod
                 resetTrigger = true;
                 insideInterrupt = false;
                 state = 0;
+                wasFetch = false;
                 st |= 0x04;
                 return;
             } else if(phi1 && resetTrigger){
@@ -1386,41 +1387,41 @@ namespace HuntaBaddayCPUmod
         protected void fetchExec(){
             switch(irInst){
                 case ADC:
-                acc = statusCO(acc, DBL1);
-                statusZN(acc);
-                break;
+                    acc = statusCO(acc, DBL1);
+                    statusZN(acc);
+                    break;
                 case SBC:
-                DBL1 = (byte)(~DBL1);
-                acc = statusCO(acc, DBL1);
-                statusZN(acc);
-                break;
+                    DBL1 = (byte)(~DBL1);
+                    acc = statusCO(acc, DBL1);
+                    statusZN(acc);
+                    break;
                 case AND:
-                acc &= DBL1;
-                statusZN(acc);
-                break;
+                    acc &= DBL1;
+                    statusZN(acc);
+                    break;
                 case BIT:
-                byte tmp = (byte)(acc&DBL1);
-                statusZN(tmp);
-                st &= 0x3f;
-                st |= (byte)(DBL1&0xc0);
-                break;
+                    byte tmp = (byte)(acc&DBL1);
+                    statusZN(tmp);
+                    st &= 0x3f;
+                    st |= (byte)(DBL1&0xc0);
+                    break;
                 case CMP:
-                compare(acc, DBL1);
-                break;
+                    compare(acc, DBL1);
+                    break;
                 case CPX:
-                compare(indexX, DBL1);
-                break;
+                    compare(indexX, DBL1);
+                    break;
                 case CPY:
-                compare(indexY, DBL1);
-                break;
+                    compare(indexY, DBL1);
+                    break;
                 case EOR:
-                acc ^= DBL1;
-                statusZN(acc);
-                break;
+                    acc ^= DBL1;
+                    statusZN(acc);
+                    break;
                 case ORA:
-                acc |= DBL1;
-                statusZN(acc);
-                break;
+                    acc |= DBL1;
+                    statusZN(acc);
+                    break;
             }
         }
         
