@@ -3,3 +3,6 @@ Name: HuntaBaddayCPUmod
 Author: HuntaBadday
 Version: 1.13.1
 Priority: 0
+Dependencies:
+    - EccsLogicWorldAPI
+    - EccsGuiBuilder
