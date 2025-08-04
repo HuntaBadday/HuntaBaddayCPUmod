@@ -297,5 +297,5 @@ TSC6530:
                     y: 0
                     z: 0
     
-    logicCode: HuntaBaddayCPUmod.TSC6530
+    logicCode: HuntaBaddayCPUmod.TSC6530_Comp
     placingRules: Standard
