@@ -1,10 +1,11 @@
 using LogicAPI.Server.Components;
+using HuntasICLib.CPU;
 
 namespace HuntaBaddayCPUmod {
     public class LWC33_Comp : LogicComponent {
         public override bool HasPersistentValues => true;
         
-        TSC_LWC33 cpu = new TSC_LWC33();
+        LWC33 cpu = new LWC33();
         
         // INPUT PINS
         const int MEMIN = 0;
