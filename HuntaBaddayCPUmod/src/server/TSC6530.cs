@@ -3,7 +3,7 @@ using System;
 
 namespace HuntaBaddayCPUmod {
     
-    public class TSC6530 : LogicComponent {
+    public class TSC6530_Comp : LogicComponent {
         public override bool HasPersistentValues => true;
         const int databus = 0;
         const int CSpin = 8;

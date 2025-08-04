@@ -1,0 +1,869 @@
+TSC3301:
+    column: "HBCM"
+    category: "Microcontrollers"
+    prefab:
+        blocks:
+            -
+                color: 2e2e2e
+                position: (0, 0, 0.5)
+                scale: (9, 1, 2)
+        inputs:
+            # DATA PORT 0 INPUT
+            -
+                position:
+                    x: 1
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.33
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.33
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.33
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.33
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -4
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # DATA PORT 1 INPUT
+            -
+                position:
+                    x: -4
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.66
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.33
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.66
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.33
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.66
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.33
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.33
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # SER0 INPUT
+            -
+                position:
+                    x: -4.5
+                    y: 0.5
+                    z: 1.25
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
+            
+            # SER1 INPUT
+            -
+                position:
+                    x: -4.5
+                    y: 0.5
+                    z: 0.25
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
+            
+            # TNET INPUT
+            -
+                position:
+                    x: 4.5
+                    y: 0.5
+                    z: 1.25
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+            
+            # CNT 0
+            -
+                position:
+                    x: 4
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            # CNT 1
+            -
+                position:
+                    x: 3.66
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # AUX FLAG 0
+            -
+                position:
+                    x: 2
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # AUX FLAG 1
+            -
+                position:
+                    x: 2.33
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # AUX FLAG 2
+            -
+                position:
+                    x: 2.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            # AUX FLAG 3
+            -
+                position:
+                    x: 3
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # IRQ 2
+            -
+                position:
+                    x: 3.66
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # IRQ 3
+            -
+                position:
+                    x: 4
+                    y: 0.5
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # RUN
+            -
+                position:
+                    x: 4.5
+                    y: 0.5
+                    z: -0.33
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+            
+            # RESET
+            -
+                position:
+                    x: 4.5
+                    y: 0.5
+                    z: 0
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+            
+            # LOAD
+            -
+                position:
+                    x: 4.5
+                    y: 0.5
+                    z: 0.33
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+            
+        outputs:
+            # DATA PORT 0 OUTPUT
+            -
+                position:
+                    x: 1
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.33
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.33
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.66
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.33
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.66
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.33
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.66
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -4
+                    y: 0.7
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # DATA PORT 1 OUTPUT
+            -
+                position:
+                    x: -4
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.66
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3.33
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -3
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.66
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2.33
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -2
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.66
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1.33
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -1
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.66
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: -0.33
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.33
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 0.66
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            -
+                position:
+                    x: 1
+                    y: 0.7
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # SER0 OUTPUT
+            -
+                position:
+                    x: -4.5
+                    y: 0.5
+                    z: 0.85
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
+            
+            # SER1 OUTPUT
+            -
+                position:
+                    x: -4.5
+                    y: 0.5
+                    z: -0.15
+                rotation:
+                    x: 0
+                    y: 0
+                    z: 90
+            
+            # TNET OUTPUT
+            -
+                position:
+                    x: 4.5
+                    y: 0.5
+                    z: 0.85
+                rotation:
+                    x: 0
+                    y: 0
+                    z: -90
+            
+            # PORT 0 READ
+            -
+                position:
+                    x: 1.5
+                    y: 0.75
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # PORT 0 WRITE
+            -
+                position:
+                    x: 1.5
+                    y: 0.25
+                    z: -0.5
+                rotation:
+                    x: -90
+                    y: 0
+                    z: 0
+            
+            # PORT 1 READ
+            -
+                position:
+                    x: 1.5
+                    y: 0.75
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # PORT 1 WRITE
+            -
+                position:
+                    x: 1.5
+                    y: 0.25
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # TA0 OUTPUT
+            -
+                position:
+                    x: 3.1
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # TB0 OUTPUT
+            -
+                position:
+                    x: 2.76
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # TA1 OUTPUT
+            -
+                position:
+                    x: 2.43
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+            # TB1 OUTPUT
+            -
+                position:
+                    x: 2.1
+                    y: 0.5
+                    z: 1.5
+                rotation:
+                    x: 90
+                    y: 0
+                    z: 0
+            
+    logicCode: HuntaBaddayCPUmod.TSC3301
+    clientCode: HuntaBaddayCPUmod.TSC3301Client
+    placingRules: Standard
