@@ -61,8 +61,8 @@ public class TSC3301 : LogicComponent<IRamData> {
     
     BufferFIFO16b Buffer0 = new BufferFIFO16b(4096);
     BufferFIFO16b Buffer1 = new BufferFIFO16b(4096);
-    BufferFIFO16b Buffer2 = new BufferFIFO16b(4096);
-    BufferFIFO16b Buffer3 = new BufferFIFO16b(4096);
+    BufferLIFO16b Buffer2 = new BufferLIFO16b(4096);
+    BufferLIFO16b Buffer3 = new BufferLIFO16b(4096);
     
     TSC6530 Timer0 = new TSC6530();
     TSC6530 Timer1 = new TSC6530();
@@ -259,6 +259,10 @@ public class TSC3301 : LogicComponent<IRamData> {
                     if ((CPU.deviceBusOutput & 0x1) != 0) SER0Buffer.Reset();
                     if ((CPU.deviceBusOutput & 0x2) != 0) SER1Buffer.Reset();
                     break;
+                case 0x11F:
+                    if ((CPU.deviceBusOutput & 0x1) != 0) CPU.interruptPinStates &= 0b1011;
+                    if ((CPU.deviceBusOutput & 0x2) != 0) CPU.interruptPinStates &= 0b0111;
+                    break;
             }
         }
         // Special for GPIO
@@ -316,6 +320,12 @@ public class TSC3301 : LogicComponent<IRamData> {
             SER1Buffer.Reset();
             TNETRecv.Reset();
             TNETTrans.Reset();
+            
+            tnetIndex = 0;
+            currentTnetPacket = new byte[0];
+            tnetSendBuffer.SetLength(0);
+            
+            CPU.interruptPinStates &= 0b0011;
         }
         
         // Output timer outputs to bus
