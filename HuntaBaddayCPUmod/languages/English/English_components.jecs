@@ -58,8 +58,11 @@ HuntaBaddayCPUmod.BiPlexer16: "16 Line Bi-Directional Multiplexer Inv. Enable"
 
 HuntaBaddayCPUmod.16BitAddressDecoder: "16 Bit Address Decoder"
 
+HuntaBaddayCPUmod.TSC3301: "TSC 3301 Microcontroller"
+
 ComponentColumn.HBCM: "HBCM"
 ComponentCategory.Processors: "Processors"
+ComponentCategory.Microcontrollers: "Microcontrollers"
 ComponentCategory.IC: "Integrated Circuit"
 ComponentCategory.Networking: "Networking"
 ComponentCategory.Buffers: "Buffers"
