@@ -8,7 +8,7 @@ using HuntaBaddayCPUmod.CustomData;
 namespace HuntaBaddayCPUmod {
     
     public class TSC3301Client : ComponentClientCode<IRamData>, FileLoadable {
-        const int LOADPIN = 0;
+        const int LOADPIN = 45;
         
         protected override void Initialize() {
             HuntaBaddayCPUmodClient.fileLoadables.Add(this);
@@ -21,7 +21,7 @@ namespace HuntaBaddayCPUmod {
         public void Load(byte[] data, LineWriter lineWriter) {
             if (data == null || data.Length == 0 || !GetInputState(LOADPIN)) return;
             
-            int loadCount = data.Length <= 0x20000 ? data.Length : 0x20000;
+            int loadCount = data.Length <= 0x4000 ? data.Length : 0x4000;
             MemoryStream output = new MemoryStream();
             using (DeflateStream comp = new DeflateStream(output, CompressionLevel.Optimal))
                 comp.Write(data, 0, loadCount);

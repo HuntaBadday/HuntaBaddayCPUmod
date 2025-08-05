@@ -417,7 +417,7 @@ TSC3301:
                     y: 0
                     z: 0
             
-            # RUN
+            # CLOCK
             -
                 position:
                     x: 4.5
