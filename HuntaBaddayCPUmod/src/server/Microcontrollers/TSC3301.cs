@@ -304,7 +304,7 @@ public class TSC3301 : LogicComponent<IRamData> {
         if (SER0Recv.LogicUpdate(Inputs[SER0IN].On))
             SER0Buffer.Write((ushort)SER0Recv.value);
         if (SER1Recv.LogicUpdate(Inputs[SER1IN].On))
-            SER0Buffer.Write((ushort)SER1Recv.value);
+            SER1Buffer.Write((ushort)SER1Recv.value);
         Outputs[SER0OUT].On = SER0Trans.LogicUpdate();
         Outputs[SER1OUT].On = SER1Trans.LogicUpdate();
         TNETRecv.LogicUpdate(Inputs[TNETIN].On);
