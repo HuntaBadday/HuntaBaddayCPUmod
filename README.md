@@ -3,6 +3,14 @@
 A mod for Logic World that adds processors and other useful microchips!\
 Please create an issue or ping/message me (huntabadday6502 on discord) for ANY questions or problems you have. (Related to this mod). You may also request new components.
 
+### Installation
+Copy the ``HuntaBaddayCPUmod`` folder to ``"Logic World/GameData/"``
+
+### Required mods
+- HuntasIntegratedCircuitLib (HuntasICLib)
+- EccsLogicWorldAPI
+- EccsGuiBuilder
+
 ### Included components
 - LWC31 16 bit microprocessor
 - LWC33 16 bit microprocessor
@@ -15,6 +23,7 @@ Please create an issue or ping/message me (huntabadday6502 on discord) for ANY q
 - 4 bit multiplexers and demultiplexers
 - TSC-6540 Video chip
 - Terminal Controller for CheeseUtil text display
+- TSC3301 (LWC33 based microcontroller)
 
 ### Credits
 - CheeseUtilMod's code for helping me figure out the custom data and file loading system.
@@ -513,3 +522,116 @@ Supported SGR attributes:
 
 ### Setting terminal dimensions
 The controller can be edited to bring up a GUI to set the terminal dimensions.
+
+## TSC 3301
+The TSC 3301 is a self contained computer based on the LWC33 CPU.
+
+### Pinout
+```
+    BBBBBBBBBBBBBBBB W TTTT CC
+SR0                  R         TNET Rx
+ST0                            TNET Tx
+             TSC 3301          Ld
+SR1                            Rst
+ST1                  R         Clk
+    AAAAAAAAAAAAAAAA W XXXX QQ
+
+SR0: Serial 0 Rx
+ST0: Serial 0 Tx
+SR1: Serial 1 Rx
+ST1: Serial 1 Tx
+
+A: Data port 0/A (Left-right: Bits 15-0)
+B: Data port 1/B (Left-right: Bits 0-15)
+
+R: Data port read output (1 tick pulse when cpu reads port)
+W: Data port write output (1 tick pulse when cpu writes port)
+
+T: Timer outputs (Left-right):
+    Timer 1 timer B output
+    Timer 1 timer A output
+    Timer 0 timer B output
+    Tiemr 0 timer A output
+
+C: Timer CNT inputs (Left-right):
+    Timer 1 CNT
+    Timer 0 CNT
+    
+X: LWC33 AUX Flag Set (Left-right: LWC33 X0-X3)
+Q: LWC33 IRQ Pins (Left-right: LWC33 Q3-Q4)
+
+TNET Rx: TNET Rx
+TNET Tx: TNET Tx
+Ld: Enable ROM loading, load binary file using the "loadraml or loadramh" commands in the console.
+Rst: Reset TSC 3301 and all components inside
+Clk: Clock CPU
+```
+
+### Memory map
+```
+0000 - DFFF: RAM
+E000 - FFFF: ROM
+```
+
+### Device map
+```
+Device Map:
+0100 - 0107: Timer 0 (TSC 6530)
+0108 - 010F: Timer 1 (TSC 6530)
+0110 -     : TNET data
+0111 -     : TNET 16-bit data
+0112 -     : TNET control register
+0114 -     : Buffer 0 R/W
+0115 -     : Buffer 1 R/W
+0116 -     : Buffer 2 R/W
+0117 -     : Buffer 3 R/W
+0118 -     : Buffer control
+011A -     : Serial 0 data
+011B -     : Serial 1 data
+011C -     : Serial control
+011D -     : GPIO 0
+011E -     : GPIO 1
+011F -     : Clear external interrupts
+
+TNET Data: Read tnet receive buffer / write tnet send buffer
+TNET 16-bit data: Read 16 bits from tnet receive buffer / write 16 bits to tnet send buffer
+TNET control bits:
+    (Read / Write)
+    0: _ / Send packet
+    1: Is write buffer empty / Clear write buffer
+    2: Packet available / Read next packet
+    3: Is read buffer empty / Clear read buffer and packet queue
+    
+Buffer 0-1 4K FIFO buffers: Read/write buffer
+Buffer 2-3 4K LIFO buffers: Read/write buffer
+
+Buffer control bits:
+    (Read / Write)
+    0: Buffer 0 data available / Buffer 0 clear
+    1: Buffer 1 data available / Buffer 1 clear
+    2: Buffer 2 data available / Buffer 2 clear
+    3: Buffer 3 data available / Buffer 3 clear
+    
+Serial 0 data: Read / write serial port
+Serial 1 data: Read / write serial port
+
+Serial control bits:
+    0: Serial 0 data available / Serial 0 clear receive buffer
+    1: Serial 1 data available / Serial 1 clear receive buffer
+    
+GPIO0: Read/write port 0/A
+GPIO1: Read/write port 1/B
+
+Clear external interrupt bits:
+    (Read / Write)
+    0: _ / Clear IRQ3
+    1: _ / Clear IRQ4
+```
+
+### Misc. info
+```
+Timer 0 / Timer 1 interrupt pins are both connected to LWC33 IRQ 0
+TNET packet available interrupt is LWC33 IRQ 1
+
+Programs loaded through the load commands are written to the 8K ROM at 0xE000
+```
