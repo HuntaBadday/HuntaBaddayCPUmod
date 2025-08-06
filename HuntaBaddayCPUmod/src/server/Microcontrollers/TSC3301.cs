@@ -151,7 +151,7 @@ public class TSC3301 : LogicComponent<IRamData> {
                     if (tnetIndex >= currentTnetPacket.Length-1) {
                         CPU.setCarryState = true;
                     } else {
-                        CPU.deviceBusInput |= currentTnetPacket[tnetIndex++];
+                        CPU.deviceBusInput = currentTnetPacket[tnetIndex++];
                         CPU.deviceBusInput |= (ushort)(currentTnetPacket[tnetIndex++] << 8);
                     }
                     break;
