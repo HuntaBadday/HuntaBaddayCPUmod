@@ -327,6 +327,10 @@ public class TSC3301 : LogicComponent<IRamData> {
             SER1Buffer.Reset();
             SER0TBuffer.Reset();
             SER1TBuffer.Reset();
+            SER0Trans.Reset();
+            SER0Recv.Reset();
+            SER1Trans.Reset();
+            SER1Recv.Reset();
             TNETRecv.Reset();
             TNETTrans.Reset();
             
