@@ -59,6 +59,9 @@ public class TSC3301 : LogicComponent<IRamData> {
     BufferFIFO16b SER0Buffer = new BufferFIFO16b(1024);
     BufferFIFO16b SER1Buffer = new BufferFIFO16b(1024);
     
+    BufferFIFO16b SER0TBuffer = new BufferFIFO16b(1024);
+    BufferFIFO16b SER1TBuffer = new BufferFIFO16b(1024);
+    
     BufferFIFO16b Buffer0 = new BufferFIFO16b(4096);
     BufferFIFO16b Buffer1 = new BufferFIFO16b(4096);
     BufferLIFO16b Buffer2 = new BufferLIFO16b(4096);
@@ -250,10 +253,10 @@ public class TSC3301 : LogicComponent<IRamData> {
                     if ((CPU.deviceBusOutput & 0x8) != 0) Buffer3.Reset();
                     break;
                 case 0x11A: // Serial 0 data
-                    SER0Trans.Transmit(CPU.deviceBusOutput);
+                    SER0TBuffer.Write(CPU.deviceBusOutput);
                     break;
                 case 0x11B: // Serial 1 data
-                    SER1Trans.Transmit(CPU.deviceBusOutput);
+                    SER1TBuffer.Write(CPU.deviceBusOutput);
                     break;
                 case 0x11C: // Serial control
                     if ((CPU.deviceBusOutput & 0x1) != 0) SER0Buffer.Reset();
@@ -305,6 +308,10 @@ public class TSC3301 : LogicComponent<IRamData> {
             SER0Buffer.Write((ushort)SER0Recv.value);
         if (SER1Recv.LogicUpdate(Inputs[SER1IN].On))
             SER1Buffer.Write((ushort)SER1Recv.value);
+        if (SER0Trans.ready && SER0TBuffer.dataAvailable)
+            SER0Trans.Transmit(SER0TBuffer.Read());
+        if (SER1Trans.ready && SER1TBuffer.dataAvailable)
+            SER1Trans.Transmit(SER1TBuffer.Read());
         Outputs[SER0OUT].On = SER0Trans.LogicUpdate();
         Outputs[SER1OUT].On = SER1Trans.LogicUpdate();
         TNETRecv.LogicUpdate(Inputs[TNETIN].On);
@@ -318,6 +325,8 @@ public class TSC3301 : LogicComponent<IRamData> {
             Buffer3.Reset();
             SER0Buffer.Reset();
             SER1Buffer.Reset();
+            SER0TBuffer.Reset();
+            SER1TBuffer.Reset();
             TNETRecv.Reset();
             TNETTrans.Reset();
             
@@ -379,16 +388,18 @@ public class TSC3301 : LogicComponent<IRamData> {
                     }
                     
                     CPU.deserializeCPUState(unpacker.ReadNext());
+                    Buffer0.Deserialize(unpacker.ReadNext());
+                    Buffer1.Deserialize(unpacker.ReadNext());
+                    Buffer2.Deserialize(unpacker.ReadNext());
+                    Buffer3.Deserialize(unpacker.ReadNext());
                     SER0Recv.Deserialize(unpacker.ReadNext());
                     SER0Trans.Deserialize(unpacker.ReadNext());
                     SER1Recv.Deserialize(unpacker.ReadNext());
                     SER1Trans.Deserialize(unpacker.ReadNext());
                     SER0Buffer.Deserialize(unpacker.ReadNext());
                     SER1Buffer.Deserialize(unpacker.ReadNext());
-                    Buffer0.Deserialize(unpacker.ReadNext());
-                    Buffer1.Deserialize(unpacker.ReadNext());
-                    Buffer2.Deserialize(unpacker.ReadNext());
-                    Buffer3.Deserialize(unpacker.ReadNext());
+                    SER0TBuffer.Deserialize(unpacker.ReadNext());
+                    SER1TBuffer.Deserialize(unpacker.ReadNext());
                     Timer0.Deserialize(unpacker.ReadNext());
                     Timer1.Deserialize(unpacker.ReadNext());
                 } catch (Exception ex) {
@@ -425,6 +436,9 @@ public class TSC3301 : LogicComponent<IRamData> {
            BufferFIFO16b SER0Buffer = new BufferFIFO16b(1024);
            BufferFIFO16b SER1Buffer = new BufferFIFO16b(1024);
            
+           BufferFIFO16b SER0TBuffer = new BufferFIFO16b(1024);
+           BufferFIFO16b SER1TBuffer = new BufferFIFO16b(1024);
+           
            BufferFIFO16b Buffer0 = new BufferFIFO16b(4096);
            BufferFIFO16b Buffer1 = new BufferFIFO16b(4096);
            BufferFIFO16b Buffer2 = new BufferFIFO16b(4096);
@@ -450,16 +464,18 @@ public class TSC3301 : LogicComponent<IRamData> {
         HCPacker packer = new HCPacker();
         packer.Write(m.ToArray());
         packer.Write(CPU.serializeCPUState());
+        packer.Write(Buffer0.Serialize());
+        packer.Write(Buffer1.Serialize());
+        packer.Write(Buffer2.Serialize());
+        packer.Write(Buffer3.Serialize());
         packer.Write(SER0Recv.Serialize());
         packer.Write(SER0Trans.Serialize());
         packer.Write(SER1Recv.Serialize());
         packer.Write(SER1Trans.Serialize());
         packer.Write(SER0Buffer.Serialize());
         packer.Write(SER1Buffer.Serialize());
-        packer.Write(Buffer0.Serialize());
-        packer.Write(Buffer1.Serialize());
-        packer.Write(Buffer2.Serialize());
-        packer.Write(Buffer3.Serialize());
+        packer.Write(SER0TBuffer.Serialize());
+        packer.Write(SER1TBuffer.Serialize());
         packer.Write(Timer0.Serialize());
         packer.Write(Timer1.Serialize());
         
